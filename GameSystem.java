@@ -142,11 +142,15 @@ public class GameSystem {
         update(profile);
     }
 //    private void enc(String str, String location){
+//
 //    }
 //    private void enc(int number, String location){
+//
 //    }
 //    private String dec(String location){
+//
 //    }
 //    private int dec(String location){
+//
 //    }
 }
