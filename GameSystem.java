@@ -22,8 +22,8 @@ public class GameSystem {
             File credentialsPath = new File(location + "credentials.txt");
             credentials = new FileOutputStream(credentialsPath);
             Scanner read = new Scanner(credentialsPath);
-            usernameList = new ArrayList<String>();
-            passwordList = new ArrayList<String>();
+            usernameList = new ArrayList<>();
+            passwordList = new ArrayList<>();
             while(read.hasNext()){
                 usernameList.add(read.nextLine());
                 passwordList.add(read.nextLine());
@@ -79,7 +79,8 @@ public class GameSystem {
         }
         else if(file==profile){
             try {
-                profilePath.delete();
+                if(!profilePath.delete())
+                    throw new Exception("Something went wrong.");
                 profilePath = new File(location + username + ".txt");
                 profile = new FileOutputStream(profilePath);
                 write = new PrintStream(profile);
@@ -90,6 +91,9 @@ public class GameSystem {
             }
             catch (FileNotFoundException e){
                 throw new RuntimeException(e);
+            }
+            catch (Exception e){
+                System.out.println("Something went wrong.");
             }
         }
     }
@@ -107,7 +111,7 @@ public class GameSystem {
         return true;
     }
     public void updatePwd(String pwd, String newPwd){
-        if(pwd==newPwd)
+        if(pwd.equals(newPwd))
             return;
         for(int i=0;i<passwordList.size();i++){
             if(pwd.equals(passwordList.get(i))){
