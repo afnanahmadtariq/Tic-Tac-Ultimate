@@ -4,6 +4,8 @@
  */
 package Tic_Tac_Ultimate;
 
+import javafx.application.Application;
+
 /**
  *
  * @author Pc
@@ -11,7 +13,7 @@ package Tic_Tac_Ultimate;
 public class Tic_Tac_Ultimate extends GUI{
     public static void main(String[] args) {
         Controller ticTacToe = new Controller(true,"easy");
-        
+        Application.launch(args);
     }
     private void start(int toss){
         Board game = new Board();
