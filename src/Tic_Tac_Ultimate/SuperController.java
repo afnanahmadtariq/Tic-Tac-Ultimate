@@ -51,16 +51,16 @@ public class SuperController extends SuperBoard{
             case 1 -> end(true,superIndex);
             case 0 -> end(false,superIndex);
         }
-        boolean flag = switch(check[1]){
+        boolean end = switch(check[1]){
             case 1 -> end(true);
             case 0 -> end(false);
             default -> false;
         };
-        if(flag)
-            return flag;
-        player = (player+1)%2;
-        superIndex = index;
-        this.superIndex = checkTurn(superIndex);
+        if(!end){
+            player = (player+1)%2;
+            superIndex = index;
+            this.superIndex = checkTurn(superIndex);
+        }
         return true;
     }
 //    public int[] superUser(int a, int b, int i,int j, SuperBoard superGame ){
