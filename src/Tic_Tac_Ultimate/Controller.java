@@ -33,15 +33,15 @@ public class Controller extends Board{
         if(super.board[index[0]][index[1]] != 0)
             return false;
         super.board[index[0]][index[1]] = player;
-        boolean flag = switch(super.check()){
+        boolean end = switch(super.check()){
             case 1 -> end(true);
             case 0 -> end(false);
             default -> false;
         };
-        if(flag)
-            return flag;
-        player = (player+1)%2;
-        checkTurn();
+        if(!end){
+            player = (player+1)%2;
+            checkTurn();
+        }
         return true;
     }
     
