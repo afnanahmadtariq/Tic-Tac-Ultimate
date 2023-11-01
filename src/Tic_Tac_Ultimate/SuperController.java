@@ -51,10 +51,13 @@ public class SuperController extends SuperBoard{
             case 1 -> end(true,superIndex);
             case 0 -> end(false,superIndex);
         }
-        switch(check[1]){
+        boolean flag = switch(check[1]){
             case 1 -> end(true);
             case 0 -> end(false);
-        }
+            default -> false;
+        };
+        if(flag)
+            return flag;
         player = (player+1)%2;
         superIndex = index;
         this.superIndex = checkTurn(superIndex);
@@ -81,7 +84,7 @@ public class SuperController extends SuperBoard{
         else
             super.superBoard[superIndex[0]][superIndex[1]].game = 0;
     }
-    private void end(boolean win){
+    private boolean end(boolean win){
         if(win)
             super.game = player;
         else
@@ -89,5 +92,6 @@ public class SuperController extends SuperBoard{
         //agr event listener game variable pe lga dain to ye func complete
         //boolean win se win ya draw ka pta chal rha
         //int player se kon jeeta ye pta lag rha
+        return true;
     }
 }

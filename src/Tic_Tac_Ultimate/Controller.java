@@ -33,16 +33,19 @@ public class Controller extends Board{
         if(super.board[index[0]][index[1]] != 0)
             return false;
         super.board[index[0]][index[1]] = player;
-        switch(super.check()){
+        boolean flag = switch(super.check()){
             case 1 -> end(true);
             case 0 -> end(false);
-        }
+            default -> false;
+        };
+        if(flag)
+            return flag;
         player = (player+1)%2;
         checkTurn();
         return true;
     }
     
-    private void end(boolean win){
+    private boolean end(boolean win){
         if(win)
             super.game = player;
         else
@@ -50,5 +53,6 @@ public class Controller extends Board{
         //agr event listener game variable pe lga dain to ye func complete
         //boolean win se win ya draw ka pta chal rha
         //int player se kon jeeta ye pta lag rha
+        return true;
     }
 }
