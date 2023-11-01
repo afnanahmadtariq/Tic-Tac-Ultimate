@@ -57,17 +57,17 @@ public class SuperBoard {
     public boolean draw(int[] superIndex){
         for(int i=0;i<3;i++) {
             for(int j=1;j<=3;j++){
-                if ((superBoard[superIndex[0]][superIndex[1]].board[i][j-1] == superBoard[superIndex[0]][superIndex[1]].board[i][j%3] && superBoard[superIndex[0]][superIndex[1]].board[i][j%3] != 0 && superBoard[superIndex[0]][superIndex[1]].board[i][(j+1)%3] == 0) || superBoard[superIndex[0]][superIndex[1]].board[i][j-1] == superBoard[superIndex[0]][superIndex[1]].board[i][j%3] && superBoard[superIndex[0]][superIndex[1]].board[i][j%3] == 0)
+                if (superBoard[superIndex[0]][superIndex[1]].board[i][j-1] ==superBoard[superIndex[0]][superIndex[1]].board[i][j%3] && (superBoard[superIndex[0]][superIndex[1]].board[i][j % 3] == 0 ||superBoard[superIndex[0]][superIndex[1]].board[i][(j+1)%3] == 0))
                     return false;
-                else if ((superBoard[superIndex[0]][superIndex[1]].board[j-1][i] == superBoard[superIndex[0]][superIndex[1]].board[j%3][i] && superBoard[superIndex[0]][superIndex[1]].board[j%3][i] != 0 && superBoard[superIndex[0]][superIndex[1]].board[(j+1)%3][i] == 0) || superBoard[superIndex[0]][superIndex[1]].board[j-1][i] == superBoard[superIndex[0]][superIndex[1]].board[j%3][i] && superBoard[superIndex[0]][superIndex[1]].board[j%3][i] == 0)
+                else if (superBoard[superIndex[0]][superIndex[1]].board[j-1][i] ==superBoard[superIndex[0]][superIndex[1]].board[j%3][i] && (superBoard[superIndex[0]][superIndex[1]].board[j%3][i] == 0 ||superBoard[superIndex[0]][superIndex[1]].board[(j+1)%3][i] == 0))
                     return false;
             }
         }
         int[][] indexes = new int[][]{{0,2},{1,1},{2,0}};
         for(int i=1; i<=3; i++){
-            if ((superBoard[superIndex[0]][superIndex[1]].board[i - 1][i - 1] == superBoard[superIndex[0]][superIndex[1]].board[i % 3][i % 3] && superBoard[superIndex[0]][superIndex[1]].board[i % 3][i % 3] != 0 && superBoard[superIndex[0]][superIndex[1]].board[(i + 1) % 3][(i + 1) % 3] == 0) || superBoard[superIndex[0]][superIndex[1]].board[i - 1][i - 1] == superBoard[superIndex[0]][superIndex[1]].board[i % 3][i % 3] && superBoard[superIndex[0]][superIndex[1]].board[i % 3][i % 3] == 0)
+            if (superBoard[superIndex[0]][superIndex[1]].board[i-1][i-1] ==superBoard[superIndex[0]][superIndex[1]].board[i%3][i%3] && (superBoard[superIndex[0]][superIndex[1]].board[i%3][i%3] == 0 ||superBoard[superIndex[0]][superIndex[1]].board[(i+1)%3][(i+1)%3] == 0))
                 return false;
-            else if((superBoard[superIndex[0]][superIndex[1]].board[indexes[i-1][0]][indexes[i-1][1]] == superBoard[superIndex[0]][superIndex[1]].board[indexes[i%3][0]][indexes[i%3][1]] && superBoard[superIndex[0]][superIndex[1]].board[indexes[i%3][0]][indexes[i%3][1]] != 0 && superBoard[superIndex[0]][superIndex[1]].board[indexes[(i+1)%3][0]][indexes[(i+1)%3][1]] == 0) || superBoard[superIndex[0]][superIndex[1]].board[indexes[i-1][0]][indexes[i-1][1]] == superBoard[superIndex[0]][superIndex[1]].board[indexes[i%3][0]][indexes[i%3][1]] && superBoard[superIndex[0]][superIndex[1]].board[indexes[i%3][0]][indexes[i%3][1]] == 0)
+            else if(superBoard[superIndex[0]][superIndex[1]].board[indexes[i-1][0]][indexes[i-1][1]] ==superBoard[superIndex[0]][superIndex[1]].board[indexes[i%3][0]][indexes[i%3][1]] && (superBoard[superIndex[0]][superIndex[1]].board[indexes[i%3][0]][indexes[i%3][1]] == 0 ||superBoard[superIndex[0]][superIndex[1]].board[indexes[(i+1)%3][0]][indexes[(i+1)%3][1]] == 0))
                 return false;
         }
         return true;
@@ -87,24 +87,21 @@ public class SuperBoard {
             return superBoard[0][2].game == superBoard[1][1].game && superBoard[1][1].game == superBoard[2][0].game && superBoard[2][0].game != 0;
         }
     }
-
-    public boolean draw() {
-        for (int i = 0; i < 3; i++) {
-            for (int j = 1; j <= 3; j++) {
-                if ((superBoard[i][j - 1].game == superBoard[i][j % 3].game && superBoard[i][j % 3].game != 0 && superBoard[i][(j + 1) % 3].game == 0) || superBoard[i][j - 1].game == superBoard[i][j % 3].game && superBoard[i][j % 3].game == 0) {
+    public boolean draw(){
+        for(int i=0;i<3;i++) {
+            for(int j=1;j<=3;j++){
+                if (superBoard[i][j-1].game == superBoard[i][j%3].game && (superBoard[i][j % 3].game == 0 || superBoard[i][(j+1)%3].game == 0))
                     return false;
-                } else if ((superBoard[j - 1][i].game == superBoard[j % 3][i].game && superBoard[j % 3][i].game != 0 && superBoard[(j + 1) % 3][i].game == 0) || superBoard[j - 1][i].game == superBoard[j % 3][i].game && superBoard[j % 3][i].game == 0) {
+                else if (superBoard[j-1][i].game == superBoard[j%3][i].game && (superBoard[j%3][i].game == 0 || superBoard[(j+1)%3][i].game == 0))
                     return false;
-                }
             }
         }
-        int[][] indexes = new int[][]{{0, 2}, {1, 1}, {2, 0}};
-        for (int i = 1; i <= 3; i++) {
-            if ((superBoard[i - 1][i - 1].game == superBoard[i % 3][i % 3].game && superBoard[i % 3][i % 3].game != 0 && superBoard[(i + 1) % 3][(i + 1) % 3].game == 0) || superBoard[i - 1][i - 1].game == superBoard[i % 3][i % 3].game && superBoard[i % 3][i % 3].game == 0) {
+        int[][] indexes = new int[][]{{0,2},{1,1},{2,0}};
+        for(int i=1; i<=3; i++){
+            if (superBoard[i-1][i-1].game == superBoard[i%3][i%3].game && (superBoard[i%3][i%3].game == 0 || superBoard[(i+1)%3][(i+1)%3].game == 0))
                 return false;
-            } else if ((superBoard[indexes[i - 1][0]][indexes[i - 1][1]].game == superBoard[indexes[i % 3][0]][indexes[i % 3][1]].game && superBoard[indexes[i % 3][0]][indexes[i % 3][1]].game != 0 && superBoard[indexes[(i + 1) % 3][0]][indexes[(i + 1) % 3][1]].game == 0) || superBoard[indexes[i - 1][0]][indexes[i - 1][1]].game == superBoard[indexes[i % 3][0]][indexes[i % 3][1]].game && superBoard[indexes[i % 3][0]][indexes[i % 3][1]].game == 0) {
+            else if(superBoard[indexes[i-1][0]][indexes[i-1][1]].game == superBoard[indexes[i%3][0]][indexes[i%3][1]].game && (superBoard[indexes[i%3][0]][indexes[i%3][1]].game == 0 || superBoard[indexes[(i+1)%3][0]][indexes[(i+1)%3][1]].game == 0))
                 return false;
-            }
         }
         return true;
     }
