@@ -57,7 +57,7 @@ public class SuperBoard {
     public boolean draw(int[] superIndex){
         for(int i=0;i<3;i++) {
             for(int j=1;j<=3;j++){
-                if ((superBoard[superIndex[0]][superIndex[1]].board[i][j-1] == superBoard[superIndex[0]][superIndex[1]].board[i][j%3] && superBoard[superIndex[0]][superIndex[1]].board[i][j%3] != 0 && superBoard[superIndex[0]][superIndex[1]].board[i][(j+1)%3] == 0) || superBoard[superIndex[0]][superIndex[1]].board[i][j-1] == superBoard[superIndex[0]][superIndex[1]].board[i][j%3] && board[i][j%3] == 0)
+                if ((superBoard[superIndex[0]][superIndex[1]].board[i][j-1] == superBoard[superIndex[0]][superIndex[1]].board[i][j%3] && superBoard[superIndex[0]][superIndex[1]].board[i][j%3] != 0 && superBoard[superIndex[0]][superIndex[1]].board[i][(j+1)%3] == 0) || superBoard[superIndex[0]][superIndex[1]].board[i][j-1] == superBoard[superIndex[0]][superIndex[1]].board[i][j%3] && superBoard[superIndex[0]][superIndex[1]].board[i][j%3] == 0)
                     return false;
                 else if ((superBoard[superIndex[0]][superIndex[1]].board[j-1][i] == superBoard[superIndex[0]][superIndex[1]].board[j%3][i] && superBoard[superIndex[0]][superIndex[1]].board[j%3][i] != 0 && superBoard[superIndex[0]][superIndex[1]].board[(j+1)%3][i] == 0) || superBoard[superIndex[0]][superIndex[1]].board[j-1][i] == superBoard[superIndex[0]][superIndex[1]].board[j%3][i] && superBoard[superIndex[0]][superIndex[1]].board[j%3][i] == 0)
                     return false;

@@ -11,7 +11,7 @@ package Tic_Tac_Ultimate;
 public class SuperBrain {
     private String difficulty;
 
-    public Brain(){
+    public SuperBrain(){
         this.difficulty = Controller.difficulty;
     }
     public static int[] compTurn(int[] superIndex, Board[][] superBoard){
