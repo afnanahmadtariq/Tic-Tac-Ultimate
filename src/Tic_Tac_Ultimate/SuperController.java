@@ -35,15 +35,16 @@ public class SuperController extends SuperBoard{
         return superIndex;
     }
     public boolean turn(int[] index, int[] superIndex){
+        if(super.superBoard[superIndex[0]][superIndex[1]].game != -1)
+            return false;
+        if(super.superBoard[superIndex[0]][superIndex[1]].board[index[0]][index[1]] != 0)
+            return false;
         if(super.superBoard[this.superIndex[0]][this.superIndex[1]].game != -1){
             this.superIndex = superIndex;
         }
         else if(this.superIndex[0] != superIndex[0] || this.superIndex[1] != superIndex[1])
             return false;
-        if(super.superBoard[superIndex[0]][superIndex[1]].game != -1)
-            return false;
-        if(super.superBoard[superIndex[0]][superIndex[1]].board[index[0]][index[1]] != 0)
-            return false;
+
         super.superBoard[superIndex[0]][superIndex[1]].board[index[0]][index[1]] = player;
         switch(super.check(superIndex)[0]){
             case 1 -> end(true,superIndex);
