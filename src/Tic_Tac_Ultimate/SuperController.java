@@ -37,7 +37,7 @@ public class SuperController extends SuperBoard{
     public boolean turn(int[] index, int[] superIndex){
         if(super.superBoard[superIndex[0]][superIndex[1]].game != -1)
             return false;
-        if(super.superBoard[superIndex[0]][superIndex[1]].board[index[0]][index[1]] != 0)
+        else if(super.superBoard[superIndex[0]][superIndex[1]].board[index[0]][index[1]] != 0)
             return false;
         if(super.superBoard[this.superIndex[0]][this.superIndex[1]].game != -1){
             this.superIndex = superIndex;
@@ -46,11 +46,12 @@ public class SuperController extends SuperBoard{
             return false;
 
         super.superBoard[superIndex[0]][superIndex[1]].board[index[0]][index[1]] = player;
-        switch(super.check(superIndex)[0]){
+        int[] check = super.check(superIndex);
+        switch(check[0]){
             case 1 -> end(true,superIndex);
             case 0 -> end(false,superIndex);
         }
-        switch(super.check(superIndex)[1]){
+        switch(check[1]){
             case 1 -> end(true);
             case 0 -> end(false);
         }
