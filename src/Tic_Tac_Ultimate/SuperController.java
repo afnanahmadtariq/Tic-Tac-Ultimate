@@ -35,7 +35,10 @@ public class SuperController extends SuperBoard{
         return superIndex;
     }
     public boolean turn(int[] index, int[] superIndex){
-        if(this.superIndex[0] != superIndex[0] || this.superIndex[1] != superIndex[1])
+        if(super.superBoard[this.superIndex[0]][this.superIndex[1]].game != -1){
+            this.superIndex = superIndex;
+        }
+        else if(this.superIndex[0] != superIndex[0] || this.superIndex[1] != superIndex[1])
             return false;
         if(super.superBoard[superIndex[0]][superIndex[1]].game != -1)
             return false;
