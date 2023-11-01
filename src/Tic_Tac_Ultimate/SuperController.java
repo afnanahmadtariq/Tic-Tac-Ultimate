@@ -13,22 +13,30 @@ public class SuperController extends SuperBoard{
     private boolean singlePlayer;
     private int player;
     protected static String difficulty;
+    private int[] superIndex;
     
     SuperController(){
         super();
         singlePlayer = true;
         difficulty = "medium";
+        superIndex = new int[2];
     }
     SuperController(boolean singlePlayer, String difficulty){
         super();
         this.singlePlayer = singlePlayer;
         this.difficulty = difficulty;
     }
-    public void checkTurn(int[] superIndex){
-        if(player==2 && singlePlayer)
-            turn(SuperBrain.compTurn(superIndex,super.superBoard),superIndex);
+    public int[] checkTurn(int[] superIndex){
+        if(player==2 && singlePlayer){
+            int[] index = SuperBrain.compTurn(superIndex,super.superBoard);
+            turn(index,superIndex);
+            return index;
+        }
+        return superIndex;
     }
     public boolean turn(int[] index, int[] superIndex){
+        if(this.superIndex[0] != superIndex[0] || this.superIndex[1] != superIndex[1])
+            return false;
         if(super.superBoard[superIndex[0]][superIndex[1]].game != -1)
             return false;
         if(super.superBoard[superIndex[0]][superIndex[1]].board[index[0]][index[1]] != 0)
@@ -43,7 +51,8 @@ public class SuperController extends SuperBoard{
             case 0 -> end(false);
         }
         player = (player+1)%2;
-        checkTurn(superIndex);
+        superIndex = index;
+        this.superIndex = checkTurn(superIndex);
         return true;
     }
 //    public int[] superUser(int a, int b, int i,int j, SuperBoard superGame ){
