@@ -114,21 +114,12 @@ public class GUI extends Application  {
             @Override
             public void handle(MouseEvent event) {
                 System.out.println("mouse Clicked!!");
-                int x = (int) event.getSceneX();
-                int y = (int) event.getSceneY();
-                int j = switch ((x-500)/cell){
-                    case 1 -> 0;
-                    case 2 -> 1;
-                    case 3 -> 2;
-                    default -> -1;
-                };
-                int i = switch ((y-100)/cell){
-                    case 1 -> 0;
-                    case 2 -> 1;
-                    case 3 -> 2;
-                    default -> -1;
-                };
+                int x = (int) event.getX();
+                int y = (int) event.getY();
+                int j = (x-500)/cell;
+                int i = (y-100)/cell;
                 if(Tic_Tac_Ultimate.turn(new int[]{i,j})){
+                    System.out.println("registered!!...............");
                     Image mark;
                     if(player==1)
                         mark = p1Icon;
