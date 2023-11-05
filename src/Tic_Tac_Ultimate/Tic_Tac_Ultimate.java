@@ -8,6 +8,9 @@ public class Tic_Tac_Ultimate extends GUI{
         ticTacToe = new Controller(true,"easy");
         Application.launch(args);
     }
+    public static void setPlayer(int player){
+        ticTacToe.setPlayer(player);
+    }
     public static boolean turn(int[] index){
         if(index[0]>=0 && index[1]>=0 && index[0]<=2 && index[1]<=2)
             return ticTacToe.turn(index);

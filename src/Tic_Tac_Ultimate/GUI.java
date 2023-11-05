@@ -27,7 +27,8 @@ import static Tic_Tac_Ultimate.Board.dictionary;
 
 public class GUI extends Application  {
     private Scene game ;
-    private int player;
+    private static int player;
+    public static Group root;
 
     private static Color backGround = Color.web("#f2f2f2");
     private static Color midGround = Color.web("#fff");
@@ -49,7 +50,7 @@ public class GUI extends Application  {
         stage.setFullScreen(true);
         stage.setX(0);
         stage.setY(0);
-        Group root = new Group();
+        root = new Group();
 
         Scene mainView = game =  new Scene(root, backGround);
 //        Rectangle rectangle = new Rectangle();
@@ -75,6 +76,7 @@ public class GUI extends Application  {
             System.out.println("player = 2");
             player = 2;
         }
+        Tic_Tac_Ultimate.setPlayer(player);
     }
     private void displayOptions(Stage stage) throws Exception{
 
@@ -104,10 +106,6 @@ public class GUI extends Application  {
 //        line.setEndX(Math.floor(stage.getWidth()/stage.getHeight())+stage.getHeight());
 
         int cell = 200;
-        Image xIcon = new Image("x.png");
-        Image p1Icon = xIcon;
-        Image oIcon = new Image("o.png");
-        Image p2Icon = oIcon;
 
         System.out.println("Event handler here?");
         game.setOnMouseClicked(new EventHandler<MouseEvent>() {
@@ -120,18 +118,7 @@ public class GUI extends Application  {
                 int i = (y-100)/cell;
                 if(Tic_Tac_Ultimate.turn(new int[]{i,j})){
                     System.out.println("registered!!...............");
-                    Image mark;
-                    if(player==1)
-                        mark = p1Icon;
-                    else
-                        mark = p2Icon;
-                    player = (player+=1)%2;
-                    ImageView imageView = new ImageView(mark);
-                    imageView.setFitWidth(100);
-                    imageView.setFitHeight(100);
-                    imageView.setLayoutX((j*cell)+550);
-                    imageView.setLayoutY((i*cell)+150);
-                    root.getChildren().add(imageView);
+                    mark(i,j);
                 }
             }
         });
@@ -160,6 +147,26 @@ public class GUI extends Application  {
             root.getChildren().add(line);
         }
 
+    }
+    public static void mark(int i, int j){
+        int cell = 200;
+        Image xIcon = new Image("x.png");
+        Image p1Icon = xIcon;
+        Image oIcon = new Image("o.png");
+        Image p2Icon = oIcon;
+
+        Image mark;
+        if(player==1)
+            mark = p1Icon;
+        else
+            mark = p2Icon;
+        player = (player%2)+1;
+        ImageView imageView = new ImageView(mark);
+        imageView.setFitWidth(100);
+        imageView.setFitHeight(100);
+        imageView.setLayoutX((j*cell)+550);
+        imageView.setLayoutY((i*cell)+150);
+        root.getChildren().add(imageView);
     }
 //    line = new Line();
 //        line.setStroke(Color.BLACK);

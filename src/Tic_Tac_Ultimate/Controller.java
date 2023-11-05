@@ -19,28 +19,35 @@ public class Controller extends Board{
         super();
         singlePlayer = true;
         difficulty = "medium";
+        player = 1;
     }
     Controller(boolean singlePlayer, String difficulty){
         super();
         this.singlePlayer = singlePlayer;
         Controller.difficulty = difficulty;
     }
+    public void setPlayer(int player){
+        this.player = player;
+    }
     public void checkTurn(){
-        if(player==2 && singlePlayer)
-            turn(Brain.compTurn(super.board));
+        if(player==2 && singlePlayer) {
+            int[] index = Brain.compTurn(super.board);
+            turn(index);
+            Tic_Tac_Ultimate.mark(index[0], index[1]);
+        }
     }
     public boolean turn(int[] index){
         if(super.board[index[0]][index[1]] != 0)
             return false;
         super.board[index[0]][index[1]] = player;
-        System.out.println("i: " + index[0] + "  j: " + index[1]);
+        System.out.println("Player: " + player + " did ----i: " + index[0] + "  j: " + index[1]);
         boolean end = switch(super.check()){
             case 1 -> end(true);
             case 0 -> end(false);
             default -> false;
         };
         if(!end){
-            player = (player+1)%2;
+            player = (player%2)+1;
             checkTurn();
         }
         return true;
