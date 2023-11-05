@@ -45,8 +45,10 @@ public class GUI extends Application  {
         stage.setTitle("Tic Tac Ultimate");
         stage.setWidth(1920);
         stage.setHeight(1080);
-        stage.setResizable(false);
-
+        stage.setResizable(true);
+        stage.setFullScreen(true);
+        stage.setX(0);
+        stage.setY(0);
         Group root = new Group();
 
         Scene mainView = game =  new Scene(root, backGround);
