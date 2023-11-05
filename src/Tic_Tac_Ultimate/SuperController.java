@@ -90,7 +90,7 @@ public class SuperController extends SuperBoard{
             super.game = player;
         else
             super.game = 0;
-        Tic_Tac_Ultimate.endGame();
+        Tic_Tac_Ultimate.endGame(winValue);
         //agr event listener game variable pe lga dain to ye func complete
         //boolean win se win ya draw ka pta chal rha
         //int player se kon jeeta ye pta lag rha

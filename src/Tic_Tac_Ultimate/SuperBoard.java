@@ -15,7 +15,7 @@ public class SuperBoard {
 
     public Board[][] superBoard;
     public int game;
-    private String winValue;;
+    public static String winValue;;
     static Map<String, int[][]> dictionary;
 
     static {

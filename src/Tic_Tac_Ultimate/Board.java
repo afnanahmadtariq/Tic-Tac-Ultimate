@@ -7,8 +7,8 @@ import java.util.Map;
 public class Board {
     public int[][] board;
     public int game;
-    private String winValue;
-    static Map<String, int[][]> dictionary;
+    public static String winValue;
+    public static Map<String, int[][]> dictionary;
 
     static {
         dictionary = new HashMap<>();

@@ -15,7 +15,8 @@ public class Tic_Tac_Ultimate extends GUI{
         Controller ticTacToe = new Controller(true,"easy");
         Application.launch(args);
     }
-    public static int endGame(){
+    public static int endGame(String winValue){
+        markLine(winValue);
         String text = "Play Again?";
         return popUp(text,"Yes","Exit",1);
 

@@ -24,6 +24,8 @@ import javafx.util.Duration;
 
 import java.util.Random;
 
+import static Tic_Tac_Ultimate.Board.dictionary;
+
 public class GUI extends Application  {
     private Scene game ;
 
@@ -222,6 +224,11 @@ public class GUI extends Application  {
         endGame.showAndWait();
         return choice[0];
     }
+    public static void markLine(String value){
+        int[][] lineIndex = dictionary.get(value);
+        //is index pe line lag gaye gi :)
+    }
+
 
 //    public void invalidated(Observable observable) {
 //        int newValue = (int) observable.getValue();
