@@ -2,7 +2,6 @@ package Tic_Tac_Ultimate;
 
 import javafx.animation.KeyFrame;
 import javafx.animation.Timeline;
-import javafx.animation.TranslateTransition;
 import javafx.application.Application;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
@@ -22,15 +21,13 @@ import javafx.stage.StageStyle;
 import javafx.stage.WindowEvent;
 import javafx.util.Duration;
 
-import java.util.Random;
-
 import static Tic_Tac_Ultimate.Board.dictionary;
 
 public class GUI extends Application  {
     private Scene game ;
 
-    private static Color background = Color.web("#f2f2f2");
-    private static Color midground = Color.web("#fff");
+    private static Color backGround = Color.web("#f2f2f2");
+    private static Color midGround = Color.web("#fff");
 
     @Override
     public void start(Stage stage) throws Exception {
@@ -45,12 +42,23 @@ public class GUI extends Application  {
         stage.setTitle("Tic Tac Ultimate");
         stage.setWidth(1280);
         stage.setHeight(720);
-        stage.setResizable(true);
-        stage.setFullScreen(false);
+        stage.setResizable(false);
+        stage.setFullScreen(true);
 
         Group root = new Group();
 
-        Scene mainView = game =  new Scene(root, background);
+        Scene mainView = game =  new Scene(root, backGround);
+//        Rectangle rectangle = new Rectangle();
+//        rectangle.setFill(Color.LIGHTBLUE);
+//        rectangle.setWidth(200);
+//        rectangle.setHeight(200);
+//
+//        Text text = new Text("Centered Square");
+//
+//        root.getChildren().add(rectangle);
+//        root.getChildren().add(text);
+//
+//        setAlignment(Pos.CENTER);
         ticTacToe(root);
 
         stage.setScene(mainView);
@@ -62,26 +70,26 @@ public class GUI extends Application  {
             System.out.println("player = 2");
         }
     }
-    public void displayOptions(Stage stage) throws Exception{
+    private void displayOptions(Stage stage) throws Exception{
 
     }
-    public void displayRuleBook(Stage stage) throws Exception{
+    private void displayRuleBook(Stage stage) throws Exception{
 
     }
-    public void displayHelp(Stage stage) throws Exception{
+    private void displayHelp(Stage stage) throws Exception{
 
     }
-    public void displayAboutUs(Stage stage) throws Exception{
+    private void displayAboutUs(Stage stage) throws Exception{
 
     }
-    public void displayProfile(Stage stage) throws Exception{
+    private void displayProfile(Stage stage) throws Exception{
 
     }
     private void ticTacToe(Group root) throws Exception{
 
 //        root.set
 //        root.setFillHeight(true);
-//        root.setBackground(new Background(new BackgroundFill(midground, CornerRadii.EMPTY, Insets.EMPTY)));
+//        root.setBackground(new Background(new BackgroundFill(midGround, CornerRadii.EMPTY, Insets.EMPTY)));
 
 //        Line line = new Line();
 //        line.setStartY(0);
@@ -112,6 +120,45 @@ public class GUI extends Application  {
             root.getChildren().add(line);
         }
     }
+//    line = new Line();
+//        line.setStroke(Color.BLACK);
+//        line.setVisible(false);
+//
+//    image = new Rectangle();
+//        image.setFill(Color.RED);
+//        image.setWidth(50);
+//        image.setHeight(50);
+//        image.setVisible(false);
+//
+//    getChildren().add(line);
+//    getChildren().add(image);
+//
+//    setAlignment(Pos.CENTER);
+//
+//    setOnMouseEntered(new EventHandler<MouseEvent>() {
+//        @Override
+//        public void handle(MouseEvent event) {
+//            line.setVisible(true);
+//            image.setVisible(true);
+//        }
+//    });
+//
+//    setOnMouseExited(new EventHandler<MouseEvent>() {
+//        @Override
+//        public void handle(MouseEvent event) {
+//            line.setVisible(false);
+//            image.setVisible(false);
+//        }
+//    });
+//
+//    setOnMouseClicked(new EventHandler<MouseEvent>() {
+//        @Override
+//        public void handle(MouseEvent event) {
+//            isVisible = !isVisible;
+//            line.setVisible(isVisible);
+//            image.setVisible(isVisible);
+//        }
+//    });
     private int Toss() throws Exception{
         String text = "Select your side for the toss";
         return popUp(text,"Heads","Tails",1);
@@ -149,7 +196,7 @@ public class GUI extends Application  {
         timeline[0].play();
     }
 
-    //ANother method{
+    //Another method{
 //    private void shakeStage(Stage stage) {
 //        final int shakeDistance = 10;
 //        final int numShakes = 10;
@@ -180,13 +227,10 @@ public class GUI extends Application  {
             }
         });
 
-
-
-
         //root Node
         VBox root = new VBox(new Text(text));
         root.setAlignment(Pos.CENTER);
-        Scene scene = new Scene(root, 200, 100, midground);
+        Scene scene = new Scene(root, 200, 100, midGround);
 
         //Buttons
         Button button1 = new Button(button1Text);
@@ -215,9 +259,7 @@ public class GUI extends Application  {
         buttons.setAlignment(Pos.BASELINE_CENTER);
         buttons.getChildren().add(button1);
         buttons.getChildren().add(button2);
-
         root.getChildren().add(buttons);
-
 
         //Show Stage
         endGame.setScene(scene);

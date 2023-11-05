@@ -1,23 +1,15 @@
-/*
- * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Main.java to edit this template
- */
 package Tic_Tac_Ultimate;
 
 import javafx.application.Application;
 
-/**
- *
- * @author Pc
- */
 public class Tic_Tac_Ultimate extends GUI{
     public static void main(String[] args) {
         Controller ticTacToe = new Controller(true,"easy");
         Application.launch(args);
     }
-    public static int endGame(String winValue){
+    public static int endGame(boolean win,int player,String winValue){
         markLine(winValue);
-        String text = "Play Again?";
+        String text = (win? "Player"+player+" won!" : "It is a draw!")+" Play Again?";
         return popUp(text,"Yes","Exit",1);
 
     }

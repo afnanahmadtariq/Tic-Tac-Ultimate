@@ -50,7 +50,12 @@ public class Controller extends Board{
             super.game = player;
         else
             super.game = 0;
-        Tic_Tac_Ultimate.endGame(winValue);
+        if(Tic_Tac_Ultimate.endGame(win, player, super.winValue)==0){
+            //start kr do phir se
+        }
+        else {
+            //exit
+        }
         //agr event listener game variable pe lga dain to ye func complete
         //boolean win se win ya draw ka pta chal rha
         //int player se kon jeeta ye pta lag rha

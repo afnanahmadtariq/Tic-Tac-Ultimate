@@ -7,7 +7,7 @@ import java.util.Map;
 public class Board {
     public int[][] board;
     public int game;
-    public static String winValue;
+    public String winValue;
     public static Map<String, int[][]> dictionary;
 
     static {
