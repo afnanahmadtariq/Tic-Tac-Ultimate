@@ -13,11 +13,10 @@ public class Board {
     static {
         dictionary = new HashMap<>();
         int count = 1;
-        for(int row=0; row<9; row++){
-            for(int col=0; col<9; col++){
-                dictionary.put(""+ count++, new int[][]{{row,0},{row,1},{row,2}});
-                dictionary.put(""+ count++, new int[][]{{0,col},{1,col},{2,col}});
-            }
+        for(int row=0; row<3; row++){
+            dictionary.put(""+ count++, new int[][]{{row,0},{row,1},{row,2}});
+            int col = row;
+            dictionary.put(""+ count++, new int[][]{{0,col},{1,col},{2,col}});
         }
         dictionary.put(""+ count++, new int[][]{{0,2},{1,1},{2,0}});
         dictionary.put(""+ count, new int[][]{{0,0},{1,1},{2,2}});
@@ -49,7 +48,7 @@ public class Board {
             count +=2;
         }
         if (board[0][0]==board[1][1] && board[1][1]==board[2][2] && board[2][2]!=0){
-            winValue = "" + ++count;
+            winValue = "" + count;
             return true;
         }
         else if(board[0][2] == board[1][1] && board[1][1] == board[2][0] && board[2][0] != 0){
