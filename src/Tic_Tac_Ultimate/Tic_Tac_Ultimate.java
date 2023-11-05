@@ -3,11 +3,18 @@ package Tic_Tac_Ultimate;
 import javafx.application.Application;
 
 public class Tic_Tac_Ultimate extends GUI{
+    static Controller ticTacToe;
     public static void main(String[] args) {
-        Controller ticTacToe = new Controller(true,"easy");
+        ticTacToe = new Controller(true,"easy");
         Application.launch(args);
     }
-    public static int endGame(boolean win,int player,String winValue){
+    public static boolean turn(int[] index){
+        if(index[0]>=0 && index[1]>=0 && index[0]<=2 && index[1]<=2)
+            return ticTacToe.turn(index);
+        else
+            return false;
+    }
+    public static int endGame(boolean win,int player,int winValue){
         markLine(winValue);
         String text = (win? "Player"+player+" won!" : "It is a draw!")+" Play Again?";
         return popUp(text,"Yes","Exit",1);

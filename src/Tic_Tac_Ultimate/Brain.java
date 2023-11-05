@@ -9,7 +9,7 @@ package Tic_Tac_Ultimate;
  * @author Pc
  */
 public class Brain {
-    private String difficulty;
+    private final String difficulty;
 
     public Brain(){
         this.difficulty = Controller.difficulty;

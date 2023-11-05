@@ -23,7 +23,7 @@ public class Controller extends Board{
     Controller(boolean singlePlayer, String difficulty){
         super();
         this.singlePlayer = singlePlayer;
-        this.difficulty = difficulty;
+        Controller.difficulty = difficulty;
     }
     public void checkTurn(){
         if(player==2 && singlePlayer)
@@ -33,6 +33,7 @@ public class Controller extends Board{
         if(super.board[index[0]][index[1]] != 0)
             return false;
         super.board[index[0]][index[1]] = player;
+        System.out.println("i: " + index[0] + "  j: " + index[1]);
         boolean end = switch(super.check()){
             case 1 -> end(true);
             case 0 -> end(false);

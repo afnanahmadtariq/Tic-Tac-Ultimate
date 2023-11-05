@@ -10,6 +10,8 @@ import javafx.scene.Group;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
+import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
@@ -25,6 +27,7 @@ import static Tic_Tac_Ultimate.Board.dictionary;
 
 public class GUI extends Application  {
     private Scene game ;
+    private int player;
 
     private static Color backGround = Color.web("#f2f2f2");
     private static Color midGround = Color.web("#fff");
@@ -40,10 +43,9 @@ public class GUI extends Application  {
         Image icon = new Image("U.png");
         stage.getIcons().add(icon);
         stage.setTitle("Tic Tac Ultimate");
-        stage.setWidth(1280);
-        stage.setHeight(720);
+        stage.setWidth(1920);
+        stage.setHeight(1080);
         stage.setResizable(false);
-        stage.setFullScreen(true);
 
         Group root = new Group();
 
@@ -65,9 +67,11 @@ public class GUI extends Application  {
         stage.show();
         if(Toss() == (int)(Math.random()*2)){
             System.out.println("player = 1");
+            player = 1;
         }
         else{
             System.out.println("player = 2");
+            player = 2;
         }
     }
     private void displayOptions(Stage stage) throws Exception{
@@ -97,7 +101,48 @@ public class GUI extends Application  {
 //        line.setStartX(Math.floor(stage.getWidth()/stage.getHeight()));
 //        line.setEndX(Math.floor(stage.getWidth()/stage.getHeight())+stage.getHeight());
 
-        int cell = 600 / 3;
+        int cell = 200;
+        Image xIcon = new Image("x.png");
+        Image p1Icon = xIcon;
+        Image oIcon = new Image("o.png");
+        Image p2Icon = oIcon;
+
+        System.out.println("Event handler here?");
+        game.setOnMouseClicked(new EventHandler<MouseEvent>() {
+            @Override
+            public void handle(MouseEvent event) {
+                System.out.println("mouse Clicked!!");
+                int x = (int) event.getSceneX();
+                int y = (int) event.getSceneY();
+                int j = switch ((x-500)/cell){
+                    case 1 -> 0;
+                    case 2 -> 1;
+                    case 3 -> 2;
+                    default -> -1;
+                };
+                int i = switch ((y-100)/cell){
+                    case 1 -> 0;
+                    case 2 -> 1;
+                    case 3 -> 2;
+                    default -> -1;
+                };
+                if(Tic_Tac_Ultimate.turn(new int[]{i,j})){
+                    Image mark;
+                    if(player==1)
+                        mark = p1Icon;
+                    else
+                        mark = p2Icon;
+                    player = (player+=1)%2;
+                    ImageView imageView = new ImageView(mark);
+                    imageView.setFitWidth(100);
+                    imageView.setFitHeight(100);
+                    imageView.setLayoutX((j*cell)+550);
+                    imageView.setLayoutY((i*cell)+150);
+                    root.getChildren().add(imageView);
+                }
+            }
+        });
+        System.out.println("reached!");
 
         for (int row = 0; row < 4; row++) {
             int y = (row * cell) + 500;
@@ -107,6 +152,7 @@ public class GUI extends Application  {
             line.setStartX(y);
             line.setEndX(y);
             line.setStrokeWidth(5);
+            line.setPickOnBounds(false);
             root.getChildren().add(line);
         }
         for (int col = 0; col < 4; col++) {
@@ -117,8 +163,10 @@ public class GUI extends Application  {
             line.setStartX(500);
             line.setEndX(1100);
             line.setStrokeWidth(5);
+            line.setPickOnBounds(false);
             root.getChildren().add(line);
         }
+
     }
 //    line = new Line();
 //        line.setStroke(Color.BLACK);
@@ -266,7 +314,7 @@ public class GUI extends Application  {
         endGame.showAndWait();
         return choice[0];
     }
-    public static void markLine(String value){
+    public static void markLine(int value){
         int[][] lineIndex = dictionary.get(value);
         //is index pe line lag gaye gi :)
     }
