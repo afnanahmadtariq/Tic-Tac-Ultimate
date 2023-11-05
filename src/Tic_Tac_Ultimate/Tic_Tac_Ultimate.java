@@ -15,19 +15,30 @@ public class Tic_Tac_Ultimate extends GUI{
         Controller ticTacToe = new Controller(true,"easy");
         Application.launch(args);
     }
-    private void start(int toss){
-        Board game = new Board();
-        if(toss==1)
-            user();
-        while(true){
-            cpu();
-            if(game.win())
-                break;
-            user();
-            if(game.win())
-                break;
-        }
+    public static int endGame(){
+        String text = "Play Again?";
+        return popUp(text,"Yes","Exit",1);
+
     }
+    public static void endGame(boolean win,int player, int[] superIndex){
+        if(win)
+            System.out.println("place 'player' at index");
+        else
+            System.out.println("place 'D' at index");
+    }
+//    private void start(int toss){
+//        Board game = new Board();
+//        if(toss==1)
+//            user();
+//        while(true){
+//            cpu();
+//            if(game.win())
+//                break;
+//            user();
+//            if(game.win())
+//                break;
+//        }
+//    }
 //    private void superStart(int toss){
 //        SuperBoard superGame = new SuperBoard();
 //        int[] index = new int[]{-1,-1};
@@ -42,24 +53,24 @@ public class Tic_Tac_Ultimate extends GUI{
 //                break;
 //        }
 //    }
-    public void user(){
-        
-    }
-    public void cpu(){
-
-    }
-    public int[] superUser(int a, int b, int i,int j, SuperBoard superGame ){
-        superGame.superBoard[i][j].board[a][b] = 1;
-        if(superGame.superBoard[i][j].win())
-            superGame.superBoard[i][j].game = 1;
-        return new int[]{a,b};
-    }
-    public int[] superCpu(int i,int j, SuperBoard superGame ){
-        int a = 0;
-        int b = 0;
-        superGame.superBoard[i][j].board[a][b] = 2;
-        if(superGame.superBoard[i][j].win())
-            superGame.superBoard[i][j].game = 2;
-        return new int[]{a,b};
-    }
+//    public void user(){
+//
+//    }
+//    public void cpu(){
+//
+//    }
+//    public int[] superUser(int a, int b, int i,int j, SuperBoard superGame ){
+//        superGame.superBoard[i][j].board[a][b] = 1;
+//        if(superGame.superBoard[i][j].win())
+//            superGame.superBoard[i][j].game = 1;
+//        return new int[]{a,b};
+//    }
+//    public int[] superCpu(int i,int j, SuperBoard superGame ){
+//        int a = 0;
+//        int b = 0;
+//        superGame.superBoard[i][j].board[a][b] = 2;
+//        if(superGame.superBoard[i][j].win())
+//            superGame.superBoard[i][j].game = 2;
+//        return new int[]{a,b};
+//    }
 }

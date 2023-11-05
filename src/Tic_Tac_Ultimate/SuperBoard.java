@@ -4,6 +4,9 @@
  */
 package Tic_Tac_Ultimate;
 
+import java.util.HashMap;
+import java.util.Map;
+
 /**
  *
  * @author Pc
@@ -12,10 +15,25 @@ public class SuperBoard {
 
     public Board[][] superBoard;
     public int game;
+    private String winValue;;
+    static Map<String, int[][]> dictionary;
 
+    static {
+        dictionary = new HashMap<>();
+        int count = 1;
+        for(int row=0; row<9; row++){
+            for(int col=0; col<9; col++){
+                dictionary.put(""+ count++, new int[][]{{row,0},{row,1},{row,2}});
+                dictionary.put(""+ count++, new int[][]{{col,0},{col,1},{col,2}});
+            }
+        }
+        dictionary.put(""+ count++, new int[][]{{0,2},{1,1},{2,0}});
+        dictionary.put(""+ count, new int[][]{{0,0},{1,1},{2,2}});
+    }
     public SuperBoard() {
         superBoard = new Board[3][3];
         game = -1;
+        winValue = "0";
     }
 
     public int[] check(int[] superIndex){

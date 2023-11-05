@@ -29,7 +29,7 @@ public class Controller extends Board{
         if(player==2 && singlePlayer)
             turn(Brain.compTurn(super.board));
     }
-    public boolean turn(int index[]){
+    public boolean turn(int[] index){
         if(super.board[index[0]][index[1]] != 0)
             return false;
         super.board[index[0]][index[1]] = player;

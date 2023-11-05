@@ -1,19 +1,31 @@
-/*
- * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
- */
 package Tic_Tac_Ultimate;
 
-/**
- *
- * @author Pc
- */
+
+import java.util.HashMap;
+import java.util.Map;
+
 public class Board {
     public int[][] board;
     public int game;
+    private String winValue;
+    static Map<String, int[][]> dictionary;
+
+    static {
+        dictionary = new HashMap<>();
+        int count = 1;
+        for(int row=0; row<9; row++){
+            for(int col=0; col<9; col++){
+                dictionary.put(""+ count++, new int[][]{{row,0},{row,1},{row,2}});
+                dictionary.put(""+ count++, new int[][]{{0,col},{1,col},{2,col}});
+            }
+        }
+        dictionary.put(""+ count++, new int[][]{{0,2},{1,1},{2,0}});
+        dictionary.put(""+ count, new int[][]{{0,0},{1,1},{2,2}});
+    }
     public Board(){
         board = new int[3][3];
         game = -1;
+        winValue = "0";
     }
     public int check(){
         if(win())
@@ -24,15 +36,27 @@ public class Board {
             return -1;
     }
     public boolean win(){
+        int count = 1;
         for(int i=0;i<3;i++) {
-            if (board[i][0]==board[i][1] && board[i][1]==board[i][2] && board[i][2]!=0)
+            if (board[i][0]==board[i][1] && board[i][1]==board[i][2] && board[i][2]!=0){
+                winValue = "" + count;
                 return true;
-            else if (board[0][i]==board[1][i] && board[1][i]==board[2][i] && board[2][i]!=0)
+            }
+            else if (board[0][i]==board[1][i] && board[1][i]==board[2][i] && board[2][i]!=0){
+                winValue = "" + ++count;
                 return true;
+            }
+            count +=2;
         }
-        if (board[0][0]==board[1][1] && board[1][1]==board[2][2] && board[2][2]!=0)
+        if (board[0][0]==board[1][1] && board[1][1]==board[2][2] && board[2][2]!=0){
+            winValue = "" + ++count;
             return true;
-        else return board[0][2] == board[1][1] && board[1][1] == board[2][0] && board[2][0]!=0;
+        }
+        else if(board[0][2] == board[1][1] && board[1][1] == board[2][0] && board[2][0] != 0){
+            winValue = "" + ++count;
+            return true;
+        }
+        return false;
     }
     public boolean draw(){
         for(int i=0;i<3;i++) {

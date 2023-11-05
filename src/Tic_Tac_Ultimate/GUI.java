@@ -111,65 +111,8 @@ public class GUI extends Application  {
         }
     }
     private int Toss() throws Exception{
-        final int[] choice = {-1};
-        //stage
-        Stage toss = new Stage(StageStyle.UNDECORATED);
-        toss.setWidth(500);
-        toss.setHeight(200);
-        toss.setResizable(false);
-        toss.initModality(Modality.APPLICATION_MODAL);
-        toss.setOnCloseRequest(new EventHandler<WindowEvent>() {
-            @Override
-            public void handle(WindowEvent event) {
-                event.consume();
-                shakeStage(toss);
-            }
-        });
-
-
-
-
-        //root Node
-        VBox root = new VBox(new Text("Select your side for the toss"));
-        root.setAlignment(Pos.CENTER);
-        Scene scene = new Scene(root, 200, 100, midground);
-
-        //Buttons
-        Button heads = new Button();
-        Button tails = new Button();
-        heads.setMinSize(150,50);
-        heads.setText("Heads");
-        heads.setOnAction(new EventHandler<ActionEvent>() {
-            @Override
-            public void handle(ActionEvent event) {
-                System.out.println("Button was pressed!");
-                choice[0] = 0;
-                toss.close();
-            }
-        });
-        tails.setMinSize(150,50);
-        tails.setText("Tails");
-        tails.setOnAction(new EventHandler<ActionEvent>() {
-            @Override
-            public void handle(ActionEvent event) {
-                System.out.println("Button was pressed!");
-                choice[0] = 1;
-                toss.close();
-            }
-        });
-
-        HBox buttons = new HBox();
-        buttons.setAlignment(Pos.CENTER);
-        buttons.getChildren().add(heads);
-        buttons.getChildren().add(tails);
-
-        root.getChildren().add(buttons);
-
-
-        //Show Stage
-        toss.setScene(scene);
-        toss.showAndWait();
-        return choice[0];
+        String text = "Select your side for the toss";
+        return popUp(text,"Heads","Tails",1);
     }
 
     private static void shakeStage(Stage stage) {
@@ -219,8 +162,7 @@ public class GUI extends Application  {
 //        tt.playFromStart();
 //    }
 
-
-    public static int endGame(){
+    public static int popUp(String text, String button1Text, String button2Text, int design){
         final int[] choice = {-1};
         //stage
         Stage endGame = new Stage(StageStyle.UNDECORATED);
@@ -240,16 +182,14 @@ public class GUI extends Application  {
 
 
         //root Node
-        VBox root = new VBox(new Text("Play Again?"));
+        VBox root = new VBox(new Text(text));
         root.setAlignment(Pos.CENTER);
         Scene scene = new Scene(root, 200, 100, midground);
 
         //Buttons
-        Button playAgain = new Button();
-        Button exit = new Button();
-        playAgain.setMinSize(150,50);
-        playAgain.setText("Yes");
-        playAgain.setOnAction(new EventHandler<ActionEvent>() {
+        Button button1 = new Button(button1Text);
+        button1.setMinSize(80,20);
+        button1.setOnAction(new EventHandler<ActionEvent>() {
             @Override
             public void handle(ActionEvent event) {
                 System.out.println("Button was pressed!");
@@ -257,9 +197,10 @@ public class GUI extends Application  {
                 endGame.close();
             }
         });
-        exit.setMinSize(150,50);
-        exit.setText("Exit");
-        exit.setOnAction(new EventHandler<ActionEvent>() {
+
+        Button button2 = new Button(button2Text);
+        button2.setMinSize(80,20);
+        button2.setOnAction(new EventHandler<ActionEvent>() {
             @Override
             public void handle(ActionEvent event) {
                 System.out.println("Button was pressed!");
@@ -269,9 +210,9 @@ public class GUI extends Application  {
         });
 
         HBox buttons = new HBox();
-        buttons.setAlignment(Pos.CENTER);
-        buttons.getChildren().add(playAgain);
-        buttons.getChildren().add(exit);
+        buttons.setAlignment(Pos.BASELINE_CENTER);
+        buttons.getChildren().add(button1);
+        buttons.getChildren().add(button2);
 
         root.getChildren().add(buttons);
 
@@ -281,13 +222,6 @@ public class GUI extends Application  {
         endGame.showAndWait();
         return choice[0];
     }
-    public static void endGame(boolean win,int player, int[] superIndex){
-        if(win)
-            System.out.println("place 'player' at index");
-        else
-            System.out.println("place 'D' at index");
-    }
-
 
 //    public void invalidated(Observable observable) {
 //        int newValue = (int) observable.getValue();
