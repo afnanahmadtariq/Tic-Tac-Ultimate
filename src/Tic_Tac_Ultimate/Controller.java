@@ -1,33 +1,76 @@
-/*
- * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
- */
 package Tic_Tac_Ultimate;
 
 
-/**
- *
- * @author Pc
- */
 public class Controller extends Board{
     private Player players[];
     private boolean singlePlayer;
+    private final Thread cpuTurn;
+    private final Thread endGame;
+    private Thread changeTurn;
+    private boolean win;
     private int player;
     protected static String difficulty;
     
     Controller(){
         super();
         singlePlayer = true;
+        cpuTurn = new Thread(()->{
+            try {
+                changeTurn.join();
+            } catch (InterruptedException e) {
+                throw new RuntimeException(e);
+            }
+            checkTurn();
+        });
+        endGame = new Thread(()-> end(win));
+        changeTurn = new Thread(()->{
+            try {
+                // Delay for 1 second (1000 milliseconds)
+                Thread.sleep(500);
+            } catch (InterruptedException e) {
+                // Handle any exceptions that may occur
+                e.printStackTrace();
+            }
+            player = (player%2)+1;
+        });
         difficulty = "medium";
         player = 1;
     }
     Controller(boolean singlePlayer, String difficulty){
         super();
         this.singlePlayer = singlePlayer;
+        cpuTurn = new Thread(()->{
+            try {
+                changeTurn.join();
+            } catch (InterruptedException e) {
+                throw new RuntimeException(e);
+            }
+            checkTurn();
+        });
+        endGame = new Thread(()-> end(win));
+        changeTurn = new Thread(()->{
+            try {
+                // Delay for 1 second (1000 milliseconds)
+                Thread.sleep(500);
+            } catch (InterruptedException e) {
+                // Handle any exceptions that may occur
+                e.printStackTrace();
+            }
+            player = (player%2)+1;
+            System.out.println("Player Changed!");
+        });
         Controller.difficulty = difficulty;
     }
     public void setPlayer(int player){
         this.player = player;
+        System.out.println("Player set as: " + player);
+        checkTurn();
+    }
+    public int getPlayer(){
+        return this.player;
+    }
+    public Thread getThread(){
+        return cpuTurn;
     }
     public void checkTurn(){
         if(player==2 && singlePlayer) {
@@ -42,13 +85,21 @@ public class Controller extends Board{
         super.board[index[0]][index[1]] = player;
         System.out.println("Player: " + player + " did ----i: " + index[0] + "  j: " + index[1]);
         boolean end = switch(super.check()){
-            case 1 -> end(true);
-            case 0 -> end(false);
+            case 1 -> {
+                win = true;
+                endGame.start();
+                yield true;
+            }
+            case 0 -> {
+                win = false;
+                endGame.start();
+                yield true;
+            }
             default -> false;
         };
         if(!end){
-            player = (player%2)+1;
-            checkTurn();
+            changeTurn.start();
+            cpuTurn.start();
         }
         return true;
     }

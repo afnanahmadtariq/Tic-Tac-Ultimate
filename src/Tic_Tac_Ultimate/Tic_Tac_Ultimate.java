@@ -11,6 +11,12 @@ public class Tic_Tac_Ultimate extends GUI{
     public static void setPlayer(int player){
         ticTacToe.setPlayer(player);
     }
+    public static int getPlayer(){
+        return ticTacToe.getPlayer();
+    }
+    public static Thread getThread(){
+        return ticTacToe.getThread();
+    }
     public static boolean turn(int[] index){
         if(index[0]>=0 && index[1]>=0 && index[0]<=2 && index[1]<=2)
             return ticTacToe.turn(index);

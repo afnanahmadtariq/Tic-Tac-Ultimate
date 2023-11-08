@@ -24,10 +24,11 @@ import javafx.stage.WindowEvent;
 import javafx.util.Duration;
 
 import static Tic_Tac_Ultimate.Board.dictionary;
+import static Tic_Tac_Ultimate.Tic_Tac_Ultimate.getPlayer;
+import static Tic_Tac_Ultimate.Tic_Tac_Ultimate.getThread;
 
 public class GUI extends Application  {
     private Scene game ;
-    private static int player;
     public static Group root;
 
     private static Color backGround = Color.web("#f2f2f2");
@@ -47,7 +48,7 @@ public class GUI extends Application  {
         stage.setWidth(1920);
         stage.setHeight(1080);
         stage.setResizable(true);
-        stage.setFullScreen(true);
+        stage.setFullScreen(false);
         stage.setX(0);
         stage.setY(0);
         root = new Group();
@@ -68,15 +69,14 @@ public class GUI extends Application  {
 
         stage.setScene(mainView);
         stage.show();
-        if(Toss() == (int)(Math.random()*2)){
+        if(Toss() == (int)(Math.random()*2) && 1!=1){
             System.out.println("player = 1");
-            player = 1;
+            Tic_Tac_Ultimate.setPlayer(1);
         }
         else{
             System.out.println("player = 2");
-            player = 2;
+            Tic_Tac_Ultimate.setPlayer(2);
         }
-        Tic_Tac_Ultimate.setPlayer(player);
     }
     private void displayOptions(Stage stage) throws Exception{
 
@@ -112,6 +112,12 @@ public class GUI extends Application  {
             @Override
             public void handle(MouseEvent event) {
                 System.out.println("mouse Clicked!!");
+                try {
+                    getThread().join();
+                }
+                catch (InterruptedException e) {
+                    throw new RuntimeException(e);
+                }
                 int x = (int) event.getX();
                 int y = (int) event.getY();
                 int j = (x-500)/cell;
@@ -156,17 +162,18 @@ public class GUI extends Application  {
         Image p2Icon = oIcon;
 
         Image mark;
-        if(player==1)
+        if(getPlayer()==1)
             mark = p1Icon;
         else
             mark = p2Icon;
-        player = (player%2)+1;
+        System.out.println("Mark set acc to player!");
         ImageView imageView = new ImageView(mark);
         imageView.setFitWidth(100);
         imageView.setFitHeight(100);
         imageView.setLayoutX((j*cell)+550);
         imageView.setLayoutY((i*cell)+150);
         root.getChildren().add(imageView);
+        System.out.println("Marked on grid!");
     }
 //    line = new Line();
 //        line.setStroke(Color.BLACK);

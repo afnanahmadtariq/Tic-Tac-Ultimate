@@ -30,6 +30,13 @@ public class Brain {
         int[] index = new int[]{(int)(Math.random()*3),(int)(Math.random()*3)};
         while(board[index[0]][index[1]] !=0)
             index = new int[]{(int)(Math.random()*3),(int)(Math.random()*3)};
+        try {
+            // Delay for 1 second (1000 milliseconds)
+            Thread.sleep(2000);
+        } catch (InterruptedException e) {
+            // Handle any exceptions that may occur
+            e.printStackTrace();
+        }
         return index;
     }
     private static int[] med(int[][] board){
