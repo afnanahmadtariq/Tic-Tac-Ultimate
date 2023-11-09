@@ -1,5 +1,4 @@
 package Tic_Tac_Ultimate;
-
 import javafx.application.Application;
 
 public class Tic_Tac_Ultimate extends GUI{

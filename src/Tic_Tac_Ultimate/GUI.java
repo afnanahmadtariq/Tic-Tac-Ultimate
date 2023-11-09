@@ -167,10 +167,10 @@ public class GUI extends Application  {
     }
     public static void markLine(int value){
         int[][] lineIndex = dictionary.get(value);
-        int startX = ((lineIndex[0][0]*cell)+550);
-        int startY = ((lineIndex[0][1]*cell)+150);
-        int endX = ((lineIndex[2][0]*cell)+550);
-        int endY = ((lineIndex[2][1]*cell)+150);
+        int startX = ((lineIndex[0][1]*cell)+(int)((cell*3.2)-cell));
+        int startY = ((lineIndex[0][0]*cell)+cell);
+        int endX = ((lineIndex[2][1]*cell)+(int)(cell*3.2));
+        int endY = ((lineIndex[2][0]*cell)+cell);
 
         //is index pe line lag gaye gi :)
         Line line = new Line(startX, startY, endX, endY);
