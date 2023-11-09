@@ -6,9 +6,9 @@ import java.util.Arrays;
 import static Tic_Tac_Ultimate.Board.dictionary;
 
 public class Tic_Tac_Ultimate extends GUI{
-    static Controller ticTacToe;
+    public static SuperController ticTacToe;
     public static void main(String[] args) {
-        ticTacToe = new Controller(true,"easy");
+        ticTacToe = new SuperController(true,"easy");
         Application.launch(args);
     }
     public static void setPlayer(int player){
@@ -24,9 +24,18 @@ public class Tic_Tac_Ultimate extends GUI{
         showTurn(index[0],index[1]);
         System.out.println("Show GUI mark Done!");
     }
-    public static void turn(int i, int j){
-        if(i>=0 && j>=0 && i<=2 && j<=2)
-            ticTacToe.doTurn(new int[] {i, j});
+    public static void showTurn(int[] index, int[] superIndex){
+        showTurn(index[0],index[1], superIndex);
+        System.out.println("Show GUI mark Done!");
+    }
+//    public static void turn(int i, int j){
+//        if(i>=0 && j>=0 && i<=2 && j<=2)
+//            ticTacToe.doTurn(new int[] {i, j});
+//    }
+    public static int[] turn(int i, int j,int sI, int sJ){
+        if(i>=0 && j>=0 && i<=2 && j<=2 && sI>=0 && sJ>=0 && sI<=2 && sJ<=2)
+            return ticTacToe.doTurn(new int[] {i, j}, new int[] {sI, sJ});
+        return new int[] {sI, sJ};
     }
     public static void endGame(boolean win,int player,int winValue){
         if(win){
@@ -42,8 +51,7 @@ public class Tic_Tac_Ultimate extends GUI{
         System.out.println(win? "Player"+player+" won!" : "It is a draw!");
         if(popUp(text,"Yes","Exit",1)==0) {
             System.out.println("\n\n\n\n---------   New Game---------");
-            ticTacToe = null;
-            ticTacToe = new Controller(true, "easy");
+            ticTacToe = new SuperController(true, "easy");
             clearMarks();
             Toss();
         }

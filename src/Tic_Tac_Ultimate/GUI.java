@@ -67,7 +67,7 @@ public class GUI extends Application  {
 //        root.getChildren().add(text);
 //
 //        setAlignment(Pos.CENTER);
-        ticTacToe(root);
+        superTicTacToe(root);
 
         stage.setScene(mainView);
         stage.show();
@@ -88,7 +88,59 @@ public class GUI extends Application  {
     private void displayProfile(Stage stage) throws Exception{
 
     }
-    private void ticTacToe(Group root) throws Exception{
+//    private void ticTacToe(Group root) throws Exception{
+//
+////        root.set
+////        root.setFillHeight(true);
+////        root.setBackground(new Background(new BackgroundFill(midGround, CornerRadii.EMPTY, Insets.EMPTY)));
+//
+////        Line line = new Line();
+////        line.setStartY(0);
+////        line.setEndY(stage.getHeight());
+////        line.setStartX(Math.floor(stage.getWidth()/stage.getHeight()));
+////        line.setEndX(Math.floor(stage.getWidth()/stage.getHeight())+stage.getHeight());
+//
+//
+//        game.setOnMouseClicked(new EventHandler<MouseEvent>() {
+//            @Override
+//            public void handle(MouseEvent event) {
+//                System.out.println("mouse Clicked!!");
+//                int x = (int) event.getX();
+//                int y = (int) event.getY();
+//                int j = (x-500)/cell;
+//                int i = (y-100)/cell;
+//                if(getPlayer()!=2 || !isSinglePlayer()){
+//                    Tic_Tac_Ultimate.turn(i, j);
+//                    System.out.println("registered!!...............");
+//                }
+//            }
+//        });
+//        for (int row = 0; row < 4; row++) {
+//            int y = (row * cell) + 500;
+//            Line line = new Line();
+//            line.setStartY(100);
+//            line.setEndY(700);
+//            line.setStartX(y);
+//            line.setEndX(y);
+//            line.setStrokeWidth(5);
+//            line.setPickOnBounds(false);
+//            root.getChildren().add(line);
+//        }
+//        for (int col = 0; col < 4; col++) {
+//            int x = (col * cell) + 100;
+//            Line line = new Line();
+//            line.setStartY(x);
+//            line.setEndY(x);
+//            line.setStartX(500);
+//            line.setEndX(1100);
+//            line.setStrokeWidth(5);
+//            line.setPickOnBounds(false);
+//            root.getChildren().add(line);
+//        }
+//        marks = new Group();
+//        root.getChildren().add(marks);
+//    }
+    private void superTicTacToe(Group root) throws Exception{
 
 //        root.set
 //        root.setFillHeight(true);
@@ -108,9 +160,13 @@ public class GUI extends Application  {
                 int x = (int) event.getX();
                 int y = (int) event.getY();
                 int j = (x-500)/cell;
+                int sJ = j/3;
+                j = j-sJ;
                 int i = (y-100)/cell;
+                int sI = i/3;
+                i = i-sJ;
                 if(getPlayer()!=2 || !isSinglePlayer()){
-                    Tic_Tac_Ultimate.turn(i, j);
+                    int[] superIndex = Tic_Tac_Ultimate.turn(i, j, sI, sJ);
                     System.out.println("registered!!...............");
                 }
             }
@@ -157,6 +213,26 @@ public class GUI extends Application  {
         imageView.setFitHeight(100);
         imageView.setLayoutX((j*cell)+550);
         imageView.setLayoutY((i*cell)+150);
+        marks.getChildren().add(imageView);
+        System.out.println("Marked on grid!");
+    }
+    public static void showTurn(int i, int j, int[] superIndex){
+        Image xIcon = new Image("x.png");
+        Image p1Icon = xIcon;
+        Image oIcon = new Image("o.png");
+        Image p2Icon = oIcon;
+
+        Image mark;
+        if(getPlayer()==1)
+            mark = p1Icon;
+        else
+            mark = p2Icon;
+        System.out.println("Mark set acc to player!");
+        ImageView imageView = new ImageView(mark);
+        imageView.setFitWidth(50);
+        imageView.setFitHeight(50);
+        imageView.setLayoutX((j*cell)+(superIndex[1]*cell)+550);
+        imageView.setLayoutY((i*cell)+(superIndex[0]*cell)+150);
         marks.getChildren().add(imageView);
         System.out.println("Marked on grid!");
     }

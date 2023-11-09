@@ -26,18 +26,59 @@ public class SuperController extends SuperBoard{
         this.singlePlayer = singlePlayer;
         this.difficulty = difficulty;
     }
-//    public boolean checkTurn(int[] index){
-//
-//    }
+    public void setPlayer(int player){
+        this.player = player;
+        System.out.println("Player set as: " + player);
+        cpuTurn(new int[]{-1, -1});
+    }
+    public void setDifficulty(String difficulty){
+        this.difficulty = difficulty;
+    }
+    public int getPlayer(){
+        return this.player;
+    }
+    public boolean isSinglePlayer(){
+        return singlePlayer;
+    }
     public int[] cpuTurn(int[] superIndex){
         if(player==2 && singlePlayer){
             int[] index = SuperBrain.compTurn(superIndex,super.superBoard, difficulty);
-            turn(index,superIndex);
+            markTurn(index,superIndex);
             return index;
         }
         return superIndex;
     }
-    public boolean turn(int[] index, int[] superIndex){
+    public int[] doTurn(int[] index, int[] superIndex){
+        if(markTurn(index,superIndex)){
+            System.out.println("registered!!...............");
+            Tic_Tac_Ultimate.showTurn(index, superIndex);
+            int[] check = super.check(superIndex);
+            switch(check[0]){
+                case 1 -> end(true,superIndex);
+                case 0 -> end(false,superIndex);
+            }
+            boolean end = switch(check[1]){
+                case 1 -> end(true);
+                case 0 -> end(false);
+                default -> false;
+            };
+            if(!end){
+                player = (player%2)+1;
+                superIndex = index;
+                superIndex = cpuTurn(superIndex);
+            }
+            this.superIndex = superIndex;
+        }
+        return this.superIndex;
+    }
+    public boolean checkSuperIndex(int[] superIndex){
+        if(super.superBoard[superIndex[0]][superIndex[1]].game != -1)
+            return false;
+        if(super.superBoard[this.superIndex[0]][this.superIndex[1]].game != -1)
+            return true;
+        else return this.superIndex[0] == superIndex[0] && this.superIndex[1] == superIndex[1];
+    }
+    public boolean markTurn(int[] index, int[] superIndex){
         if(super.superBoard[superIndex[0]][superIndex[1]].game != -1)
             return false;
         else if(super.superBoard[superIndex[0]][superIndex[1]].board[index[0]][index[1]] != 0)
@@ -49,21 +90,7 @@ public class SuperController extends SuperBoard{
             return false;
 
         super.superBoard[superIndex[0]][superIndex[1]].board[index[0]][index[1]] = player;
-        int[] check = super.check(superIndex);
-        switch(check[0]){
-            case 1 -> end(true,superIndex);
-            case 0 -> end(false,superIndex);
-        }
-        boolean end = switch(check[1]){
-            case 1 -> end(true);
-            case 0 -> end(false);
-            default -> false;
-        };
-        if(!end){
-            player = (player+1)%2;
-            superIndex = index;
-            this.superIndex = cpuTurn(superIndex);
-        }
+        System.out.println("Player: " + player + " did at super index:__ x: "+ superIndex[0] + "y: " + superIndex[1] + "and at index----i: " + index[0] + "  j: " + index[1]);
         return true;
     }
 //    public int[] superUser(int a, int b, int i,int j, SuperBoard superGame ){

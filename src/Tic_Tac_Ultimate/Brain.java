@@ -9,8 +9,6 @@ public class Brain {
             case "practice" -> practice(board);
             default -> new int[]{(int)(Math.random()*3),(int)(Math.random()*3)};
         };
-        
-        
     }
     private static int[] easy(int[][] board){
         int[] index = new int[]{(int)(Math.random()*3),(int)(Math.random()*3)};
