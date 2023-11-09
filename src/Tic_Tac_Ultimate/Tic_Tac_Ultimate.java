@@ -1,6 +1,10 @@
 package Tic_Tac_Ultimate;
 import javafx.application.Application;
 
+import java.util.Arrays;
+
+import static Tic_Tac_Ultimate.Board.dictionary;
+
 public class Tic_Tac_Ultimate extends GUI{
     static Controller ticTacToe;
     public static void main(String[] args) {
@@ -28,14 +32,21 @@ public class Tic_Tac_Ultimate extends GUI{
         if(win){
             markLine(winValue);
             System.out.println("place 'player' at index");
+            System.out.println("Won with value: " + winValue);
+            System.out.println("index at: " + Arrays.deepToString(dictionary.get(winValue)));
         }
         else
             System.out.println("place 'D' at index");
 
         String text = (win? "Player"+player+" won!" : "It is a draw!")+" Play Again?";
-        if(popUp(text,"Yes","Exit",1)==0)
-            ticTacToe = new Controller(true,"easy");
-
+        System.out.println(win? "Player"+player+" won!" : "It is a draw!");
+        if(popUp(text,"Yes","Exit",1)==0) {
+            System.out.println("\n\n\n\n---------   New Game---------");
+            ticTacToe = null;
+            ticTacToe = new Controller(true, "easy");
+            clearMarks();
+            Toss();
+        }
     }
     public static void endGame(boolean win,int player, int[] superIndex){
         if(win)

@@ -1,6 +1,7 @@
 package Tic_Tac_Ultimate;
 
 import javafx.animation.KeyFrame;
+import javafx.animation.KeyValue;
 import javafx.animation.PathTransition;
 import javafx.animation.Timeline;
 import javafx.application.Application;
@@ -30,6 +31,7 @@ import static Tic_Tac_Ultimate.Tic_Tac_Ultimate.*;
 public class GUI extends Application  {
     private Scene game ;
     public static Group root;
+    public static Group marks;
     public static int cell = 200;
     private static Color backGround = Color.web("#f2f2f2");
     private static Color midGround = Color.web("#fff");
@@ -69,15 +71,7 @@ public class GUI extends Application  {
 
         stage.setScene(mainView);
         stage.show();
-        if(Toss() == (int)(Math.random()*2) && 1!=1){
-            System.out.println("player = 1");
-            Tic_Tac_Ultimate.setPlayer(1);
-        }
-        else{
-            System.out.println("player = 2");
-            Tic_Tac_Ultimate.setPlayer(2);
-        }
-        markLine(1);
+        Toss();
     }
     private void displayOptions(Stage stage) throws Exception{
 
@@ -143,7 +137,8 @@ public class GUI extends Application  {
             line.setPickOnBounds(false);
             root.getChildren().add(line);
         }
-
+        marks = new Group();
+        root.getChildren().add(marks);
     }
     public static void showTurn(int i, int j){
         Image xIcon = new Image("x.png");
@@ -162,22 +157,43 @@ public class GUI extends Application  {
         imageView.setFitHeight(100);
         imageView.setLayoutX((j*cell)+550);
         imageView.setLayoutY((i*cell)+150);
-        root.getChildren().add(imageView);
+        marks.getChildren().add(imageView);
         System.out.println("Marked on grid!");
     }
     public static void markLine(int value){
         int[][] lineIndex = dictionary.get(value);
-        int startX = ((lineIndex[0][1]*cell)+(int)((cell*3.2)-cell));
+        int startX = ((lineIndex[0][1]*cell)+(int)(cell*2.8));
         int startY = ((lineIndex[0][0]*cell)+cell);
         int endX = ((lineIndex[2][1]*cell)+(int)(cell*3.2));
         int endY = ((lineIndex[2][0]*cell)+cell);
 
         //is index pe line lag gaye gi :)
         Line line = new Line(startX, startY, endX, endY);
+        line.setStroke(Color.BLACK);
         line.setStrokeWidth(10);
         line.setStrokeLineCap(StrokeLineCap.ROUND);
-        root.getChildren().add(line);
-        System.out.println("marked Line!!");
+
+        marks.getChildren().add(line);
+
+        // Create a Timeline for the animation
+        Timeline timeline = new Timeline();
+
+        // Define the starting and ending keyframes
+        KeyFrame startFrame = new KeyFrame(Duration.ZERO,
+                new KeyValue(line.endXProperty(), startX),
+                new KeyValue(line.endYProperty(), startY));
+        KeyFrame endFrame = new KeyFrame(Duration.seconds(0.5),
+                new KeyValue(line.endXProperty(), endX),
+                new KeyValue(line.endYProperty(), endY));
+
+        // Add the keyframes to the timeline
+        timeline.getKeyFrames().addAll(startFrame, endFrame);
+
+        // Start the animation
+        timeline.play();
+    }
+    public static void clearMarks(){
+        marks.getChildren().clear();
     }
 //    line = new Line();
 //        line.setStroke(Color.BLACK);
@@ -218,9 +234,17 @@ public class GUI extends Application  {
 //            image.setVisible(isVisible);
 //        }
 //    });
-    private int Toss() throws Exception{
+    public static void Toss(){
         String text = "Select your side for the toss";
-        return popUp(text,"Heads","Tails",1);
+        int choice = popUp(text,"Heads","Tails",1);
+        if(choice == (int)(Math.random()*2) && 1!=1){
+            System.out.println("player = 1");
+            Tic_Tac_Ultimate.setPlayer(1);
+        }
+        else{
+            System.out.println("player = 2");
+            Tic_Tac_Ultimate.setPlayer(2);
+        }
     }
 
     private static void shakeStage(Stage stage) {
