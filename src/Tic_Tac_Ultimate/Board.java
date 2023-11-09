@@ -1,6 +1,7 @@
 package Tic_Tac_Ultimate;
 
 
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -18,8 +19,11 @@ public class Board {
             int col = row;
             dictionary.put(count++, new int[][]{{0,col},{1,col},{2,col}});
         }
-        dictionary.put(count++, new int[][]{{0,2},{1,1},{2,0}});
-        dictionary.put(count, new int[][]{{0,0},{1,1},{2,2}});
+        dictionary.put(count++, new int[][]{{0,0},{1,1},{2,2}});
+        dictionary.put(count, new int[][]{{0,2},{1,1},{2,0}});
+        for(int i=1; i<9; i++){
+            System.out.println("Number " +i+ ": " +Arrays.deepToString(dictionary.get(i)));
+        }
     }
     public Board(){
         board = new int[3][3];

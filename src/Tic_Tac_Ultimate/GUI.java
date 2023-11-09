@@ -237,7 +237,7 @@ public class GUI extends Application  {
     public static void Toss(){
         String text = "Select your side for the toss";
         int choice = popUp(text,"Heads","Tails",1);
-        if(choice == (int)(Math.random()*2) && 1!=1){
+        if(choice == (int)(Math.random()*2)){
             System.out.println("player = 1");
             Tic_Tac_Ultimate.setPlayer(1);
         }

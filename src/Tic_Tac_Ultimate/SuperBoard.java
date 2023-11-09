@@ -26,8 +26,8 @@ public class SuperBoard {
             int col = row;
             dictionary.put(count++, new int[][]{{0,col},{1,col},{2,col}});
         }
-        dictionary.put(count++, new int[][]{{0,2},{1,1},{2,0}});
-        dictionary.put(count, new int[][]{{0,0},{1,1},{2,2}});
+        dictionary.put(count++, new int[][]{{0,0},{1,1},{2,2}});
+        dictionary.put(count, new int[][]{{0,2},{1,1},{2,0}});
     }
     public SuperBoard() {
         superBoard = new Board[3][3];
