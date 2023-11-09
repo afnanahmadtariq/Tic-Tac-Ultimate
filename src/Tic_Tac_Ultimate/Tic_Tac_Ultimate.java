@@ -14,19 +14,28 @@ public class Tic_Tac_Ultimate extends GUI{
     public static int getPlayer(){
         return ticTacToe.getPlayer();
     }
-    public static Thread getThread(){
-        return ticTacToe.getThread();
+    public static boolean isSinglePlayer(){
+        return ticTacToe.isSinglePlayer();
     }
-    public static boolean turn(int[] index){
-        if(index[0]>=0 && index[1]>=0 && index[0]<=2 && index[1]<=2)
-            return ticTacToe.turn(index);
+    public static void showTurn(int[] index){
+        showTurn(index[0],index[1]);
+        System.out.println("Show GUI mark Done!");
+    }
+    public static void turn(int i, int j){
+        if(i>=0 && j>=0 && i<=2 && j<=2)
+            ticTacToe.doTurn(new int[] {i, j});
+    }
+    public static void endGame(boolean win,int player,int winValue){
+        if(win){
+            markLine(winValue);
+            System.out.println("place 'player' at index");
+        }
         else
-            return false;
-    }
-    public static int endGame(boolean win,int player,int winValue){
-        markLine(winValue);
+            System.out.println("place 'D' at index");
+
         String text = (win? "Player"+player+" won!" : "It is a draw!")+" Play Again?";
-        return popUp(text,"Yes","Exit",1);
+        if(popUp(text,"Yes","Exit",1)==0)
+            ticTacToe = new Controller(true,"easy");
 
     }
     public static void endGame(boolean win,int player, int[] superIndex){

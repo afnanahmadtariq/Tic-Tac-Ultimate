@@ -12,7 +12,7 @@ public class SuperController extends SuperBoard{
     private Player players[];
     private boolean singlePlayer;
     private int player;
-    protected static String difficulty;
+    public String difficulty;
     private int[] superIndex;
     
     SuperController(){
@@ -26,9 +26,12 @@ public class SuperController extends SuperBoard{
         this.singlePlayer = singlePlayer;
         this.difficulty = difficulty;
     }
-    public int[] checkTurn(int[] superIndex){
+//    public boolean checkTurn(int[] index){
+//
+//    }
+    public int[] cpuTurn(int[] superIndex){
         if(player==2 && singlePlayer){
-            int[] index = SuperBrain.compTurn(superIndex,super.superBoard);
+            int[] index = SuperBrain.compTurn(superIndex,super.superBoard, difficulty);
             turn(index,superIndex);
             return index;
         }
@@ -59,7 +62,7 @@ public class SuperController extends SuperBoard{
         if(!end){
             player = (player+1)%2;
             superIndex = index;
-            this.superIndex = checkTurn(superIndex);
+            this.superIndex = cpuTurn(superIndex);
         }
         return true;
     }
@@ -90,12 +93,7 @@ public class SuperController extends SuperBoard{
             super.game = player;
         else
             super.game = 0;
-        if(Tic_Tac_Ultimate.endGame(win, player, super.winValue)==0){
-            //start kr do phir se
-        }
-        else {
-            //exit
-        }
+        Tic_Tac_Ultimate.endGame(win, player, super.winValue);
         //agr event listener game variable pe lga dain to ye func complete
         //boolean win se win ya draw ka pta chal rha
         //int player se kon jeeta ye pta lag rha

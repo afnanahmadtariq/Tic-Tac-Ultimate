@@ -1,6 +1,7 @@
 package Tic_Tac_Ultimate;
 
 import javafx.animation.KeyFrame;
+import javafx.animation.PathTransition;
 import javafx.animation.Timeline;
 import javafx.application.Application;
 import javafx.event.ActionEvent;
@@ -15,7 +16,7 @@ import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
-import javafx.scene.shape.Line;
+import javafx.scene.shape.*;
 import javafx.scene.text.Text;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
@@ -24,13 +25,12 @@ import javafx.stage.WindowEvent;
 import javafx.util.Duration;
 
 import static Tic_Tac_Ultimate.Board.dictionary;
-import static Tic_Tac_Ultimate.Tic_Tac_Ultimate.getPlayer;
-import static Tic_Tac_Ultimate.Tic_Tac_Ultimate.getThread;
+import static Tic_Tac_Ultimate.Tic_Tac_Ultimate.*;
 
 public class GUI extends Application  {
     private Scene game ;
     public static Group root;
-
+    public static int cell = 200;
     private static Color backGround = Color.web("#f2f2f2");
     private static Color midGround = Color.web("#fff");
 
@@ -77,6 +77,7 @@ public class GUI extends Application  {
             System.out.println("player = 2");
             Tic_Tac_Ultimate.setPlayer(2);
         }
+        markLine(1);
     }
     private void displayOptions(Stage stage) throws Exception{
 
@@ -105,31 +106,21 @@ public class GUI extends Application  {
 //        line.setStartX(Math.floor(stage.getWidth()/stage.getHeight()));
 //        line.setEndX(Math.floor(stage.getWidth()/stage.getHeight())+stage.getHeight());
 
-        int cell = 200;
 
-        System.out.println("Event handler here?");
         game.setOnMouseClicked(new EventHandler<MouseEvent>() {
             @Override
             public void handle(MouseEvent event) {
                 System.out.println("mouse Clicked!!");
-                try {
-                    getThread().join();
-                }
-                catch (InterruptedException e) {
-                    throw new RuntimeException(e);
-                }
                 int x = (int) event.getX();
                 int y = (int) event.getY();
                 int j = (x-500)/cell;
                 int i = (y-100)/cell;
-                if(Tic_Tac_Ultimate.turn(new int[]{i,j})){
+                if(getPlayer()!=2 || !isSinglePlayer()){
+                    Tic_Tac_Ultimate.turn(i, j);
                     System.out.println("registered!!...............");
-                    mark(i,j);
                 }
             }
         });
-        System.out.println("reached!");
-
         for (int row = 0; row < 4; row++) {
             int y = (row * cell) + 500;
             Line line = new Line();
@@ -154,8 +145,7 @@ public class GUI extends Application  {
         }
 
     }
-    public static void mark(int i, int j){
-        int cell = 200;
+    public static void showTurn(int i, int j){
         Image xIcon = new Image("x.png");
         Image p1Icon = xIcon;
         Image oIcon = new Image("o.png");
@@ -174,6 +164,20 @@ public class GUI extends Application  {
         imageView.setLayoutY((i*cell)+150);
         root.getChildren().add(imageView);
         System.out.println("Marked on grid!");
+    }
+    public static void markLine(int value){
+        int[][] lineIndex = dictionary.get(value);
+        int startX = ((lineIndex[0][0]*cell)+550);
+        int startY = ((lineIndex[0][1]*cell)+150);
+        int endX = ((lineIndex[2][0]*cell)+550);
+        int endY = ((lineIndex[2][1]*cell)+150);
+
+        //is index pe line lag gaye gi :)
+        Line line = new Line(startX, startY, endX, endY);
+        line.setStrokeWidth(10);
+        line.setStrokeLineCap(StrokeLineCap.ROUND);
+        root.getChildren().add(line);
+        System.out.println("marked Line!!");
     }
 //    line = new Line();
 //        line.setStroke(Color.BLACK);
@@ -321,10 +325,7 @@ public class GUI extends Application  {
         endGame.showAndWait();
         return choice[0];
     }
-    public static void markLine(int value){
-        int[][] lineIndex = dictionary.get(value);
-        //is index pe line lag gaye gi :)
-    }
+
 
 
 //    public void invalidated(Observable observable) {

@@ -9,13 +9,8 @@ package Tic_Tac_Ultimate;
  * @author Pc
  */
 public class Brain {
-    private final String difficulty;
-
-    public Brain(){
-        this.difficulty = Controller.difficulty;
-    }
-    public static int[] compTurn(int[][] board){
-        return switch(Controller.difficulty){
+    public static int[] compTurn(int[][] board, String difficulty){
+        return switch(difficulty){
             case "easy" -> easy(board);
             case "med" -> med(board);
             case "hard" -> hard(board);
@@ -30,13 +25,13 @@ public class Brain {
         int[] index = new int[]{(int)(Math.random()*3),(int)(Math.random()*3)};
         while(board[index[0]][index[1]] !=0)
             index = new int[]{(int)(Math.random()*3),(int)(Math.random()*3)};
-        try {
-            // Delay for 1 second (1000 milliseconds)
-            Thread.sleep(2000);
-        } catch (InterruptedException e) {
-            // Handle any exceptions that may occur
-            e.printStackTrace();
-        }
+//        try {
+//            // Delay for 1 second (1000 milliseconds)
+//            Thread.sleep(2000);
+//        } catch (InterruptedException e) {
+//            // Handle any exceptions that may occur
+//            e.printStackTrace();
+//        }
         return index;
     }
     private static int[] med(int[][] board){

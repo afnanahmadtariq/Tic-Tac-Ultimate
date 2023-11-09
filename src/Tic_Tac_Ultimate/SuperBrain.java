@@ -9,13 +9,8 @@ package Tic_Tac_Ultimate;
  * @author Pc
  */
 public class SuperBrain {
-    private String difficulty;
-
-    public SuperBrain(){
-        this.difficulty = Controller.difficulty;
-    }
-    public static int[] compTurn(int[] superIndex, Board[][] superBoard){
-        return switch(Controller.difficulty){
+    public static int[] compTurn(int[] superIndex, Board[][] superBoard,String difficulty){
+        return switch(difficulty){
             case "easy" -> easy(superIndex, superBoard);
             case "med" -> med(superIndex, superBoard);
             case "hard" -> hard(superIndex, superBoard);
