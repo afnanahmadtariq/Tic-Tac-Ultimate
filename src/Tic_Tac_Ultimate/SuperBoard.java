@@ -31,27 +31,26 @@ public class SuperBoard {
     }
     public SuperBoard() {
         superBoard = new Board[3][3];
+        for(int i=0; i<3; i++){
+            for(int j=0; j<3; j++)
+                superBoard[i][j] = new Board();
+        }
         game = -1;
         winValue = 0;
     }
 
     public int[] check(int[] superIndex){
         int[] win = new int[2];
-        if (win(superIndex)){
+        if (win(superIndex))
             win[0] = 1;
-            win[1] = check();
-        }
-        else if (draw(superIndex)){
+        else if (draw(superIndex))
             win[0] = 0;
-            win[1] = check();
-        }
-        else{
+        else
             win[0] = -1;
-            win[1] = check();
-        }
+        win[1] = check();
         return win;
     }
-    public int check() {
+    private int check() {
         if (win())
             return 1;
         else if (draw())

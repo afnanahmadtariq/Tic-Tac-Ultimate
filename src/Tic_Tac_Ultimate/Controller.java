@@ -8,15 +8,13 @@ public class Controller extends Board{
     public String difficulty;
     
     Controller(){
-        super();
-        singlePlayer = true;
-        difficulty = "medium";
-        player = 1;
+        this(true,"medium");
     }
     Controller(boolean singlePlayer, String difficulty){
         super();
         this.singlePlayer = singlePlayer;
         this.difficulty = difficulty;
+        player = 1;
     }
     public void setPlayer(int player){
         this.player = player;

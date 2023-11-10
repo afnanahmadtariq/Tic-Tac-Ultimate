@@ -1,13 +1,5 @@
-/*
- * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
- */
 package Tic_Tac_Ultimate;
 
-/**
- *
- * @author Pc
- */
 public class SuperController extends SuperBoard{
     private Player players[];
     private boolean singlePlayer;
@@ -16,15 +8,13 @@ public class SuperController extends SuperBoard{
     private int[] superIndex;
     
     SuperController(){
-        super();
-        singlePlayer = true;
-        difficulty = "medium";
-        superIndex = new int[2];
+        this(true, "medium");
     }
     SuperController(boolean singlePlayer, String difficulty){
         super();
         this.singlePlayer = singlePlayer;
         this.difficulty = difficulty;
+        superIndex = new int[] {-1, -1};
     }
     public void setPlayer(int player){
         this.player = player;
@@ -64,31 +54,30 @@ public class SuperController extends SuperBoard{
             };
             if(!end){
                 player = (player%2)+1;
-                superIndex = index;
-                superIndex = cpuTurn(superIndex);
+                if(checkSuperIndex(index))
+                    this.superIndex = cpuTurn(this.superIndex=index);
+                else
+                    this.superIndex = cpuTurn(this.superIndex= new int[] {-1, -1});
             }
-            this.superIndex = superIndex;
         }
         return this.superIndex;
     }
     public boolean checkSuperIndex(int[] superIndex){
         if(super.superBoard[superIndex[0]][superIndex[1]].game != -1)
             return false;
-        if(super.superBoard[this.superIndex[0]][this.superIndex[1]].game != -1)
+        if(this.superIndex[0] == -1 && this.superIndex[1] == -1)
             return true;
+        else if(super.superBoard[this.superIndex[0]][this.superIndex[1]].game != -1) {
+            this.superIndex = new int[] {-1, -1};
+            return true;
+        }
         else return this.superIndex[0] == superIndex[0] && this.superIndex[1] == superIndex[1];
     }
     public boolean markTurn(int[] index, int[] superIndex){
-        if(super.superBoard[superIndex[0]][superIndex[1]].game != -1)
+        if(!checkSuperIndex(superIndex))
             return false;
         else if(super.superBoard[superIndex[0]][superIndex[1]].board[index[0]][index[1]] != 0)
             return false;
-        if(super.superBoard[this.superIndex[0]][this.superIndex[1]].game != -1){
-            this.superIndex = superIndex;
-        }
-        else if(this.superIndex[0] != superIndex[0] || this.superIndex[1] != superIndex[1])
-            return false;
-
         super.superBoard[superIndex[0]][superIndex[1]].board[index[0]][index[1]] = player;
         System.out.println("Player: " + player + " did at super index:__ x: "+ superIndex[0] + "y: " + superIndex[1] + "and at index----i: " + index[0] + "  j: " + index[1]);
         return true;

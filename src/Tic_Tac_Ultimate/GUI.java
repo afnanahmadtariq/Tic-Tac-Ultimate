@@ -37,24 +37,58 @@ public class GUI extends Application  {
 
     @Override
     public void start(Stage stage) throws Exception {
-       displayPlay(stage);
-    }
-    private void showNavPage(Stage stage) throws Exception{
-
-    }
-    private void displayPlay(Stage stage) throws Exception{
         Image icon = new Image("U.png");
         stage.getIcons().add(icon);
         stage.setTitle("Tic Tac Ultimate");
         stage.setWidth(1920);
         stage.setHeight(1080);
         stage.setResizable(true);
-        stage.setFullScreen(false);
+        stage.setFullScreen(true);
         stage.setX(0);
         stage.setY(0);
+        displayPlay(stage);
+    }
+    public void displayStart(Stage stage) throws Exception {
+        HBox root = new HBox();
+        Scene scene = new Scene(root, midGround);
+//        Group simple = new Group(new Text(""));
+//        simple.set
+//        Group ultimate = new Group(new Text(""));
+//        root.getChildren().add(simple);
+//        root.getChildren().add(ultimate);
+
+        Rectangle simple = new Rectangle();
+        simple.setFill(Color.LIGHTBLUE);
+        simple.setWidth(780);
+        simple.setHeight(stage.getHeight());
+        System.out.println("this is width: " + stage.getWidth());
+
+        Text text = new Text("Tic Tac Toe");
+
+        root.getChildren().add(simple);
+
+
+        Rectangle ultimate = new Rectangle();
+        ultimate.setFill(Color.BLUE);
+        ultimate.setWidth(stage.getWidth());
+        ultimate.setHeight(stage.getHeight());
+
+        Text text2 = new Text("Super Tic Tac Toe");
+
+        root.getChildren().add(ultimate);
+
+
+        stage.setScene(scene);
+        stage.show();
+    }
+    private void showNavPage(Stage stage) throws Exception{
+
+    }
+    private void displayPlay(Stage stage) throws Exception{
+
         Group root = new Group();
 
-        Scene mainView = game =  new Scene(root, backGround);
+        game =  new Scene(root, backGround);
 //        Rectangle rectangle = new Rectangle();
 //        rectangle.setFill(Color.LIGHTBLUE);
 //        rectangle.setWidth(200);
@@ -68,7 +102,7 @@ public class GUI extends Application  {
 //        setAlignment(Pos.CENTER);
         superTicTacToe(root);
 
-        stage.setScene(mainView);
+        stage.setScene(game);
         stage.show();
         Toss(true);
     }
@@ -192,18 +226,6 @@ public class GUI extends Application  {
     root.getChildren().add(marks);
 }
     private void superTicTacToe(Group root) throws Exception{
-
-//        root.set
-//        root.setFillHeight(true);
-//        root.setBackground(new Background(new BackgroundFill(midGround, CornerRadii.EMPTY, Insets.EMPTY)));
-
-//        Line line = new Line();
-//        line.setStartY(0);
-//        line.setEndY(stage.getHeight());
-//        line.setStartX(Math.floor(stage.getWidth()/stage.getHeight()));
-//        line.setEndX(Math.floor(stage.getWidth()/stage.getHeight())+stage.getHeight());
-
-
         game.setOnMouseClicked(new EventHandler<MouseEvent>() {
             @Override
             public void handle(MouseEvent event) {
@@ -218,7 +240,7 @@ public class GUI extends Application  {
                 i = i-sJ;
                 if(getPlayer(true)!=2 || !isSinglePlayer(true)){
                     int[] superIndex = Tic_Tac_Ultimate.turn(i, j, sI, sJ);
-                    System.out.println("registered!!...............");
+                    System.out.println("registered!!............... at: i:" + i + " j:" + j+ " SI:"+sI+" sJ:"+sJ);
                 }
             }
         });
