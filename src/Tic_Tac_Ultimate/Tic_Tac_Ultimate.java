@@ -6,19 +6,35 @@ import java.util.Arrays;
 import static Tic_Tac_Ultimate.Board.dictionary;
 
 public class Tic_Tac_Ultimate extends GUI{
-    public static SuperController ticTacToe;
+    public static SuperController superTicTacToe;
+    public static Controller ticTacToe;
     public static void main(String[] args) {
-        ticTacToe = new SuperController(true,"easy");
+        start(true,true,"easy");
         Application.launch(args);
     }
-    public static void setPlayer(int player){
-        ticTacToe.setPlayer(player);
+    public static void start(boolean ultimate,boolean singlePlayer, String difficulty){
+        if(ultimate)
+            superTicTacToe = new SuperController(singlePlayer,difficulty);
+        else
+            ticTacToe = new Controller(singlePlayer,difficulty);
     }
-    public static int getPlayer(){
-        return ticTacToe.getPlayer();
+    public static void setPlayer(int player, boolean ultimate){
+        if(ultimate)
+            superTicTacToe.setPlayer(player);
+        else
+            ticTacToe.setPlayer(player);
     }
-    public static boolean isSinglePlayer(){
-        return ticTacToe.isSinglePlayer();
+    public static int getPlayer(boolean ultimate){
+        if(ultimate)
+            return superTicTacToe.getPlayer();
+        else
+            return ticTacToe.getPlayer();
+    }
+    public static boolean isSinglePlayer(boolean ultimate){
+        if(ultimate)
+            return superTicTacToe.isSinglePlayer();
+        else
+            return ticTacToe.isSinglePlayer();
     }
     public static void showTurn(int[] index){
         showTurn(index[0],index[1]);
@@ -28,16 +44,16 @@ public class Tic_Tac_Ultimate extends GUI{
         showTurn(index[0],index[1], superIndex);
         System.out.println("Show GUI mark Done!");
     }
-//    public static void turn(int i, int j){
-//        if(i>=0 && j>=0 && i<=2 && j<=2)
-//            ticTacToe.doTurn(new int[] {i, j});
-//    }
+    public static void turn(int i, int j){
+        if(i>=0 && j>=0 && i<=2 && j<=2)
+            ticTacToe.doTurn(new int[] {i, j});
+    }
     public static int[] turn(int i, int j,int sI, int sJ){
         if(i>=0 && j>=0 && i<=2 && j<=2 && sI>=0 && sJ>=0 && sI<=2 && sJ<=2)
-            return ticTacToe.doTurn(new int[] {i, j}, new int[] {sI, sJ});
+            return superTicTacToe.doTurn(new int[] {i, j}, new int[] {sI, sJ});
         return new int[] {sI, sJ};
     }
-    public static void endGame(boolean win,int player,int winValue){
+    public static void endGame(boolean win,int player,int winValue,boolean ultimate){
         if(win){
             markLine(winValue);
             System.out.println("place 'player' at index");
@@ -51,9 +67,12 @@ public class Tic_Tac_Ultimate extends GUI{
         System.out.println(win? "Player"+player+" won!" : "It is a draw!");
         if(popUp(text,"Yes","Exit",1)==0) {
             System.out.println("\n\n\n\n---------   New Game---------");
-            ticTacToe = new SuperController(true, "easy");
+            if(ultimate)
+                superTicTacToe = new SuperController(true, "easy");
+            else
+                ticTacToe = new Controller(true, "easy");
             clearMarks();
-            Toss();
+            Toss(ultimate);
         }
     }
     public static void endGame(boolean win,int player, int[] superIndex){
