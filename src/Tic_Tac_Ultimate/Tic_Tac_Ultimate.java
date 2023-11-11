@@ -8,29 +8,34 @@ import static Tic_Tac_Ultimate.Board.dictionary;
 public class Tic_Tac_Ultimate extends GUI{
     public static SuperController superTicTacToe;
     public static Controller ticTacToe;
+    public static boolean ultimate;
     public static void main(String[] args) {
-        start(true,true,"easy");
+        ultimate = true;
+        start(true,"easy");
         Application.launch(args);
     }
-    public static void start(boolean ultimate,boolean singlePlayer, String difficulty){
+    public static void start(boolean singlePlayer, String difficulty){
         if(ultimate)
             superTicTacToe = new SuperController(singlePlayer,difficulty);
         else
             ticTacToe = new Controller(singlePlayer,difficulty);
     }
-    public static void setPlayer(int player, boolean ultimate){
+    public static void setPlayer(int player){
         if(ultimate)
             superTicTacToe.setPlayer(player);
         else
             ticTacToe.setPlayer(player);
     }
-    public static int getPlayer(boolean ultimate){
+    public static int getPlayer(){
         if(ultimate)
             return superTicTacToe.getPlayer();
         else
             return ticTacToe.getPlayer();
     }
-    public static boolean isSinglePlayer(boolean ultimate){
+    public static boolean isUltimate(){
+        return ultimate;
+    }
+    public static boolean isSinglePlayer(){
         if(ultimate)
             return superTicTacToe.isSinglePlayer();
         else
@@ -44,16 +49,17 @@ public class Tic_Tac_Ultimate extends GUI{
         showTurn(index[0],index[1], superIndex);
         System.out.println("Show GUI mark Done!");
     }
-    public static void turn(int i, int j){
+    public static boolean turn(int i, int j){
         if(i>=0 && j>=0 && i<=2 && j<=2)
-            ticTacToe.doTurn(new int[] {i, j});
+            return ticTacToe.doTurn(new int[] {i, j});
+        return false;
     }
-    public static int[] turn(int i, int j,int sI, int sJ){
+    public static boolean turn(int i, int j,int sI, int sJ){
         if(i>=0 && j>=0 && i<=2 && j<=2 && sI>=0 && sJ>=0 && sI<=2 && sJ<=2)
             return superTicTacToe.doTurn(new int[] {i, j}, new int[] {sI, sJ});
-        return new int[] {sI, sJ};
+        return false;
     }
-    public static void endGame(boolean win,int player,int winValue,boolean ultimate){
+    public static void endGame(boolean win, int winValue){
         if(win){
             markLine(winValue);
             System.out.println("place 'player' at index");
@@ -63,8 +69,8 @@ public class Tic_Tac_Ultimate extends GUI{
         else
             System.out.println("place 'D' at index");
 
-        String text = (win? "Player"+player+" won!" : "It is a draw!")+" Play Again?";
-        System.out.println(win? "Player"+player+" won!" : "It is a draw!");
+        String text = (win? "Player"+getPlayer()+" won!" : "It is a draw!")+" Play Again?";
+        System.out.println(win? "Player"+getPlayer()+" won!" : "It is a draw!");
         if(popUp(text,"Yes","Exit",1)==0) {
             System.out.println("\n\n\n\n---------   New Game---------");
             if(ultimate)
@@ -72,14 +78,20 @@ public class Tic_Tac_Ultimate extends GUI{
             else
                 ticTacToe = new Controller(true, "easy");
             clearMarks();
-            Toss(ultimate);
+            Toss();
         }
     }
-    public static void endGame(boolean win,int player, int[] superIndex){
-        if(win)
+    public static void endGame(int[] superIndex, boolean win, int winValue){
+        if(win){
+            markLine(superIndex, winValue);
             System.out.println("place 'player' at index");
-        else
+            System.out.println("Won with value: " + winValue);
+            System.out.println("index at: " + Arrays.deepToString(dictionary.get(winValue)));
+        }
+        else {
+            markDraw(superIndex);
             System.out.println("place 'D' at index");
+        }
     }
 //    private void start(int toss){
 //        Board game = new Board();
