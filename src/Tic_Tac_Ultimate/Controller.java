@@ -36,7 +36,7 @@ public class Controller extends Board{
             doTurn(index);
         }
     }
-    public void doTurn(int[] index){
+    public boolean doTurn(int[] index){
         if(markTurn(index)){
             System.out.println("registered!!...............");
             Tic_Tac_Ultimate.showTurn(index);
@@ -50,7 +50,10 @@ public class Controller extends Board{
                 System.out.println("Player Changed!");
                 cpuTurn();
             }
+            return true;
         }
+        else
+            return false;
     }
     private boolean markTurn(int[] index){
         if(super.board[index[0]][index[1]] != 0)
@@ -66,7 +69,7 @@ public class Controller extends Board{
         else {
             super.game = 0;
         }
-        Tic_Tac_Ultimate.endGame(win, player, super.winValue, false);
+        Tic_Tac_Ultimate.endGame(win, super.winValue, false);
         //agr event listener game variable pe lga dain to ye func complete
         //boolean win se win ya draw ka pta chal rha
         //int player se kon jeeta ye pta lag rha

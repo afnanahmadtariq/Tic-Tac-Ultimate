@@ -44,16 +44,17 @@ public class Tic_Tac_Ultimate extends GUI{
         showTurn(index[0],index[1], superIndex);
         System.out.println("Show GUI mark Done!");
     }
-    public static void turn(int i, int j){
+    public static boolean turn(int i, int j){
         if(i>=0 && j>=0 && i<=2 && j<=2)
-            ticTacToe.doTurn(new int[] {i, j});
+            return ticTacToe.doTurn(new int[] {i, j});
+        return false;
     }
-    public static int[] turn(int i, int j,int sI, int sJ){
+    public static boolean turn(int i, int j,int sI, int sJ){
         if(i>=0 && j>=0 && i<=2 && j<=2 && sI>=0 && sJ>=0 && sI<=2 && sJ<=2)
             return superTicTacToe.doTurn(new int[] {i, j}, new int[] {sI, sJ});
-        return new int[] {sI, sJ};
+        return false;
     }
-    public static void endGame(boolean win,int player,int winValue,boolean ultimate){
+    public static void endGame(boolean win, int winValue, boolean ultimate){
         if(win){
             markLine(winValue);
             System.out.println("place 'player' at index");
@@ -63,8 +64,8 @@ public class Tic_Tac_Ultimate extends GUI{
         else
             System.out.println("place 'D' at index");
 
-        String text = (win? "Player"+player+" won!" : "It is a draw!")+" Play Again?";
-        System.out.println(win? "Player"+player+" won!" : "It is a draw!");
+        String text = (win? "Player"+getPlayer(ultimate)+" won!" : "It is a draw!")+" Play Again?";
+        System.out.println(win? "Player"+getPlayer(ultimate)+" won!" : "It is a draw!");
         if(popUp(text,"Yes","Exit",1)==0) {
             System.out.println("\n\n\n\n---------   New Game---------");
             if(ultimate)
@@ -75,11 +76,17 @@ public class Tic_Tac_Ultimate extends GUI{
             Toss(ultimate);
         }
     }
-    public static void endGame(boolean win,int player, int[] superIndex){
-        if(win)
+    public static void endGame(int[] superIndex, boolean win, int winValue){
+        if(win){
+            markLine(superIndex, winValue);
             System.out.println("place 'player' at index");
-        else
+            System.out.println("Won with value: " + winValue);
+            System.out.println("index at: " + Arrays.deepToString(dictionary.get(winValue)));
+        }
+        else {
+            markDraw(superIndex);
             System.out.println("place 'D' at index");
+        }
     }
 //    private void start(int toss){
 //        Board game = new Board();
