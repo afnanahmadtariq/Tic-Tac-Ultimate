@@ -282,8 +282,8 @@ public class GUI extends Application  {
         showMark(i,j,true,false,false);
     }
     public static void markDraw(int[] superIndex){
-        int i = (superIndex[1]*cell)+150;
-        int j = (superIndex[0]*cell)+550;
+        int i = (superIndex[1]*cell)+100;
+        int j = (superIndex[0]*cell)+500;
         showMark(i,j,false,false,true);
     }
     private static void showMark(int i, int j, boolean win, boolean small, boolean dark){
@@ -308,7 +308,7 @@ public class GUI extends Application  {
         marks.getChildren().add(imageView);
         System.out.println("Marked on grid!");
         if(dark)
-            showMark(i,j,win,small, false);
+            showMark(i+=50,j+=50,win,small, false);
     }
     public static void markLine(int value){
         int[][] lineIndex = dictionary.get(value);
