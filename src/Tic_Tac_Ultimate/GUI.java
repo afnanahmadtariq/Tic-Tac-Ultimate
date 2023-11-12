@@ -394,7 +394,6 @@ public class GUI extends Application  {
             Tic_Tac_Ultimate.setPlayer(2);
         }
     }
-
     private static void shakeStage(Stage stage) {
         final double originalX = stage.getX();
         final double originalY = stage.getY();
@@ -426,7 +425,6 @@ public class GUI extends Application  {
         timeline[0].setCycleCount(Timeline.INDEFINITE);
         timeline[0].play();
     }
-
     //Another method{
 //    private void shakeStage(Stage stage) {
 //        final int shakeDistance = 10;
@@ -441,7 +439,6 @@ public class GUI extends Application  {
 //
 //        tt.playFromStart();
 //    }
-
     public static int popUp(String text, String button1Text, String button2Text, int design){
         final int[] choice = {-1};
         //stage
@@ -497,8 +494,6 @@ public class GUI extends Application  {
         endGame.showAndWait();
         return choice[0];
     }
-
-
 
 //    public void invalidated(Observable observable) {
 //        int newValue = (int) observable.getValue();
