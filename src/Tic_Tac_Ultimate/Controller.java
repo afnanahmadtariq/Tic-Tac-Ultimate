@@ -10,7 +10,7 @@ public class Controller extends Board{
     Controller(){
         super();
         singlePlayer = true;
-        difficulty = "medium";
+        difficulty = "Medium";
         player = 1;
     }
     Controller(boolean singlePlayer, String difficulty){
@@ -22,6 +22,9 @@ public class Controller extends Board{
         this.player = player;
         System.out.println("Player set as: " + player);
         cpuTurn();
+    }
+    public void setPlayerOptions(boolean singlePlayer){
+        this.singlePlayer = singlePlayer;
     }
     public void setDifficulty(String difficulty){
         this.difficulty = difficulty;

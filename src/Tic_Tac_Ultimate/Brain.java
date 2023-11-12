@@ -2,11 +2,11 @@ package Tic_Tac_Ultimate;
 public class Brain {
     public static int[] compTurn(int[][] board, String difficulty){
         return switch(difficulty){
-            case "easy" -> easy(board);
-            case "med" -> med(board);
-            case "hard" -> hard(board);
-            case "extreme" -> extreme(board);
-            case "practice" -> practice(board);
+            case "Easy" -> easy(board);
+            case "Medium" -> med(board);
+            case "Hard" -> hard(board);
+            case "Extreme" -> extreme(board);
+            case "Practice" -> practice(board);
             default -> new int[]{(int)(Math.random()*3),(int)(Math.random()*3)};
         };
         

@@ -38,6 +38,8 @@ public class GUI extends Application  {
     public static Group root;
     public static Group marks;
     public static int cell = 200;
+    public static boolean singlePlayer;
+    public static String gameDifficulty;
     private static Color backGround = Color.web("#f2f2f2");
     private static Color midGround = Color.web("#fff");
     private ToggleGroup gameToggleGroup = new ToggleGroup();
@@ -113,14 +115,14 @@ public class GUI extends Application  {
         playerOptions.getChildren().addAll(new RadioButton("Single Player"), new RadioButton("Double Player"));
         playerOptions.setAlignment(Pos.CENTER);
 
-        HBox gameDifficulty = new HBox();
-        gameDifficulty.getChildren().addAll(
+        HBox gameDiffPanel = new HBox();
+        gameDiffPanel.getChildren().addAll(
                 new RadioButton("Easy"),
                 new RadioButton("Medium"),
                 new RadioButton("Hard"),
                 new RadioButton("Extreme")
         );
-        gameDifficulty.setAlignment(Pos.BOTTOM_CENTER);
+        gameDiffPanel.setAlignment(Pos.BOTTOM_CENTER);
 
         Button playGame = new Button("Play");
         playGame.setOnAction(new EventHandler<ActionEvent>() {
@@ -132,15 +134,21 @@ public class GUI extends Application  {
                 RadioButton selectedPlayerOption = (RadioButton) playerToggleGroup.getSelectedToggle();
                 RadioButton selectedDifficulty = (RadioButton) difficultyToggleGroup.getSelectedToggle();
 
+                switch (selectedPlayerOption.getText()){
+                    case "Single Player" -> singlePlayer = true;
+                    case "Double Player" -> singlePlayer = false;
+                }
+
                 try {
                     if (selectedGameType != null) {
+                        gameDifficulty = selectedDifficulty.getText();
                         System.out.println("Selected Game Type: " + selectedGameType.getText());
                         switch (selectedGameType.getText()) {
                             case "Tic Tac Toe" -> {
-                                if (selectedPlayerOption != null && selectedDifficulty != null
-                                        && selectedPlayerOption.getText().equals("Single Player")
-                                        && selectedDifficulty.getText().equals("Easy")) {
-                                    System.out.println("Single Player and Easy Game was selected");
+                                if (selectedPlayerOption != null && selectedDifficulty != null) {
+                                    setGameOptions();
+                                    System.out.println("Tic Tac Toe was Selected");
+                                    System.out.println(selectedPlayerOption.getText() + " and " + selectedDifficulty.getText() + "Game was selected");
                                     stage.show();
                                     Scene mainView = game = new Scene(root, backGround);
                                     ticTacToe(root);
@@ -164,10 +172,10 @@ public class GUI extends Application  {
         // Assign toggle groups to radio buttons
         assignToggleGroup(gameType, gameToggleGroup);
         assignToggleGroup(playerOptions, playerToggleGroup);
-        assignToggleGroup(gameDifficulty, difficultyToggleGroup);
+        assignToggleGroup(gameDiffPanel, difficultyToggleGroup);
         playGame.setAlignment(Pos.CENTER);
 
-        selectionPanel.getChildren().addAll(gameType, playerOptions, gameDifficulty, playGame);
+        selectionPanel.getChildren().addAll(gameType, playerOptions, gameDiffPanel, playGame);
 
         stage.setScene(gameSelection);
         stage.show();
