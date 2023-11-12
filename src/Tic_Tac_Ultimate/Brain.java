@@ -50,7 +50,66 @@ public class Brain {
         return new int[]{(int)(Math.random()*3),(int)(Math.random()*3)};
     }
     private static int[] extreme(int[][] board){
-        return new int[]{(int)(Math.random()*3),(int)(Math.random()*3)};
+        int row, column;
+        row =  column = -1;
+        int bestScore = -10;
+        for(int i = 0; i < 3; i++){
+            for (int j = 0; j < 3; j++){
+                if(board[i][j] == 0){
+                    int score = bestMove(true, board);
+                    board[i][j] = 0;
+                    if(score > bestScore){
+                        bestScore = score;
+                        row = i;
+                        column = j;
+                    }
+                }
+            }
+        }
+        return new int[]{row, column};
+    }
+    private static int bestMove(boolean turn, int[][] board){
+        int score =  checkMove(board);
+        if(score == -1 || score == 0 || score == 1) return score;
+        if(turn){
+            int bestScore = -100;
+            for (int row = 0; row < 3; row++) {
+                for (int col = 0; col < 3; col++) {
+                    if (board[row][col] == 0) {
+                        board[row][col] = -1;
+                        bestScore = bestMove(!turn, board);
+                        board[row][col] = 0;
+                    }
+                }
+            }
+            return bestScore;
+        } else {
+            int bestScore = 100;
+            for (int row = 0; row < 3; row++) {
+                for (int col = 0; col < 3; col++) {
+                    if (board[row][col] == 0) {
+                        board[row][col] = 1;
+                        bestScore = bestMove(turn, board);
+                        board[row][col] = 0;
+                    }
+                }
+            }
+            return bestScore;
+        }
+    }
+    private static int checkMove(int[][] board){
+        for(int row = 0; row < 3; row++)
+            if(board[row][0]==board[row][1] && board[row][1]==board[row][2] && board[row][1] != 0)
+                return (board[row][1] == 1)? -1: 1;
+
+        for(int col = 0; col < 3; col++)
+            if(board[0][col]==board[1][col] && board[1][col]==board[2][col] && board[1][col] != 0)
+                return (board[1][col] == 1)? -1: 1;
+
+        if(board[0][0]==board[1][1] && board[1][1]==board[2][2] && board[1][1] != 0)
+            return (board[1][1] == 1)? -1: 1;
+
+        return 0;
     }
     private static int[] practice(int[][] board){
         return new int[]{(int)(Math.random()*3),(int)(Math.random()*3)};
