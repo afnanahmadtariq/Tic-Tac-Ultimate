@@ -29,7 +29,7 @@ import static Tic_Tac_Ultimate.Tic_Tac_Ultimate.*;
 
 public class GUI extends Application  {
     private Scene game ;
-    public static Group marks;
+    public static Pane marks;
     public static double cell;
     private static Color backGround = Color.web("#f2f2f2");
     private static Color midGround = Color.web("#fff");
@@ -110,7 +110,7 @@ public class GUI extends Application  {
 
         grid.setBackground(new javafx.scene.layout.Background(
                 new javafx.scene.layout.BackgroundFill(midGround, null, null)));
-        superTicTacToe(grid);
+        ticTacToe(grid);
 
         board.getChildren().add(rectangle);
         board.getChildren().add(grid);
@@ -188,17 +188,6 @@ public class GUI extends Application  {
 //    }
     private void ticTacToe(Pane grid) throws Exception{
         Platform.runLater(() -> {
-//        root.set
-//        root.setFillHeight(true);
-//        root.setBackground(new Background(new BackgroundFill(midGround, CornerRadii.EMPTY, Insets.EMPTY)));
-
-//        Line line = new Line();
-//        line.setStartY(0);
-//        line.setEndY(stage.getHeight());
-//        line.setStartX(Math.floor(stage.getWidth()/stage.getHeight()));
-//        line.setEndX(Math.floor(stage.getWidth()/stage.getHeight())+stage.getHeight());
-
-
             game.setOnMouseClicked(new EventHandler<MouseEvent>() {
                 @Override
                 public void handle(MouseEvent event) {
@@ -213,29 +202,25 @@ public class GUI extends Application  {
                     }
                 }
             });
-            for (int row = 0; row < 4; row++) {
-                double y = row * cell;
+            for (int col = 0; col < 4; col++) {
                 Line line = new Line();
                 line.setStartY(0);
-                line.setEndY(grid.getHeight());
-                line.setStartX(y);
-                line.setEndX(y);
+                line.endYProperty().bind(grid.maxHeightProperty());
+                line.startXProperty().bind(grid.maxWidthProperty().multiply((double) col/3));
+                line.endXProperty().bind(grid.maxWidthProperty().multiply((double) col/3));
                 line.setStrokeWidth(5);
-                line.setPickOnBounds(false);
                 grid.getChildren().add(line);
             }
-            for (int col = 0; col < 4; col++) {
-                double x = col * cell;
+            for (int row = 0; row < 4; row++) {
                 Line line = new Line();
-                line.setStartY(x);
-                line.setEndY(x);
+                line.startYProperty().bind(grid.maxHeightProperty().multiply((double) row/3));
+                line.endYProperty().bind(grid.maxHeightProperty().multiply((double) row/3));
                 line.setStartX(0);
-                line.setEndX(grid.getWidth());
+                line.endXProperty().bind(grid.maxWidthProperty());
                 line.setStrokeWidth(5);
-                line.setPickOnBounds(false);
                 grid.getChildren().add(line);
             }
-            marks = new Group();
+            marks = new Pane();
             grid.getChildren().add(marks);
         });
     }
@@ -284,7 +269,7 @@ public class GUI extends Application  {
                 line.setPickOnBounds(false);
                 grid.getChildren().add(line);
             }
-            marks = new Group();
+            marks = new Pane();
             grid.getChildren().add(marks);
         });
     }
