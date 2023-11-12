@@ -35,16 +35,16 @@ public class SuperController extends SuperBoard{
     }
     public void cpuTurn(int[] superIndex){
         if(player==2 && singlePlayer){
-            System.out.println("Super index BEFORE cpu turn_ row:" + superIndex[0] + " col: " + superIndex[1]);
+            System.out.println("Super index BEFORE cpu turn_ row:" + this.superIndex[0] + " col: " + this.superIndex[1]);
             int[][] compute = SuperBrain.compTurn(superIndex,super.superBoard, difficulty);
             int[] index = compute[0];
             this.superIndex = superIndex = compute[1];
             doTurn(index,superIndex);
-            System.out.println("Super index AFTER cpu turn_ row:" + superIndex[0] + " col: " + superIndex[1]);
+            System.out.println("Super index AFTER cpu turn_ row:" + this.superIndex[0] + " col: " + this.superIndex[1]);
         }
     }
     public boolean doTurn(int[] index, int[] superIndex){
-        System.out.println("Super index BEFORE player: " + player +" turn_ row:" + superIndex[0] + " col: " + superIndex[1]);
+        System.out.println("Super index BEFORE player: " + player +" turn_ row:" + this.superIndex[0] + " col: " + this.superIndex[1]);
         if(markTurn(index,superIndex)){
             System.out.println("registered!!...............");
             Tic_Tac_Ultimate.showTurn(index, superIndex);
@@ -63,7 +63,7 @@ public class SuperController extends SuperBoard{
                 System.out.println("Player Changed!");
                 cpuTurn(this.superIndex);
             }
-            System.out.println("Super index FOR player: " + player +" turn_ row:" + superIndex[0] + " col: " + superIndex[1]);
+            System.out.println("Super index FOR player: " + player +" turn_ row:" + this.superIndex[0] + " col: " + this.superIndex[1]);
             return true;
         }
         else
@@ -87,9 +87,8 @@ public class SuperController extends SuperBoard{
             return false;
         super.superBoard[superIndex[0]][superIndex[1]].board[index[0]][index[1]] = player;
         System.out.println("Player: " + player + " did at super index:__ x: "+ superIndex[0] + "y: " + superIndex[1] + "and at index----i: " + index[0] + "  j: " + index[1]);
-        if(checkSuperIndex(index))
-            this.superIndex = index;
-        else
+        this.superIndex = index;
+        if(!checkSuperIndex(index))
             this.superIndex = new int[] {-1, -1};
         return true;
     }

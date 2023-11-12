@@ -8,7 +8,6 @@ import javafx.application.Platform;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.geometry.Pos;
-import javafx.scene.Group;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.image.Image;
@@ -39,10 +38,10 @@ public class GUI extends Application  {
         Image icon = new Image("U.png");
         stage.getIcons().add(icon);
         stage.setTitle("Tic Tac Ultimate");
-        stage.setWidth(1920);
-        stage.setHeight(1080);
-        stage.setResizable(true);
-        stage.setFullScreen(true);
+        stage.setWidth(1280);
+        stage.setHeight(720);
+        stage.setResizable(false);
+        stage.setFullScreen(false);
         stage.setX(0);
         stage.setY(0);
         displayPlay(stage);
@@ -86,7 +85,6 @@ public class GUI extends Application  {
 
     }
     private void displayPlay(Stage stage) throws Exception{
-
         BorderPane root = new BorderPane();
         game =  new Scene(root, backGround);
         StackPane board = new StackPane();
@@ -99,25 +97,21 @@ public class GUI extends Application  {
         rectangle.setArcWidth(50);
         rectangle.setArcHeight(50);
 
-
         Pane grid = new Pane();
         grid.maxWidthProperty().bind(root.heightProperty().multiply(0.8));
         grid.maxHeightProperty().bind(root.heightProperty().multiply(0.8));
-        Platform.runLater(() -> {
+        Platform.runLater(()->{
             cell = grid.getHeight()/3;
-            System.out.println("cell: " + cell);
+            System.out.println("Cell size: " + cell);
         });
-
-        grid.setBackground(new javafx.scene.layout.Background(
-                new javafx.scene.layout.BackgroundFill(midGround, null, null)));
-        ticTacToe(grid);
 
         board.getChildren().add(rectangle);
         board.getChildren().add(grid);
 
+        superTicTacToe(grid);
         stage.setScene(game);
         stage.show();
-//        Toss();
+        Toss();
     }
     private void displayOptions(Stage stage) throws Exception{
 
@@ -188,37 +182,36 @@ public class GUI extends Application  {
 //    }
     private void ticTacToe(Pane grid) throws Exception{
         Platform.runLater(() -> {
-            game.setOnMouseClicked(new EventHandler<MouseEvent>() {
+            grid.setOnMouseClicked(new EventHandler<MouseEvent>() {
                 @Override
                 public void handle(MouseEvent event) {
                     System.out.println("mouse Clicked!!");
                     double x = event.getX();
                     double y = event.getY();
-                    int j = (int) (x/cell);
-                    int i = (int) (y/cell);
+                    int row = (int) (y/cell);
+                    int col = (int) (x/cell);
                     if(getPlayer()!=2 || !isSinglePlayer()){
-                        if(turn(i, j))
+                        if(turn(row, col))
                             System.out.println("registered!!...............");
                     }
                 }
             });
-            for (int col = 0; col < 4; col++) {
-                Line line = new Line();
-                line.setStartY(0);
-                line.endYProperty().bind(grid.maxHeightProperty());
-                line.startXProperty().bind(grid.maxWidthProperty().multiply((double) col/3));
-                line.endXProperty().bind(grid.maxWidthProperty().multiply((double) col/3));
-                line.setStrokeWidth(5);
-                grid.getChildren().add(line);
-            }
-            for (int row = 0; row < 4; row++) {
-                Line line = new Line();
-                line.startYProperty().bind(grid.maxHeightProperty().multiply((double) row/3));
-                line.endYProperty().bind(grid.maxHeightProperty().multiply((double) row/3));
-                line.setStartX(0);
-                line.endXProperty().bind(grid.maxWidthProperty());
-                line.setStrokeWidth(5);
-                grid.getChildren().add(line);
+            for (int i = 0; i<4; i++) {
+                Line hLine = new Line();
+                hLine.setStartY(0);
+                hLine.endYProperty().bind(grid.maxHeightProperty());
+                hLine.startXProperty().bind(grid.maxWidthProperty().multiply((double) i/3));
+                hLine.endXProperty().bind(grid.maxWidthProperty().multiply((double) i/3));
+                hLine.setStrokeWidth(5);
+                grid.getChildren().add(hLine);
+
+                Line vLine = new Line();
+                vLine.startYProperty().bind(grid.maxHeightProperty().multiply((double) i/3));
+                vLine.endYProperty().bind(grid.maxHeightProperty().multiply((double) i/3));
+                vLine.setStartX(0);
+                vLine.endXProperty().bind(grid.maxWidthProperty());
+                vLine.setStrokeWidth(5);
+                grid.getChildren().add(vLine);
             }
             marks = new Pane();
             grid.getChildren().add(marks);
@@ -226,7 +219,7 @@ public class GUI extends Application  {
     }
     private void superTicTacToe(Pane grid) throws Exception{
         Platform.runLater(() -> {
-            game.setOnMouseClicked(new EventHandler<MouseEvent>() {
+            grid.setOnMouseClicked(new EventHandler<MouseEvent>() {
                 @Override
                 public void handle(MouseEvent event) {
                     System.out.println("mouse Clicked!!");
@@ -237,58 +230,54 @@ public class GUI extends Application  {
                     int i = (int) (y  / (cell / 3)) % 3;
                     int sI = (int) (y  / cell);
                     if (getPlayer() != 2 || !isSinglePlayer()) {
-                        Tic_Tac_Ultimate.turn(i, j, sI, sJ);
+                        turn(i, j, sI, sJ);
                     }
                 }
             });
-            for (int row = 0; row < 10; row++) {
-                double y = row * (cell / 3);
-                Line line = new Line();
-                line.setStartY(0);
-                line.setEndY(grid.getHeight());
-                line.setStartX(y);
-                line.setEndX(y);
-                if (row == 0 || row == 3 || row == 6 || row == 9)
-                    line.setStrokeWidth(8);
+            for (int i = 0; i < 10; i++) {
+                Line hLine = new Line();
+                hLine.setStartY(0);
+                hLine.endYProperty().bind(grid.maxHeightProperty());
+                hLine.startXProperty().bind(grid.maxWidthProperty().multiply((double) i/9));
+                hLine.endXProperty().bind(grid.maxWidthProperty().multiply((double) i/9));
+                if (i == 0 || i == 3 || i == 6 || i == 9)
+                    hLine.setStrokeWidth(8);
                 else
-                    line.setStrokeWidth(3);
-                line.setPickOnBounds(false);
-                grid.getChildren().add(line);
-            }
-            for (int col = 0; col < 10; col++) {
-                double x = col * (cell / 3);
-                Line line = new Line();
-                line.setStartY(x);
-                line.setEndY(x);
-                line.setStartX(0);
-                line.setEndX(grid.getWidth());
-                if (col == 0 || col == 3 || col == 6 || col == 9)
-                    line.setStrokeWidth(8);
+                    hLine.setStrokeWidth(3);
+                hLine.setPickOnBounds(false);
+                grid.getChildren().add(hLine);
+
+                Line vLine = new Line();
+                vLine.startYProperty().bind(grid.maxHeightProperty().multiply((double) i/9));
+                vLine.endYProperty().bind(grid.maxHeightProperty().multiply((double) i/9));
+                vLine.setStartX(0);
+                vLine.endXProperty().bind(grid.maxWidthProperty());
+                if (i == 0 || i == 3 || i == 6 || i == 9)
+                    vLine.setStrokeWidth(8);
                 else
-                    line.setStrokeWidth(3);
-                line.setPickOnBounds(false);
-                grid.getChildren().add(line);
+                    vLine.setStrokeWidth(3);
+                grid.getChildren().add(vLine);
             }
             marks = new Pane();
             grid.getChildren().add(marks);
         });
     }
-    public static void showTurn(int i, int j, int[] superIndex){
-        i = (int) ((int) (i*(cell/3))+(superIndex[0]*cell));
-        j = (int) ((int) (j*(cell/3))+(superIndex[1]*cell));
-        showMark(i,j,true,true, false);
+    public static void showTurn(int row, int col, int[] superIndex){
+        int y = (int) ((int) (row*(cell/3))+(superIndex[0]*cell)+((cell/3)*0.2));
+        int x = (int) ((int) (col*(cell/3))+(superIndex[1]*cell)+((cell/3)*0.2));
+        showMark(x,y,true,true, false);
     }
-    public static void showTurn(int i, int j){
-        i = (int)(i*cell)+150;
-        j = (int)(j*cell)+550;
-        showMark(i,j,true,false,false);
+    public static void showTurn(int row, int col){
+        int y = (int)((row*cell)+(cell*0.2));
+        int x = (int)((col*cell)+(cell*0.2));
+        showMark(x,y,true,false,false);
     }
     public static void markDraw(int[] superIndex){
-        int i = (int)(superIndex[1]*cell)+100;
-        int j = (int)(superIndex[0]*cell)+500;
-        showMark(i,j,false,false,true);
+        int x = (int)(superIndex[1]*cell);
+        int y = (int)(superIndex[0]*cell);
+        showMark(x,y,false,false,true);
     }
-    private static void showMark(int i, int j, boolean win, boolean small, boolean dark){
+    private static void showMark(int x, int y, boolean win, boolean small, boolean dark){
         Image xIcon = new Image("x.png");
         Image p1Icon = xIcon;
         Image oIcon = new Image("o.png");
@@ -300,64 +289,55 @@ public class GUI extends Application  {
         mark = !dark? win? getPlayer()==1? p1Icon : p2Icon : dIcon : darkIcon;
         System.out.println("Mark set acc to player!");
         int width, height;
-        width = height = !dark? small? 50 : 100 :(int) cell;
+        width = height = !dark? small? (int)((cell/3)*0.6) : (int)(cell*0.6) : (int)cell;
 
         ImageView imageView = new ImageView(mark);
         imageView.setFitWidth(width);
         imageView.setFitHeight(height);
-        imageView.setLayoutX(j);
-        imageView.setLayoutY(i);
+        imageView.setLayoutX(x);
+        imageView.setLayoutY(y);
         marks.getChildren().add(imageView);
         System.out.println("Marked on grid!");
         if(dark)
-            showMark(i+=50,j+=50,win,small, false);
+            showMark(x+=(int)(cell*0.2),y+=(int)(cell*0.2),win,small, false);
     }
     public static void markLine(int value){
         int[][] lineIndex = dictionary.get(value);
-        int startX = (int)((lineIndex[0][1]*cell)+(int)(cell*2.8));
-        int startY =(int) ((lineIndex[0][0]*cell)+cell);
-        int endX = (int)((lineIndex[2][1]*cell)+(int)(cell*3.2));
-        int endY = (int)((lineIndex[2][0]*cell)+cell);
+        int startX =(int)((lineIndex[0][1]*cell)+(int)(cell*0.5));
+        int startY =(int)((lineIndex[0][0]*cell)+(int)(cell*0.5));
+        int endX = (int) ((lineIndex[2][1]*cell)+(int)(cell*0.5));
+        int endY = (int) ((lineIndex[2][0]*cell)+(int)(cell*0.5));
 
         markLine(startX,startY,endX,endY);
     }
     public static void markLine(int[] superIndex,int value){
         int[][] lineIndex = dictionary.get(value);
-        int startX =(int) ((lineIndex[0][1]*(cell/3))+(int)((cell/3)*2.8)+superIndex[1]*cell);
-        int startY =(int) ((lineIndex[0][0]*(cell/3))+(cell/3)+superIndex[0]*cell);
-        int endX =(int) ((lineIndex[2][1]*(cell/3))+(int)((cell/3)*3.2)+superIndex[1]*cell);
-        int endY =(int) ((lineIndex[2][0]*(cell/3))+(cell/3)+superIndex[0]*cell);
+        int startX =(int)((superIndex[1]*cell)+(lineIndex[0][1]*(cell/3))+(int)((cell/3)*0.5));
+        int startY =(int)((superIndex[0]*cell)+(lineIndex[0][0]*(cell/3))+(int)((cell/3)*0.5));
+        int endX = (int) ((superIndex[1]*cell)+(lineIndex[2][1]*(cell/3))+(int)((cell/3)*0.5));
+        int endY = (int) ((superIndex[0]*cell)+(lineIndex[2][0]*(cell/3))+(int)((cell/3)*0.5));
 
         markLine(startX,startY,endX,endY);
 
-        int i =(int) (superIndex[1]*cell)+150;
-        int j =(int) (superIndex[0]*cell)+550;
-        showMark(i,j,true,false,true);
+        int x =(int) (superIndex[1]*cell);
+        int y =(int) (superIndex[0]*cell);
+        showMark(x,y,true,false,true);
     }
     public static void markLine(int startX, int startY, int endX, int endY){
-        //is index pe line lag gaye gi :)
         Line line = new Line(startX, startY, endX, endY);
-        line.setStroke(Color.BLACK);
+        line.setStroke(Color.GREEN);
         line.setStrokeWidth(10);
         line.setStrokeLineCap(StrokeLineCap.ROUND);
-
         marks.getChildren().add(line);
 
-        // Create a Timeline for the animation
         Timeline timeline = new Timeline();
-
-        // Define the starting and ending keyframes
         KeyFrame startFrame = new KeyFrame(Duration.ZERO,
                 new KeyValue(line.endXProperty(), startX),
                 new KeyValue(line.endYProperty(), startY));
         KeyFrame endFrame = new KeyFrame(Duration.seconds(0.5),
                 new KeyValue(line.endXProperty(), endX),
                 new KeyValue(line.endYProperty(), endY));
-
-        // Add the keyframes to the timeline
         timeline.getKeyFrames().addAll(startFrame, endFrame);
-
-        // Start the animation
         timeline.play();
     }
     public static void clearMarks(){

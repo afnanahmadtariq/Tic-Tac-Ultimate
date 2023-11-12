@@ -49,9 +49,9 @@ public class Tic_Tac_Ultimate extends GUI{
         showTurn(index[0],index[1], superIndex);
         System.out.println("Show GUI mark Done!");
     }
-    public static boolean turn(int i, int j){
-        if(i>=0 && j>=0 && i<=2 && j<=2)
-            return ticTacToe.doTurn(new int[] {i, j});
+    public static boolean turn(int row, int col){
+        if(row>=0 && col>=0 && row<=2 && col<=2)
+            return ticTacToe.doTurn(new int[] {row, col});
         return false;
     }
     public static boolean turn(int i, int j,int sI, int sJ){
@@ -84,7 +84,7 @@ public class Tic_Tac_Ultimate extends GUI{
     public static void endGame(int[] superIndex, boolean win, int winValue){
         if(win){
             markLine(superIndex, winValue);
-            System.out.println("place 'player' at index");
+            System.out.println("won at super index: " + Arrays.toString(superIndex));
             System.out.println("Won with value: " + winValue);
             System.out.println("index at: " + Arrays.deepToString(dictionary.get(winValue)));
         }
