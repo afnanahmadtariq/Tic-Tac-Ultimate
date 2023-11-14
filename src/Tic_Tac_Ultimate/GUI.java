@@ -11,7 +11,10 @@ import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Group;
 import javafx.scene.Scene;
+import javafx.scene.control.Alert;
+import javafx.scene.control.Alert.AlertType;
 import javafx.scene.control.Button;
+import javafx.scene.control.ButtonType;
 import javafx.scene.control.RadioButton;
 import javafx.scene.control.ToggleGroup;
 import javafx.scene.image.Image;
@@ -48,7 +51,7 @@ public class GUI extends Application  {
 
     @Override
     public void start(Stage stage) throws Exception {
-       displayPlay(stage);
+        displayPlay(stage);
     }
     private void showNavPage(Stage stage) throws Exception{
 
@@ -84,6 +87,7 @@ public class GUI extends Application  {
             @Override
             public void handle(ActionEvent event) {
                 System.out.println("Options button was pressed!");
+                displayPopupMessage("Under Development", "Option Button is under development", AlertType.INFORMATION);
             }
         });
 
@@ -92,7 +96,19 @@ public class GUI extends Application  {
         exitButton.setOnAction(new EventHandler<ActionEvent>() {
             @Override
             public void handle(ActionEvent event) {
-                System.out.println("Exit button was pressed!");
+                Alert alert = new Alert(AlertType.CONFIRMATION);
+                alert.setTitle("Exit Game");
+                alert.setContentText("Are you sure you want to exit?");
+
+                ButtonType exitButton = new ButtonType("Exit");
+                ButtonType cancelButton = new ButtonType("Cancel");
+                alert.getButtonTypes().setAll(exitButton, cancelButton);
+
+                alert.showAndWait().ifPresent(response -> {
+                    if (response == exitButton) {
+                        stage.close();
+                    }
+                });
             }
         });
         menuPanel.getChildren().add(startButton);
@@ -134,37 +150,41 @@ public class GUI extends Application  {
                 RadioButton selectedPlayerOption = (RadioButton) playerToggleGroup.getSelectedToggle();
                 RadioButton selectedDifficulty = (RadioButton) difficultyToggleGroup.getSelectedToggle();
 
-                switch (selectedPlayerOption.getText()){
-                    case "Single Player" -> singlePlayer = true;
-                    case "Double Player" -> singlePlayer = false;
-                }
-
-                try {
-                    if (selectedGameType != null) {
+                if(selectedGameType != null && selectedPlayerOption != null && selectedDifficulty != null){
+                    if((selectedGameType.getText().equals("Super Tic Tac Toe") && !selectedDifficulty.getText().equals("Easy"))
+                            || selectedDifficulty.getText().equals("Hard")){
+                        displayPopupMessage("Under Development", "Super Tic Tac Toe\nHard Mode", AlertType.INFORMATION);
+                        if(selectedGameType.getText().equals("Super Tic Tac Toe")){
+                            resetRadioButtons(gameToggleGroup);
+                        }
+                        resetRadioButtons(difficultyToggleGroup);
+                    }
+                    try {
+                        switch (selectedPlayerOption.getText()){
+                            case "Single Player" -> singlePlayer = true;
+                            case "Double Player" -> singlePlayer = false;
+                        }
                         gameDifficulty = selectedDifficulty.getText();
                         System.out.println("Selected Game Type: " + selectedGameType.getText());
                         switch (selectedGameType.getText()) {
                             case "Tic Tac Toe" -> {
-                                if (selectedPlayerOption != null && selectedDifficulty != null) {
-                                    setGameOptions();
-                                    System.out.println("Tic Tac Toe was Selected");
-                                    System.out.println(selectedPlayerOption.getText() + " and " + selectedDifficulty.getText() + "Game was selected");
-                                    stage.show();
-                                    Scene mainView = game = new Scene(root, backGround);
-                                    ticTacToe(root);
-                                    stage.setScene(mainView);
-                                    Toss();
-                                } else if (selectedPlayerOption != null && selectedDifficulty != null) {
-                                    System.out.println("Single Player and Easy Game was not selected");
-                                }
+                                setGameOptions();
+                                System.out.println("Tic Tac Toe was Selected");
+                                System.out.println(selectedPlayerOption.getText() + " and " + selectedDifficulty.getText() + " Game was selected");
+                                stage.show();
+                                Scene mainView = game = new Scene(root, backGround);
+                                ticTacToe(root);
+                                stage.setScene(mainView);
+                                Toss();
                             }
                             case "Super Tic Tac Toe" -> System.out.println("Selected STTT");
                         }
-                    }
 
-                } catch (Exception e) {
-                    e.printStackTrace();
-                }
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
+                } else
+                    displayPopupMessage("Missing Outputs", "Please Select all fields", AlertType.INFORMATION);
             }
         });
 
@@ -180,6 +200,12 @@ public class GUI extends Application  {
         stage.setScene(gameSelection);
         stage.show();
     }
+    private void resetRadioButtons(ToggleGroup toggleGroup) {
+        toggleGroup.getToggles().forEach(toggle -> {
+            RadioButton radioButton = (RadioButton) toggle;
+            radioButton.setSelected(false);
+        });
+    }
 
     private void assignToggleGroup(HBox hbox, ToggleGroup toggleGroup) {
         hbox.getChildren().forEach(node -> {
@@ -187,6 +213,13 @@ public class GUI extends Application  {
                 ((RadioButton) node).setToggleGroup(toggleGroup);
             }
         });
+    }
+    public static void displayPopupMessage(String title, String message, AlertType type) {
+        Alert alert = new Alert(type);
+        alert.setTitle(title);
+        alert.setHeaderText(null); // Setting header text to null means no header
+        alert.setContentText(message);
+        alert.showAndWait(); // Wait for user action (OK button click) before continuing
     }
     private void displayPlay(Stage stage) throws Exception{
         Image icon = new Image("U.png");
@@ -341,7 +374,7 @@ public class GUI extends Application  {
     public static void clearMarks(){
         marks.getChildren().clear();
     }
-//    line = new Line();
+    //    line = new Line();
 //        line.setStroke(Color.BLACK);
 //        line.setVisible(false);
 //

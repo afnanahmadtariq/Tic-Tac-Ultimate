@@ -8,15 +8,13 @@ import static Tic_Tac_Ultimate.Board.dictionary;
 public class Tic_Tac_Ultimate extends GUI{
     static Controller ticTacToe;
     public static void main(String[] args) {
-        ticTacToe = new Controller(true,"Easy");
         Application.launch(args);
     }
     public static void setPlayer(int player){
         ticTacToe.setPlayer(player);
     }
     public static void setGameOptions(){
-        ticTacToe.setPlayerOptions(singlePlayer);
-        ticTacToe.setDifficulty(gameDifficulty);
+        ticTacToe = new Controller(singlePlayer,gameDifficulty);
     }
     public static int getPlayer(){
         return ticTacToe.getPlayer();

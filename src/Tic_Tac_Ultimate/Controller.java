@@ -6,7 +6,7 @@ public class Controller extends Board{
     private boolean singlePlayer;
     private int player;
     public String difficulty;
-    
+
     Controller(){
         super();
         singlePlayer = true;
@@ -61,7 +61,7 @@ public class Controller extends Board{
         if(super.board[index[0]][index[1]] != 0)
             return false;
         super.board[index[0]][index[1]] = player;
-        System.out.println("Player: " + player + " did ----i: " + index[0] + "  j: " + index[1]);
+        System.out.println("Player: " + player + " marked ---->i: " + index[0] + "  |  j: " + index[1]);
         return true;
     }
     private boolean end(boolean win){
