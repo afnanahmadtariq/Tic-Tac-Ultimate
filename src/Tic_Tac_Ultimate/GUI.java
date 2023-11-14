@@ -324,18 +324,70 @@ public class GUI extends Application {
             }
         });
     }
-    private void shake(Node node) {
-        final int shakeDistance = 10;
-        final int numShakes = 10;
-        final double shakeDuration = 50; // milliseconds
-
-        TranslateTransition tt = new TranslateTransition(Duration.millis(shakeDuration), node);
-        tt.setCycleCount(2 * numShakes);
-        tt.setAutoReverse(true);
-        tt.setByX(shakeDistance);
-        tt.setByY(shakeDistance);
-
-        tt.playFromStart();
+    private static void shake(Node node) {
+        final double originalX = node.getTranslateX();
+        final double originalY = node.getTranslateY();
+        final Timeline[] timeline = new Timeline[1];
+        timeline[0] = new Timeline(new KeyFrame (Duration.millis(1),new EventHandler<ActionEvent>() {
+            int shakeCount = 0;
+            @Override
+            public void handle(ActionEvent event) {
+                if (!(shakeCount > 400)) {
+                    int dist = shakeCount++ % 10;
+                    if((shakeCount >= 100 && shakeCount < 200) || (shakeCount >= 300 && shakeCount < 400)){
+                        dist *=-1;
+                    }
+                    node.setTranslateX(originalX + dist);
+                    node.setTranslateY(originalY + dist);
+                }
+                else {
+                    node.setTranslateX(originalX);
+                    node.setTranslateY(originalY);
+                    timeline[0].stop();
+                }
+            }
+        }
+        ));
+        timeline[0].setCycleCount(Timeline.INDEFINITE);
+        timeline[0].play();
+//        final int shakeDistance = 10;
+//        final int numShakes = 10;
+//        final double shakeDuration = 50; // milliseconds
+//
+//        TranslateTransition tt = new TranslateTransition(Duration.millis(shakeDuration), node);
+//        tt.setCycleCount(2 * numShakes);
+//        tt.setAutoReverse(true);
+//        tt.setByX(shakeDistance);
+//        tt.setByY(shakeDistance);
+//
+//        tt.playFromStart();
+    }
+    private static void shakeStage(Stage stage) {
+        final double originalX = stage.getX();
+        final double originalY = stage.getY();
+        final Timeline[] timeline = new Timeline[1];
+        timeline[0] = new Timeline(new KeyFrame (Duration.millis(1),new EventHandler<ActionEvent>() {
+            int shakeCount = 0;
+            @Override
+            public void handle(ActionEvent event) {
+                if (!(shakeCount > 400)) {
+                    int dist = shakeCount++ % 10;
+                    if((shakeCount >= 100 && shakeCount < 200) || (shakeCount >= 300 && shakeCount < 400)){
+                        dist *=-1;
+                    }
+                    stage.setX(originalX + dist);
+                    stage.setY(originalY + dist);
+                }
+                else {
+                    stage.setX(originalX);
+                    stage.setY(originalY);
+                    timeline[0].stop();
+                }
+            }
+        }
+        ));
+        timeline[0].setCycleCount(Timeline.INDEFINITE);
+        timeline[0].play();
     }
     private void displayGame() {
         root.getChildren().clear();
@@ -704,33 +756,6 @@ public class GUI extends Application {
             Tic_Tac_Ultimate.setPlayer(2);
         }
     }
-    private static void shakeStage(Stage stage) {
-        final double originalX = stage.getX();
-        final double originalY = stage.getY();
-        final Timeline[] timeline = new Timeline[1];
-        timeline[0] = new Timeline(new KeyFrame (Duration.millis(1),new EventHandler<ActionEvent>() {
-                    int shakeCount = 0;
-                    @Override
-                    public void handle(ActionEvent event) {
-                        if (!(shakeCount > 400)) {
-                            int dist = shakeCount++ % 10;
-                            if((shakeCount >= 100 && shakeCount < 200) || (shakeCount >= 300 && shakeCount < 400)){
-                                dist *=-1;
-                            }
-                            stage.setX(originalX + dist);
-                            stage.setY(originalY + dist);
-                        }
-                        else {
-                            stage.setX(originalX);
-                            stage.setY(originalY);
-                            timeline[0].stop();
-                        }
-                    }
-                }
-        ));
-        timeline[0].setCycleCount(Timeline.INDEFINITE);
-        timeline[0].play();
-    }
     //Another method{
 //    private void shakeStage(Stage stage) {
 //        final int shakeDistance = 10;
@@ -747,16 +772,23 @@ public class GUI extends Application {
 //    }
     public static void popUp(String text, String button1Text, String button2Text, int method){
         StackPane popUp = new StackPane();
-
-        popUp.setBackground(new Background(new BackgroundFill( Color.color(0,0,0,0.8), CornerRadii.EMPTY, Insets.EMPTY)));
-        popUp.getChildren().add(rectangle(0.4,0.2));
+        BorderPane background = new BorderPane();
+        background.setCenter(popUp);
+        background.setBackground(new Background(new BackgroundFill( Color.color(0,0,0,0.8), CornerRadii.EMPTY, Insets.EMPTY)));
+        Rectangle box = rectangle(0.4,0.2);
+        popUp.getChildren().add(box);
+        popUp.setOnMouseClicked(new EventHandler<MouseEvent>() {
+            @Override
+            public void handle(MouseEvent event) {
+                shake(popUp);
+            }
+        });
 
         List<Node> appNodes = root.getChildren();
         for(Node node: appNodes){
             node.setDisable(true);
         }
-        root.getChildren().add(popUp);
-//                shake(popUp);
+        root.getChildren().add(background);
         VBox vBox = new VBox(new Text(text));
         vBox.setAlignment(Pos.CENTER);
         vBox.setSpacing(25);
@@ -769,7 +801,7 @@ public class GUI extends Application {
             @Override
             public void handle(ActionEvent event) {
                 System.out.println("Button1 was pressed!");
-                root.getChildren().remove(popUp);
+                root.getChildren().remove(background);
                 List<Node> appNodes = root.getChildren();
                 for(Node node: appNodes){
                     node.setDisable(false);
@@ -786,7 +818,7 @@ public class GUI extends Application {
             @Override
             public void handle(ActionEvent event) {
                 System.out.println("Button2 was pressed!");
-                root.getChildren().remove(popUp);
+                root.getChildren().remove(background);
                 List<Node> appNodes = root.getChildren();
                 for(Node node: appNodes){
                     node.setDisable(false);
