@@ -30,11 +30,16 @@ import javafx.stage.StageStyle;
 import javafx.stage.WindowEvent;
 import javafx.util.Duration;
 
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
+
 import static Tic_Tac_Ultimate.Board.dictionary;
 import static Tic_Tac_Ultimate.Tic_Tac_Ultimate.*;
+import static Tic_Tac_Ultimate.Tic_Tac_Ultimate.ultimate;
 //import static Tic_Tac_Ultimate.Tic_Tac_Ultimate.setGameOptions;
 
-public class GUI extends Application  {
+public class GUI extends Application {
+    private Stage stage;
     private BorderPane game ;
     private static Pane marks;
     private static StackPane root;
@@ -47,6 +52,7 @@ public class GUI extends Application  {
 
     @Override
     public void start(Stage stage){
+        this.stage = stage;
         Image icon = new Image("U.png");
         stage.getIcons().add(icon);
         stage.setTitle("Tic Tac Ultimate");
@@ -60,7 +66,7 @@ public class GUI extends Application  {
         Scene scene = new Scene(root);
         stage.setScene(scene);
         stage.show();
-        displayStart();
+        showNavPage();
     }
     private void displayStart(){
         Text ticTac = new Text("Tic tac");
@@ -89,7 +95,7 @@ public class GUI extends Application  {
         ultimate.setTranslateY(-ultimate.getLayoutBounds().getHeight()/2);
 
         plane.setWidth(ultimate.getLayoutBounds().getWidth()*1.2);
-        plane.setHeight(ultimate.getLayoutBounds().getWidth());
+        plane.setHeight(ultimate.getLayoutBounds().getHeight()*1.2);
         plane.setFill(Color.WHITE);
 
         background.setWidth(ultimate.getLayoutBounds().getWidth());
@@ -112,7 +118,7 @@ public class GUI extends Application  {
             rotate(-90, 0, background);
             translate(0, background).setOnFinished(event2 -> {
                 System.out.println("Transition2 completed");
-//            displayGameSelection();
+            displayGameSelection();
             });
         });
 
@@ -125,76 +131,80 @@ public class GUI extends Application  {
         translateTransition.play();
         return translateTransition;
     }
-    private RotateTransition rotate(int fromAngle, int toAngle, Node node){
+    private void rotate(int fromAngle, int toAngle, Node node){
         RotateTransition rotateTransition = new RotateTransition(Duration.seconds(2), node);
         rotateTransition.setAxis(Rotate.X_AXIS);
         rotateTransition.setFromAngle(fromAngle);
         rotateTransition.setToAngle(toAngle);
         rotateTransition.setCycleCount(1);
         rotateTransition.play();
-        return rotateTransition;
     }
     private void showNavPage() {
-        VBox menuPanel = new VBox();
-        Text title = new Text("Tic Tac Ultimate");
-        Font customFont = Font.font("Times New Roman", FontWeight.BOLD, 50);
-        title.setFont(customFont);
+        Text ticTac = new Text("Tic tac");
+        Text ultimate = new Text(" Ultimate ");
+        Rectangle background = new Rectangle();
+        StackPane complex = new StackPane(background, ultimate);
 
-        menuPanel.getChildren().add(title);
+        HBox title = new HBox(ticTac,complex);
+        title.setAlignment(Pos.CENTER);
+        title.setTranslateY(root.getHeight()*0.1);
+        title.setSpacing(10);
+
+        ticTac.setFont(Font.font("Franklin Gothic Heavy", FontWeight.BOLD, 74));
+        ticTac.setFill(Color.BLACK);
+
+        ultimate.setFont(Font.font("Franklin Gothic Heavy", FontWeight.BOLD, 74));
+        ultimate.setFill(Color.WHITE);
+
+        background.setWidth(ultimate.getLayoutBounds().getWidth());
+        background.setHeight(ultimate.getLayoutBounds().getHeight());
+        background.setFill(Color.RED);
+
+        Button start = makeButton("Start");
+        Button options = makeButton("Options");
+        Button exit = makeButton("Exit Game");
+
+        VBox menuPanel = new VBox(title,start,options,exit);
         menuPanel.setAlignment(Pos.TOP_CENTER);
+        menuPanel.setSpacing(25);
         root.getChildren().add(menuPanel);
+    }
 
-        Button startButton = new Button("Start");
-        startButton.setMinSize(150,50);
-        startButton.setOnAction(new EventHandler<ActionEvent>() {
+    private Button makeButton(String text) {
+        Button button = new Button(text);
+        button.setTranslateY(root.getHeight()*0.25);
+        button.setMinSize(200,80);
+        String style = "-fx-padding: 10 20; " +
+                "-fx-font-family: 'Franklin Gothic';" +
+                "-fx-font-size: 35;" +
+                "-fx-border-radius: 5;";
+        button.setStyle( "-fx-background-color: Black; " + "-fx-text-fill: White; " + style );
+        button.setOnMouseEntered(e -> button.setStyle( "-fx-background-color: Red; " + "-fx-text-fill: White; " + style));
+        button.setOnMouseExited(e -> button.setStyle("-fx-background-color: Black; " + "-fx-text-fill: White; " + style ));
+        button.setOnAction(new EventHandler<ActionEvent>() {
             @Override
             public void handle(ActionEvent event) {
-                try {
-                    System.out.println("Start button was Pressed!");
+                System.out.println(text +" button was pressed!");
+                if(text.equals("Start"))
                     displayGameSelection();
-                } catch (Exception e) {
-                    e.printStackTrace();
-                }
+                else if(text.equals("Options"))
+                    displayOptions();
+                else
+                    stage.close();
             }
         });
-
-        Button optionButton = new Button("Options");
-        optionButton.setMinSize(150,50);
-        optionButton.setOnAction(new EventHandler<ActionEvent>() {
-            @Override
-            public void handle(ActionEvent event) {
-                System.out.println("Options button was pressed!");
-            }
-        });
-
-        Button exitButton = new Button("Exit Game");
-        exitButton.setMinSize(150,50);
-        exitButton.setOnAction(new EventHandler<ActionEvent>() {
-            @Override
-            public void handle(ActionEvent event) {
-                System.out.println("Exit button was pressed!");
-            }
-        });
-        menuPanel.getChildren().add(startButton);
-        menuPanel.getChildren().add(optionButton);
-        menuPanel.getChildren().add(exitButton);
+        return button;
     }
     private void displayGameSelection() {
-        root.getChildren().clear();
-        VBox startWindow = new VBox();
-        startWindow.setAlignment(Pos.CENTER);
-        root.getChildren().add(startWindow);
-
-
-        Rectangle simple = new Rectangle();
-        simple.setFill(Color.LIGHTBLUE);
-        simple.widthProperty().bind(root.widthProperty().divide(2));
-        Pane ticTacToe = new Pane();
-        ticTacToe.prefWidthProperty().bind(root.widthProperty().divide(2));
+        Text ticTacToe = new Text("Tic Tac Toe");
+        ticTacToe.setFont(Font.font("Franklin Gothic Heavy", FontWeight.BOLD, 74));
+        ticTacToe.setFill(Color.RED);
+        StackPane simple = new StackPane(ticTacToe);
+        simple.prefWidthProperty().bind(root.widthProperty().divide(2));
         simple.setOnMouseEntered(new EventHandler<MouseEvent>() {
              @Override
              public void handle(MouseEvent event) {
-
+                shake(simple);
              }
         });
         simple.setOnMouseExited(new EventHandler<MouseEvent>() {
@@ -204,7 +214,23 @@ public class GUI extends Application  {
             }
         });
 
+        Text ultimateTicTacToe = new Text("  Ultimate \nTic Tac Toe");
+        ultimateTicTacToe.setFont(Font.font("Franklin Gothic Heavy", FontWeight.BOLD, 74));
+        ultimateTicTacToe.setFill(Color.DARKGREEN);
+        StackPane ultimate = new StackPane(ultimateTicTacToe);
+        ultimate.prefWidthProperty().bind(root.widthProperty().divide(2));
+        ultimate.setOnMouseEntered(new EventHandler<MouseEvent>() {
+            @Override
+            public void handle(MouseEvent event) {
+                shake(ultimate);
+            }
+        });
+        ultimate.setOnMouseExited(new EventHandler<MouseEvent>() {
+            @Override
+            public void handle(MouseEvent event) {
 
+            }
+        });
 //        //Set the width of the content pane to half the width of the stage
 //        stage.widthProperty().addListener((obs, oldWidth, newWidth) -> {
 //            double halfWidth = newWidth.doubleValue() / 2.0;
@@ -212,78 +238,82 @@ public class GUI extends Application  {
 //        });
 
 
-        HBox gameType = new HBox();
+        HBox gameType = new HBox(simple,ultimate);
 
-        gameType.getChildren().addAll(new RadioButton("Tic Tac Toe"), new RadioButton("Super Tic Tac Toe"));
-        gameType.setAlignment(Pos.TOP_CENTER);
-
-        HBox playerOptions = new HBox();
-        playerOptions.getChildren().addAll(new RadioButton("Single Player"), new RadioButton("Double Player"));
-        playerOptions.setAlignment(Pos.CENTER);
-
-        HBox gameDiffPanel = new HBox();
-        gameDiffPanel.getChildren().addAll(
-                new RadioButton("Easy"),
-                new RadioButton("Medium"),
-                new RadioButton("Hard"),
-                new RadioButton("Extreme")
-        );
-        gameDiffPanel.setAlignment(Pos.BOTTOM_CENTER);
-
-        Button playGame = new Button("Play");
-        playGame.setOnAction(new EventHandler<ActionEvent>() {
-            private Pane root;
-            private String gameDifficulty;
-            private boolean singlePlayer;
-            private ToggleGroup gameToggleGroup;
-
-            @Override
-            public void handle(ActionEvent event) {
-                System.out.println("Play Game button was pressed!");
-
-                RadioButton selectedGameType = (RadioButton) gameToggleGroup.getSelectedToggle();
-                RadioButton selectedPlayerOption = (RadioButton) playerToggleGroup.getSelectedToggle();
-                RadioButton selectedDifficulty = (RadioButton) difficultyToggleGroup.getSelectedToggle();
-
-                switch (selectedPlayerOption.getText()){
-                    case "Single Player" -> singlePlayer = true;
-                    case "Double Player" -> singlePlayer = false;
-                }
-
-                try {
-                    if (selectedGameType != null) {
-                        gameDifficulty = selectedDifficulty.getText();
-                        System.out.println("Selected Game Type: " + selectedGameType.getText());
-                        switch (selectedGameType.getText()) {
-                            case "Tic Tac Toe" -> {
-                                if (selectedPlayerOption != null && selectedDifficulty != null) {
-//                                    setGameOptions();
-                                    System.out.println("Tic Tac Toe was Selected");
-                                    System.out.println(selectedPlayerOption.getText() + " and " + selectedDifficulty.getText() + "Game was selected");
-                                    displayGameView();
-                                    Toss();
-                                } else if (selectedPlayerOption != null && selectedDifficulty != null) {
-                                    System.out.println("Single Player and Easy Game was not selected");
-                                }
-                            }
-                            case "Super Tic Tac Toe" -> System.out.println("Selected STTT");
-                        }
-                    }
-
-                } catch (Exception e) {
-                    e.printStackTrace();
-                }
-            }
-        });
+        root.getChildren().clear();
+        VBox startWindow = new VBox(gameType);
+        startWindow.setAlignment(Pos.CENTER);
+        root.getChildren().add(startWindow);
 
 
-        // Assign toggle groups to radio buttons
-        assignToggleGroup(gameType, gameToggleGroup);
-        assignToggleGroup(playerOptions, playerToggleGroup);
-        assignToggleGroup(gameDiffPanel, difficultyToggleGroup);
-        playGame.setAlignment(Pos.CENTER);
-
-        startWindow.getChildren().addAll(gameType, playerOptions, gameDiffPanel, playGame);
+//
+//        HBox playerOptions = new HBox();
+//        playerOptions.getChildren().addAll(new RadioButton("Single Player"), new RadioButton("Double Player"));
+//        playerOptions.setAlignment(Pos.CENTER);
+//
+//        HBox gameDiffPanel = new HBox();
+//        gameDiffPanel.getChildren().addAll(
+//                new RadioButton("Easy"),
+//                new RadioButton("Medium"),
+//                new RadioButton("Hard"),
+//                new RadioButton("Extreme")
+//        );
+//        gameDiffPanel.setAlignment(Pos.BOTTOM_CENTER);
+//
+//        Button playGame = new Button("Play");
+//        playGame.setOnAction(new EventHandler<ActionEvent>() {
+//            private Pane root;
+//            private String gameDifficulty;
+//            private boolean singlePlayer;
+//            private ToggleGroup gameToggleGroup;
+//
+//            @Override
+//            public void handle(ActionEvent event) {
+//                System.out.println("Play Game button was pressed!");
+//
+//                RadioButton selectedGameType = (RadioButton) gameToggleGroup.getSelectedToggle();
+//                RadioButton selectedPlayerOption = (RadioButton) playerToggleGroup.getSelectedToggle();
+//                RadioButton selectedDifficulty = (RadioButton) difficultyToggleGroup.getSelectedToggle();
+//
+//                switch (selectedPlayerOption.getText()){
+//                    case "Single Player" -> singlePlayer = true;
+//                    case "Double Player" -> singlePlayer = false;
+//                }
+//
+//                try {
+//                    if (selectedGameType != null) {
+//                        gameDifficulty = selectedDifficulty.getText();
+//                        System.out.println("Selected Game Type: " + selectedGameType.getText());
+//                        switch (selectedGameType.getText()) {
+//                            case "Tic Tac Toe" -> {
+//                                if (selectedPlayerOption != null && selectedDifficulty != null) {
+////                                    setGameOptions();
+//                                    System.out.println("Tic Tac Toe was Selected");
+//                                    System.out.println(selectedPlayerOption.getText() + " and " + selectedDifficulty.getText() + "Game was selected");
+//                                    displayGameView();
+//                                    Toss();
+//                                } else if (selectedPlayerOption != null && selectedDifficulty != null) {
+//                                    System.out.println("Single Player and Easy Game was not selected");
+//                                }
+//                            }
+//                            case "Super Tic Tac Toe" -> System.out.println("Selected STTT");
+//                        }
+//                    }
+//
+//                } catch (Exception e) {
+//                    e.printStackTrace();
+//                }
+//            }
+//        });
+//
+//
+//        // Assign toggle groups to radio buttons
+//        assignToggleGroup(gameType, gameToggleGroup);
+//        assignToggleGroup(playerOptions, playerToggleGroup);
+//        assignToggleGroup(gameDiffPanel, difficultyToggleGroup);
+//        playGame.setAlignment(Pos.CENTER);
+//
+//        startWindow.getChildren().addAll(gameType, playerOptions, gameDiffPanel, playGame);
     }
     private void assignToggleGroup(HBox hbox, ToggleGroup toggleGroup) {
         hbox.getChildren().forEach(node -> {
@@ -291,6 +321,19 @@ public class GUI extends Application  {
                 ((RadioButton) node).setToggleGroup(toggleGroup);
             }
         });
+    }
+    private void shake(Node node) {
+        final int shakeDistance = 10;
+        final int numShakes = 10;
+        final double shakeDuration = 50; // milliseconds
+
+        TranslateTransition tt = new TranslateTransition(Duration.millis(shakeDuration), node);
+        tt.setCycleCount(2 * numShakes);
+        tt.setAutoReverse(true);
+        tt.setByX(shakeDistance);
+        tt.setByY(shakeDistance);
+
+        tt.playFromStart();
     }
 
     private void displayGameView(){
