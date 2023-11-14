@@ -71,7 +71,7 @@ public class Tic_Tac_Ultimate extends GUI{
 
         String text = (win? "Player"+getPlayer()+" won!" : "It is a draw!")+" Play Again?";
         System.out.println(win? "Player"+getPlayer()+" won!" : "It is a draw!");
-        if(popUp(text,"Yes","Exit",1)==0) {
+        if(popUp(text,"Yes","Exit",1)==1) {
             System.out.println("\n\n\n\n---------   New Game---------");
             if(ultimate)
                 superTicTacToe = new SuperController(true, "easy");

@@ -10,12 +10,16 @@ import javafx.event.EventHandler;
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
+import javafx.scene.control.RadioButton;
+import javafx.scene.control.ToggleGroup;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.*;
+import javafx.scene.text.Font;
+import javafx.scene.text.FontWeight;
 import javafx.scene.text.Text;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
@@ -25,6 +29,7 @@ import javafx.util.Duration;
 
 import static Tic_Tac_Ultimate.Board.dictionary;
 import static Tic_Tac_Ultimate.Tic_Tac_Ultimate.*;
+//import static Tic_Tac_Ultimate.Tic_Tac_Ultimate.setGameOptions;
 
 public class GUI extends Application  {
     private Scene game ;
@@ -32,6 +37,9 @@ public class GUI extends Application  {
     public static double cell;
     private static Color backGround = Color.web("#f2f2f2");
     private static Color midGround = Color.web("#fff");
+    private ToggleGroup difficultyToggleGroup;
+    private ToggleGroup playerToggleGroup;
+    private ToggleGroup gameToggleGroup;
 
     @Override
     public void start(Stage stage) throws Exception {
@@ -41,10 +49,153 @@ public class GUI extends Application  {
         stage.setWidth(1280);
         stage.setHeight(720);
         stage.setResizable(false);
-        stage.setFullScreen(false);
+        stage.setFullScreen(true);
+        stage.setAlwaysOnTop(true);
         stage.setX(0);
         stage.setY(0);
-        displayPlay(stage);
+        StackPane root = new StackPane();
+        Scene scene = new Scene(root);
+        stage.setScene(scene);
+        displayGameView(stage);
+    }
+    private Scene displayMenu(Stage stage) throws Exception{
+
+        VBox menuPanel = new VBox();
+        Text title = new Text("Tic Tac Ultimate");
+        Font customFont = Font.font("Times New Roman", FontWeight.BOLD, 50);
+        title.setFont(customFont);
+
+        menuPanel.getChildren().add(title);
+        menuPanel.setAlignment(Pos.TOP_CENTER);
+        Scene mainMenu = new Scene(menuPanel, 200, 100, midGround);
+
+        Button startButton = new Button("Start");
+        startButton.setMinSize(150,50);
+        startButton.setOnAction(new EventHandler<ActionEvent>() {
+            @Override
+            public void handle(ActionEvent event) {
+                try {
+                    System.out.println("Start button was Pressed!");
+                    displaySelectGame(stage);
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+            }
+        });
+
+        Button optionButton = new Button("Options");
+        optionButton.setMinSize(150,50);
+        optionButton.setOnAction(new EventHandler<ActionEvent>() {
+            @Override
+            public void handle(ActionEvent event) {
+                System.out.println("Options button was pressed!");
+            }
+        });
+
+        Button exitButton = new Button("Exit Game");
+        exitButton.setMinSize(150,50);
+        exitButton.setOnAction(new EventHandler<ActionEvent>() {
+            @Override
+            public void handle(ActionEvent event) {
+                System.out.println("Exit button was pressed!");
+            }
+        });
+        menuPanel.getChildren().add(startButton);
+        menuPanel.getChildren().add(optionButton);
+        menuPanel.getChildren().add(exitButton);
+        return mainMenu;
+    }
+    private void displaySelectGame(Stage stage) throws Exception {
+        VBox selectionPanel = new VBox();
+        selectionPanel.setAlignment(Pos.CENTER);
+        selectionPanel.setSpacing(10);
+        Scene gameSelection = new Scene(selectionPanel, 400, 300);
+
+        HBox gameType = new HBox();
+        gameType.setAlignment(Pos.CENTER);
+        gameType.getChildren().addAll(new RadioButton("Tic Tac Toe"), new RadioButton("Super Tic Tac Toe"));
+        gameType.setAlignment(Pos.TOP_CENTER);
+
+        HBox playerOptions = new HBox();
+        playerOptions.getChildren().addAll(new RadioButton("Single Player"), new RadioButton("Double Player"));
+        playerOptions.setAlignment(Pos.CENTER);
+
+        HBox gameDiffPanel = new HBox();
+        gameDiffPanel.getChildren().addAll(
+                new RadioButton("Easy"),
+                new RadioButton("Medium"),
+                new RadioButton("Hard"),
+                new RadioButton("Extreme")
+        );
+        gameDiffPanel.setAlignment(Pos.BOTTOM_CENTER);
+
+        Button playGame = new Button("Play");
+        playGame.setOnAction(new EventHandler<ActionEvent>() {
+            private Pane root;
+            private String gameDifficulty;
+            private boolean singlePlayer;
+            private ToggleGroup gameToggleGroup;
+
+            @Override
+            public void handle(ActionEvent event) {
+                System.out.println("Play Game button was pressed!");
+
+                RadioButton selectedGameType = (RadioButton) gameToggleGroup.getSelectedToggle();
+                RadioButton selectedPlayerOption = (RadioButton) playerToggleGroup.getSelectedToggle();
+                RadioButton selectedDifficulty = (RadioButton) difficultyToggleGroup.getSelectedToggle();
+
+                switch (selectedPlayerOption.getText()){
+                    case "Single Player" -> singlePlayer = true;
+                    case "Double Player" -> singlePlayer = false;
+                }
+
+                try {
+                    if (selectedGameType != null) {
+                        gameDifficulty = selectedDifficulty.getText();
+                        System.out.println("Selected Game Type: " + selectedGameType.getText());
+                        switch (selectedGameType.getText()) {
+                            case "Tic Tac Toe" -> {
+                                if (selectedPlayerOption != null && selectedDifficulty != null) {
+//                                    setGameOptions();
+                                    System.out.println("Tic Tac Toe was Selected");
+                                    System.out.println(selectedPlayerOption.getText() + " and " + selectedDifficulty.getText() + "Game was selected");
+                                    stage.show();
+                                    Scene mainView = game = new Scene(root, backGround);
+                                    ticTacToe(root);
+                                    stage.setScene(mainView);
+                                    Toss();
+                                } else if (selectedPlayerOption != null && selectedDifficulty != null) {
+                                    System.out.println("Single Player and Easy Game was not selected");
+                                }
+                            }
+                            case "Super Tic Tac Toe" -> System.out.println("Selected STTT");
+                        }
+                    }
+
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+            }
+        });
+
+
+        // Assign toggle groups to radio buttons
+        assignToggleGroup(gameType, gameToggleGroup);
+        assignToggleGroup(playerOptions, playerToggleGroup);
+        assignToggleGroup(gameDiffPanel, difficultyToggleGroup);
+        playGame.setAlignment(Pos.CENTER);
+
+        selectionPanel.getChildren().addAll(gameType, playerOptions, gameDiffPanel, playGame);
+
+        stage.setScene(gameSelection);
+        stage.show();
+    }
+    private void assignToggleGroup(HBox hbox, ToggleGroup toggleGroup) {
+        hbox.getChildren().forEach(node -> {
+            if (node instanceof RadioButton) {
+                ((RadioButton) node).setToggleGroup(toggleGroup);
+            }
+        });
     }
     public void displayStart(Stage stage) throws Exception {
         HBox root = new HBox();
@@ -84,7 +235,7 @@ public class GUI extends Application  {
     private void showNavPage(Stage stage) throws Exception{
 
     }
-    private void displayPlay(Stage stage) throws Exception{
+    private void displayGameView(Stage stage) throws Exception{
         BorderPane root = new BorderPane();
         game =  new Scene(root, backGround);
         StackPane board = new StackPane();
@@ -128,59 +279,7 @@ public class GUI extends Application  {
     private void displayProfile(Stage stage) throws Exception{
 
     }
-//    private void ticTacToe(Group root) throws Exception{
-//
-////        root.set
-////        root.setFillHeight(true);
-////        root.setBackground(new Background(new BackgroundFill(midGround, CornerRadii.EMPTY, Insets.EMPTY)));
-//
-////        Line line = new Line();
-////        line.setStartY(0);
-////        line.setEndY(stage.getHeight());
-////        line.setStartX(Math.floor(stage.getWidth()/stage.getHeight()));
-////        line.setEndX(Math.floor(stage.getWidth()/stage.getHeight())+stage.getHeight());
-//
-//
-//        game.setOnMouseClicked(new EventHandler<MouseEvent>() {
-//            @Override
-//            public void handle(MouseEvent event) {
-//                System.out.println("mouse Clicked!!");
-//                int x = (int) event.getX();
-//                int y = (int) event.getY();
-//                int j = (x-500)/cell;
-//                int i = (y-100)/cell;
-//                if(getPlayer()!=2 || !isSinglePlayer()){
-//                    Tic_Tac_Ultimate.turn(i, j);
-//                    System.out.println("registered!!...............");
-//                }
-//            }
-//        });
-//        for (int row = 0; row < 4; row++) {
-//            int y = (row * cell) + 500;
-//            Line line = new Line();
-//            line.setStartY(100);
-//            line.setEndY(700);
-//            line.setStartX(y);
-//            line.setEndX(y);
-//            line.setStrokeWidth(5);
-//            line.setPickOnBounds(false);
-//            root.getChildren().add(line);
-//        }
-//        for (int col = 0; col < 4; col++) {
-//            int x = (col * cell) + 100;
-//            Line line = new Line();
-//            line.setStartY(x);
-//            line.setEndY(x);
-//            line.setStartX(500);
-//            line.setEndX(1100);
-//            line.setStrokeWidth(5);
-//            line.setPickOnBounds(false);
-//            root.getChildren().add(line);
-//        }
-//        marks = new Group();
-//        root.getChildren().add(marks);
-//    }
-    private void ticTacToe(Pane grid) throws Exception{
+    private void ticTacToe(Pane grid){
         Platform.runLater(() -> {
             grid.setOnMouseClicked(new EventHandler<MouseEvent>() {
                 @Override
@@ -217,7 +316,7 @@ public class GUI extends Application  {
             grid.getChildren().add(marks);
         });
     }
-    private void superTicTacToe(Pane grid) throws Exception{
+    private void superTicTacToe(Pane grid){
         Platform.runLater(() -> {
             grid.setOnMouseClicked(new EventHandler<MouseEvent>() {
                 @Override
@@ -343,49 +442,10 @@ public class GUI extends Application  {
     public static void clearMarks(){
         marks.getChildren().clear();
     }
-//    line = new Line();
-//        line.setStroke(Color.BLACK);
-//        line.setVisible(false);
-//
-//    image = new Rectangle();
-//        image.setFill(Color.RED);
-//        image.setWidth(50);
-//        image.setHeight(50);
-//        image.setVisible(false);
-//
-//    getChildren().add(line);
-//    getChildren().add(image);
-//
-//    setAlignment(Pos.CENTER);
-//
-//    setOnMouseEntered(new EventHandler<MouseEvent>() {
-//        @Override
-//        public void handle(MouseEvent event) {
-//            line.setVisible(true);
-//            image.setVisible(true);
-//        }
-//    });
-//
-//    setOnMouseExited(new EventHandler<MouseEvent>() {
-//        @Override
-//        public void handle(MouseEvent event) {
-//            line.setVisible(false);
-//            image.setVisible(false);
-//        }
-//    });
-//
-//    setOnMouseClicked(new EventHandler<MouseEvent>() {
-//        @Override
-//        public void handle(MouseEvent event) {
-//            isVisible = !isVisible;
-//            line.setVisible(isVisible);
-//            image.setVisible(isVisible);
-//        }
-//    });
     public static void Toss(){
         String text = "Select your side for the toss";
         int choice = popUp(text,"Heads","Tails",1);
-        if(choice == (int)(Math.random()*2) && 1!=1){
+        if(choice == (int)(Math.random()*2)+1 && 1!=1){
             System.out.println("player = 1");
             Tic_Tac_Ultimate.setPlayer(1);
         }
@@ -398,23 +458,19 @@ public class GUI extends Application  {
         final double originalX = stage.getX();
         final double originalY = stage.getY();
         final Timeline[] timeline = new Timeline[1];
-
-        timeline[0] = new Timeline(new KeyFrame(
-                Duration.millis(100),
-                new EventHandler<ActionEvent>() {
+        timeline[0] = new Timeline(new KeyFrame (Duration.millis(1),new EventHandler<ActionEvent>() {
                     int shakeCount = 0;
                     @Override
                     public void handle(ActionEvent event) {
-                        // Shake the stage
-                        if (shakeCount++ % 2 == 0) {
-                            stage.setX(originalX + 10);
-                            stage.setY(originalY + 10);
-                        } else {
-                            stage.setX(originalX);
-                            stage.setY(originalY);
+                        if (!(shakeCount > 400)) {
+                            int dist = shakeCount++ % 10;
+                            if((shakeCount >= 100 && shakeCount < 200) || (shakeCount >= 300 && shakeCount < 400)){
+                                dist *=-1;
+                            }
+                            stage.setX(originalX + dist);
+                            stage.setY(originalY + dist);
                         }
-                        // Stop shaking after 10 shakes
-                        if (shakeCount > 10) {
+                        else {
                             stage.setX(originalX);
                             stage.setY(originalY);
                             timeline[0].stop();
@@ -439,67 +495,58 @@ public class GUI extends Application  {
 //
 //        tt.playFromStart();
 //    }
-    public static int popUp(String text, String button1Text, String button2Text, int design){
-        final int[] choice = {-1};
-        //stage
-        Stage endGame = new Stage(StageStyle.UNDECORATED);
-        endGame.setWidth(500);
-        endGame.setHeight(200);
-        endGame.setResizable(false);
-        endGame.initModality(Modality.APPLICATION_MODAL);
-        endGame.setOnCloseRequest(new EventHandler<WindowEvent>() {
+    public static int popUp(String text, String button1Text, String button2Text, int design) {
+        final int[] choice = new int[1];
+        Stage popUp = new Stage(StageStyle.UNDECORATED);
+        popUp.setWidth(500);
+        popUp.setHeight(200);
+        popUp.setResizable(false);
+        popUp.initModality(Modality.APPLICATION_MODAL);
+        //setDisable(true);
+        popUp.setOnCloseRequest(new EventHandler<WindowEvent>() {
             @Override
             public void handle(WindowEvent event) {
                 event.consume();
-                shakeStage(endGame);
+                shakeStage(popUp);
             }
         });
-
-        //root Node
+        popUp.setOnCloseRequest(event -> {
+            event.consume();
+            shakeStage(popUp);
+        });
         VBox root = new VBox(new Text(text));
         root.setAlignment(Pos.CENTER);
         Scene scene = new Scene(root, 200, 100, midGround);
 
-        //Buttons
+
         Button button1 = new Button(button1Text);
         button1.setMinSize(80,20);
         button1.setOnAction(new EventHandler<ActionEvent>() {
             @Override
             public void handle(ActionEvent event) {
-                System.out.println("Button was pressed!");
-                choice[0] = 0;
-                endGame.close();
+                System.out.println("Button1 was pressed!");
+                choice[0] = 1;
+                popUp.close();
             }
         });
-
         Button button2 = new Button(button2Text);
         button2.setMinSize(80,20);
         button2.setOnAction(new EventHandler<ActionEvent>() {
             @Override
             public void handle(ActionEvent event) {
-                System.out.println("Button was pressed!");
-                choice[0] = 1;
-                endGame.close();
+                System.out.println("Button2 was pressed!");
+                choice[0] = 2;
             }
         });
-
         HBox buttons = new HBox();
         buttons.setAlignment(Pos.BASELINE_CENTER);
         buttons.getChildren().add(button1);
         buttons.getChildren().add(button2);
         root.getChildren().add(buttons);
 
-        //Show Stage
-        endGame.setScene(scene);
-        endGame.showAndWait();
+        popUp.setScene(scene);
+        popUp.showAndWait();
+        for(;choice[0]==0;);
         return choice[0];
     }
-
-//    public void invalidated(Observable observable) {
-//        int newValue = (int) observable.getValue();
-//        if (newValue != -1) {
-//            int a=1;
-////            onValueChanged();
-//        }
-//    }
 }
