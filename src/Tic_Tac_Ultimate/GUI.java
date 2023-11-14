@@ -1,13 +1,14 @@
 package Tic_Tac_Ultimate;
 
-import javafx.animation.KeyFrame;
-import javafx.animation.KeyValue;
-import javafx.animation.Timeline;
+import javafx.animation.*;
 import javafx.application.Application;
 import javafx.application.Platform;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.geometry.Pos;
+import javafx.scene.Group;
+import javafx.scene.Node;
+import javafx.scene.PerspectiveCamera;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.RadioButton;
@@ -17,10 +18,12 @@ import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
+import javafx.scene.paint.PhongMaterial;
 import javafx.scene.shape.*;
 import javafx.scene.text.Font;
 import javafx.scene.text.FontWeight;
 import javafx.scene.text.Text;
+import javafx.scene.transform.Rotate;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 import javafx.stage.StageStyle;
@@ -32,9 +35,10 @@ import static Tic_Tac_Ultimate.Tic_Tac_Ultimate.*;
 //import static Tic_Tac_Ultimate.Tic_Tac_Ultimate.setGameOptions;
 
 public class GUI extends Application  {
-    private Scene game ;
-    public static Pane marks;
-    public static double cell;
+    private BorderPane game ;
+    private static Pane marks;
+    private static StackPane root;
+    private static double cell;
     private static Color backGround = Color.web("#f2f2f2");
     private static Color midGround = Color.web("#fff");
     private ToggleGroup difficultyToggleGroup;
@@ -42,24 +46,95 @@ public class GUI extends Application  {
     private ToggleGroup gameToggleGroup;
 
     @Override
-    public void start(Stage stage) throws Exception {
+    public void start(Stage stage){
         Image icon = new Image("U.png");
         stage.getIcons().add(icon);
         stage.setTitle("Tic Tac Ultimate");
-        stage.setWidth(1280);
-        stage.setHeight(720);
+        stage.setMinWidth(1280);
+        stage.setMinHeight(720);
         stage.setResizable(false);
         stage.setFullScreen(true);
-        stage.setAlwaysOnTop(true);
         stage.setX(0);
         stage.setY(0);
-        StackPane root = new StackPane();
+        root = new StackPane();
         Scene scene = new Scene(root);
         stage.setScene(scene);
-        displayGameView(stage);
+        stage.show();
+        displayStart();
     }
-    private Scene displayMenu(Stage stage) throws Exception{
+    private void displayStart(){
+        Text ticTac = new Text("Tic tac");
+        Text toe = new Text(" toe");
+        Text ultimate = new Text(" Ultimate ");
+        Rectangle background = new Rectangle();
+        Rectangle plane = new Rectangle();
+        StackPane transitionComplex = new StackPane(background, ultimate, plane, toe);
+        transitionComplex.setAlignment(Pos.CENTER_LEFT);
+        HBox title = new HBox(ticTac,transitionComplex);
+        title.setAlignment(Pos.CENTER);
+        title.setStyle("-fx-background-color: #ffff;");
+        title.setSpacing(10);
+        root.getChildren().add(title);
 
+
+        // Create a Text node
+        ticTac.setFont(Font.font("Franklin Gothic Heavy", FontWeight.BOLD, 102));
+        ticTac.setFill(Color.BLACK);
+
+        toe.setFont(Font.font("Franklin Gothic Heavy", FontWeight.BOLD, 102));
+        toe.setFill(Color.BLACK);
+
+        ultimate.setFont(Font.font("Franklin Gothic Heavy", FontWeight.BOLD, 102));
+        ultimate.setFill(Color.WHITE);
+        ultimate.setTranslateY(-ultimate.getLayoutBounds().getHeight()/2);
+
+        plane.setWidth(ultimate.getLayoutBounds().getWidth()*1.2);
+        plane.setHeight(ultimate.getLayoutBounds().getWidth());
+        plane.setFill(Color.WHITE);
+
+        background.setWidth(ultimate.getLayoutBounds().getWidth());
+        background.setHeight(ultimate.getLayoutBounds().getHeight());
+        background.setFill(Color.RED);
+        background.setTranslateY(-ultimate.getLayoutBounds().getHeight()/2);
+
+        Region empty = new Region();
+        TranslateTransition emptyTransition = new TranslateTransition(Duration.seconds(2), empty);
+        emptyTransition.play();
+        emptyTransition.setOnFinished(event -> {
+            System.out.println("Transition completed");
+            transitionComplex.getChildren().setAll(plane, toe, background, ultimate);
+            rotate(0,90, toe);
+            translate(ultimate.getLayoutBounds().getHeight()/2, toe);
+
+            rotate(-90,0, ultimate);
+            translate(0, ultimate);
+
+            rotate(-90, 0, background);
+            translate(0, background).setOnFinished(event2 -> {
+                System.out.println("Transition2 completed");
+//            displayGameSelection();
+            });
+        });
+
+
+    }
+    private TranslateTransition translate(double magnitude, Node node){
+        TranslateTransition translateTransition = new TranslateTransition(Duration.seconds(2), node);
+        translateTransition.setToY(magnitude);
+        translateTransition.setCycleCount(1);
+        translateTransition.play();
+        return translateTransition;
+    }
+    private RotateTransition rotate(int fromAngle, int toAngle, Node node){
+        RotateTransition rotateTransition = new RotateTransition(Duration.seconds(2), node);
+        rotateTransition.setAxis(Rotate.X_AXIS);
+        rotateTransition.setFromAngle(fromAngle);
+        rotateTransition.setToAngle(toAngle);
+        rotateTransition.setCycleCount(1);
+        rotateTransition.play();
+        return rotateTransition;
+    }
+    private void showNavPage() {
         VBox menuPanel = new VBox();
         Text title = new Text("Tic Tac Ultimate");
         Font customFont = Font.font("Times New Roman", FontWeight.BOLD, 50);
@@ -67,7 +142,7 @@ public class GUI extends Application  {
 
         menuPanel.getChildren().add(title);
         menuPanel.setAlignment(Pos.TOP_CENTER);
-        Scene mainMenu = new Scene(menuPanel, 200, 100, midGround);
+        root.getChildren().add(menuPanel);
 
         Button startButton = new Button("Start");
         startButton.setMinSize(150,50);
@@ -76,7 +151,7 @@ public class GUI extends Application  {
             public void handle(ActionEvent event) {
                 try {
                     System.out.println("Start button was Pressed!");
-                    displaySelectGame(stage);
+                    displayGameSelection();
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
@@ -103,16 +178,42 @@ public class GUI extends Application  {
         menuPanel.getChildren().add(startButton);
         menuPanel.getChildren().add(optionButton);
         menuPanel.getChildren().add(exitButton);
-        return mainMenu;
     }
-    private void displaySelectGame(Stage stage) throws Exception {
-        VBox selectionPanel = new VBox();
-        selectionPanel.setAlignment(Pos.CENTER);
-        selectionPanel.setSpacing(10);
-        Scene gameSelection = new Scene(selectionPanel, 400, 300);
+    private void displayGameSelection() {
+        root.getChildren().clear();
+        VBox startWindow = new VBox();
+        startWindow.setAlignment(Pos.CENTER);
+        root.getChildren().add(startWindow);
+
+
+        Rectangle simple = new Rectangle();
+        simple.setFill(Color.LIGHTBLUE);
+        simple.widthProperty().bind(root.widthProperty().divide(2));
+        Pane ticTacToe = new Pane();
+        ticTacToe.prefWidthProperty().bind(root.widthProperty().divide(2));
+        simple.setOnMouseEntered(new EventHandler<MouseEvent>() {
+             @Override
+             public void handle(MouseEvent event) {
+
+             }
+        });
+        simple.setOnMouseExited(new EventHandler<MouseEvent>() {
+            @Override
+            public void handle(MouseEvent event) {
+
+            }
+        });
+
+
+//        //Set the width of the content pane to half the width of the stage
+//        stage.widthProperty().addListener((obs, oldWidth, newWidth) -> {
+//            double halfWidth = newWidth.doubleValue() / 2.0;
+//            simple.setWidth(halfWidth);
+//        });
+
 
         HBox gameType = new HBox();
-        gameType.setAlignment(Pos.CENTER);
+
         gameType.getChildren().addAll(new RadioButton("Tic Tac Toe"), new RadioButton("Super Tic Tac Toe"));
         gameType.setAlignment(Pos.TOP_CENTER);
 
@@ -159,10 +260,7 @@ public class GUI extends Application  {
 //                                    setGameOptions();
                                     System.out.println("Tic Tac Toe was Selected");
                                     System.out.println(selectedPlayerOption.getText() + " and " + selectedDifficulty.getText() + "Game was selected");
-                                    stage.show();
-                                    Scene mainView = game = new Scene(root, backGround);
-                                    ticTacToe(root);
-                                    stage.setScene(mainView);
+                                    displayGameView();
                                     Toss();
                                 } else if (selectedPlayerOption != null && selectedDifficulty != null) {
                                     System.out.println("Single Player and Easy Game was not selected");
@@ -185,10 +283,7 @@ public class GUI extends Application  {
         assignToggleGroup(gameDiffPanel, difficultyToggleGroup);
         playGame.setAlignment(Pos.CENTER);
 
-        selectionPanel.getChildren().addAll(gameType, playerOptions, gameDiffPanel, playGame);
-
-        stage.setScene(gameSelection);
-        stage.show();
+        startWindow.getChildren().addAll(gameType, playerOptions, gameDiffPanel, playGame);
     }
     private void assignToggleGroup(HBox hbox, ToggleGroup toggleGroup) {
         hbox.getChildren().forEach(node -> {
@@ -197,49 +292,12 @@ public class GUI extends Application  {
             }
         });
     }
-    public void displayStart(Stage stage) throws Exception {
-        HBox root = new HBox();
-        root.setBackground(new javafx.scene.layout.Background(
-                new javafx.scene.layout.BackgroundFill(Color.BLACK, null, null)));
-        Scene scene = new Scene(root, midGround);
 
-        Rectangle simple = new Rectangle();
-        simple.setFill(Color.LIGHTBLUE);
-        simple.widthProperty().bind(root.widthProperty().divide(2));
-        simple.setHeight(stage.getHeight());
-        System.out.println("this is width: " + stage.getWidth());
-//
-//        Text text = new Text("Tic Tac Toe");
-//
-        root.getChildren().add(simple);
-//
-//
-        Rectangle ultimate = new Rectangle();
-        ultimate.setFill(Color.BLUE);
-        ultimate.widthProperty().bind(root.widthProperty().divide(2));
-        ultimate.setHeight(stage.getHeight());
-
-        Text text2 = new Text("Super Tic Tac Toe");
-
-        root.getChildren().add(ultimate);
-
-//        //Set the width of the content pane to half the width of the stage
-//        stage.widthProperty().addListener((obs, oldWidth, newWidth) -> {
-//            double halfWidth = newWidth.doubleValue() / 2.0;
-//            simple.setWidth(halfWidth);
-//        });
-
-        stage.setScene(scene);
-        stage.show();
-    }
-    private void showNavPage(Stage stage) throws Exception{
-
-    }
-    private void displayGameView(Stage stage) throws Exception{
-        BorderPane root = new BorderPane();
-        game =  new Scene(root, backGround);
+    private void displayGameView(){
+        root.getChildren().clear();
+        game = new BorderPane();
         StackPane board = new StackPane();
-        root.setCenter(board);
+        game.setCenter(board);
 
         Rectangle rectangle = new Rectangle();
         rectangle.setFill(midGround);
@@ -260,24 +318,7 @@ public class GUI extends Application  {
         board.getChildren().add(grid);
 
         superTicTacToe(grid);
-        stage.setScene(game);
-        stage.show();
         Toss();
-    }
-    private void displayOptions(Stage stage) throws Exception{
-
-    }
-    private void displayRuleBook(Stage stage) throws Exception{
-
-    }
-    private void displayHelp(Stage stage) throws Exception{
-
-    }
-    private void displayAboutUs(Stage stage) throws Exception{
-
-    }
-    private void displayProfile(Stage stage) throws Exception{
-
     }
     private void ticTacToe(Pane grid){
         Platform.runLater(() -> {
@@ -360,6 +401,26 @@ public class GUI extends Application  {
             marks = new Pane();
             grid.getChildren().add(marks);
         });
+    }
+    private void displayOptions(){
+        root.getChildren().clear();
+
+    }
+    private void displayRuleBook(){
+        root.getChildren().clear();
+
+    }
+    private void displayHelp(){
+        root.getChildren().clear();
+
+    }
+    private void displayAboutUs(){
+        root.getChildren().clear();
+
+    }
+    private void displayProfile(){
+        root.getChildren().clear();
+
     }
     public static void showTurn(int row, int col, int[] superIndex){
         int y = (int) ((int) (row*(cell/3))+(superIndex[0]*cell)+((cell/3)*0.2));
