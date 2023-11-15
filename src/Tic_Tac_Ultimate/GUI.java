@@ -240,34 +240,42 @@ public class GUI extends Application {
             RadioButton selectedDifficulty = (RadioButton) difficultyToggleGroup.getSelectedToggle();
 
             if(selectedGameType != null && selectedPlayerOption != null && selectedDifficulty != null){
-                if((selectedGameType.getText().equals("Super Tic Tac Toe") && !selectedDifficulty.getText().equals("Easy"))
-                        || selectedDifficulty.getText().equals("Hard")){
-                    displayPopupMessage("Under Development", "Super Tic Tac Toe\nHard Mode");
-                    if(selectedGameType.getText().equals("Super Tic Tac Toe")){
-                        resetRadioButtons(gameToggleGroup);
-                    }
-                    resetRadioButtons(difficultyToggleGroup);
-                }
+
                 try {
                     switch (selectedPlayerOption.getText()){
                         case "Single Player" -> singlePlayer = true;
                         case "Double Player" -> singlePlayer = false;
                     }
+                    if(!singlePlayer)
+                        displayPopupMessage("Irrelevant Difficulty", "No Difficulty is required in case of" +
+                                " Double Player Game\n\nThe game will now Continue");
                     difficulty = selectedDifficulty.getText();
                     System.out.println("Selected Game Type: " + selectedGameType.getText());
                     switch (selectedGameType.getText()) {
                         case "Tic Tac Toe" -> {
-                            ultimate = false;
-                            startGame();
-                            displayGame();
-                            System.out.println("Tic Tac Toe was Selected");
-                            System.out.println(selectedPlayerOption.getText() + " and " + selectedDifficulty.getText() + " Game was selected");
+                            if(selectedDifficulty.getText().equals("Easy") || selectedDifficulty.getText().equals("Medium")) {
+                                ultimate = false;
+                                startGame();
+                                displayGame();
+                                System.out.println("Tic Tac Toe was Selected");
+                                System.out.println(selectedPlayerOption.getText() + " and " + selectedDifficulty.getText() + " Game was selected");
+                            } else {
+                                displayPopupMessage("Under Development", "Tic Tac Toe:\n\tHard Mode\n\tExtreme Mode");
+                                resetRadioButtons(gameToggleGroup);
+                                resetRadioButtons(difficultyToggleGroup);
+                            }
                         }
                         case "Super Tic Tac Toe" -> {
-                            ultimate = true;
-                            startGame();
-                            displayGame();
-                            System.out.println("Selected Super Tic Tac Toe");
+                            if(selectedDifficulty.getText().equals("Easy")) {
+                                ultimate = true;
+                                startGame();
+                                displayGame();
+                                System.out.println("Selected Super Tic Tac Toe");
+                            } else {
+                                displayPopupMessage("Under Development", "Super Tic Tac Toe:\n\tMedium Mode\n\tHard Mode\n\tExtreme Mode");
+                                resetRadioButtons(gameToggleGroup);
+                                resetRadioButtons(difficultyToggleGroup);
+                            }
                         }
                     }
 
