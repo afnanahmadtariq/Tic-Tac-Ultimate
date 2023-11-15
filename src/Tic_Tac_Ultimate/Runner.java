@@ -1,19 +1,17 @@
 package Tic_Tac_Ultimate;
-import javafx.application.Application;
 
 import java.util.Arrays;
 
 import static Tic_Tac_Ultimate.Board.dictionary;
 
-public class Tic_Tac_Ultimate{
+public class Runner {
     private static SuperController superTicTacToe;
     private static Controller ticTacToe;
-    public static final GUI gui = new GUI();
     public static boolean ultimate;
     public static boolean singlePlayer;
     public static String difficulty = "none";
     public static void main(String[] args) {
-        gui.initialize(args);
+        GUI.initialize(args);
     }
     public static void startGame(){
         if(ultimate)
@@ -43,11 +41,11 @@ public class Tic_Tac_Ultimate{
             return ticTacToe.isSinglePlayer();
     }
     public static void showTurn(int[] index){
-        gui.showTurn(index[0],index[1]);
+        GUI.showTurn(index[0],index[1]);
         System.out.println("Show GUI mark Done!");
     }
     public static void showTurn(int[] index, int[] superIndex){
-        gui.showTurn(index[0],index[1], superIndex);
+        GUI.showTurn(index[0],index[1], superIndex);
         System.out.println("Show GUI mark Done!");
     }
     public static boolean turn(int row, int col){
@@ -62,7 +60,7 @@ public class Tic_Tac_Ultimate{
     }
     public static void endGame(boolean win, int winValue){
         if(win){
-            gui.markLine(winValue);
+            GUI.markLine(winValue);
             System.out.println("place 'player' at index");
             System.out.println("Won with value: " + winValue);
             System.out.println("index at: " + Arrays.deepToString(dictionary.get(winValue)));
@@ -72,30 +70,30 @@ public class Tic_Tac_Ultimate{
 
         String text = (win? "Player"+getPlayer()+" won!" : "It is a draw!")+" Play Again?";
         System.out.println(win? "Player"+getPlayer()+" won!" : "It is a draw!");
-        gui.popUp(text,"Yes","Exit",2);
+        GUI.popUp(text,"Yes","Exit",2);
     }
     public static void endGame(int choice){
         if(choice==1) {
             System.out.println("\n\n\n\n---------   New Game---------");
             startGame();
-            gui.clearMarks();
-            gui.clearTurn();
-            gui.Toss();
+            GUI.clearMarks();
+            GUI.clearTurn();
+            GUI.Toss();
         }
         else{
             System.out.println("\n\n\n\n---------  Exit Game---------");
-            gui.clearGame();
+            GUI.clearGame();
         }
     }
     public static void endGame(int[] superIndex, boolean win, int winValue){
         if(win){
-            gui.markLine(superIndex, winValue);
+            GUI.markLine(superIndex, winValue);
             System.out.println("won at super index: " + Arrays.toString(superIndex));
             System.out.println("Won with value: " + winValue);
             System.out.println("index at: " + Arrays.deepToString(dictionary.get(winValue)));
         }
         else {
-            gui.markDraw(superIndex);
+            GUI.markDraw(superIndex);
             System.out.println("place 'D' at index");
         }
     }

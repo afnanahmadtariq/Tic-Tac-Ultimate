@@ -38,7 +38,7 @@ public class SuperController extends SuperBoard{
         System.out.println("Super index BEFORE player: " + player +" turn_ row:" + this.superIndex[0] + " col: " + this.superIndex[1]);
         if(markTurn(index,superIndex)){
             System.out.println("registered!!...............");
-            Tic_Tac_Ultimate.showTurn(index, superIndex);
+            Runner.showTurn(index, superIndex);
             switch(super.check(superIndex)){
                 case 1 -> end(true,superIndex);
                 case 0 -> end(false,superIndex);
@@ -54,7 +54,7 @@ public class SuperController extends SuperBoard{
                 this.superIndex = new int[] {-1, -1};
             if(!end){
                 player = (player%2)+1;
-                Tic_Tac_Ultimate.gui.updateTurn();
+                GUI.updateTurn();
                 System.out.println("Player Changed!");
                 cpuTurn();
             }
@@ -85,14 +85,14 @@ public class SuperController extends SuperBoard{
             super.superBoard[superIndex[0]][superIndex[1]].game = player;
         else
             super.superBoard[superIndex[0]][superIndex[1]].game = 0;
-        Tic_Tac_Ultimate.endGame(superIndex, win, super.winValue);
+        Runner.endGame(superIndex, win, super.winValue);
     }
     private boolean end(boolean win){
         if(win)
             super.game = player;
         else
             super.game = 0;
-        Tic_Tac_Ultimate.endGame(win, super.winValue);
+        Runner.endGame(win, super.winValue);
         return true;
     }
 }

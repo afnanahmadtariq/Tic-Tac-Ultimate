@@ -34,7 +34,7 @@ public class Controller extends Board{
     public boolean doTurn(int[] index){
         if(markTurn(index)){
             System.out.println("registered!!...............");
-            Tic_Tac_Ultimate.showTurn(index);
+            Runner.showTurn(index);
             boolean end = switch(super.check()){
                 case 1 -> end(true);
                 case 0 -> end(false);
@@ -42,7 +42,7 @@ public class Controller extends Board{
             };
             if(!end){
                 player = (player%2)+1;
-                Tic_Tac_Ultimate.gui.updateTurn();
+                GUI.updateTurn();
                 System.out.println("Player Changed!");
                 cpuTurn();
             }
@@ -65,7 +65,7 @@ public class Controller extends Board{
         else {
             super.game = 0;
         }
-        Tic_Tac_Ultimate.endGame(win, super.winValue);
+        Runner.endGame(win, super.winValue);
         return true;
     }
 }

@@ -24,26 +24,21 @@ import javafx.util.Duration;
 import java.util.List;
 
 import static Tic_Tac_Ultimate.Board.dictionary;
-import static Tic_Tac_Ultimate.Tic_Tac_Ultimate.*;
+import static Tic_Tac_Ultimate.Runner.*;
 
 public class GUI extends Application {
-    private Stage stage;
-    private BorderPane game ;
-    private Group marks;
-    private StackPane root;
-    private double cell;
-    private Text turn1;
-    private Text turn2;
-    private Group grid1;
-    private Group grid2;
-    private Color backGround;
-    private Color midGround;
-    public GUI(){
-        marks = new Group();
-        backGround = Color.web("#f2f2f2");
-        midGround = Color.web("#fff");
-    }
-    public void initialize(String[] args){
+    private static Stage stage;
+    private static StackPane root;
+    private static Color backGround = Color.web("#f2f2f2");
+    private static Color midGround = Color.web("#fff");
+    private static Text turn1;
+    private static Text turn2;
+    private static Group grid1;
+    private static Group grid2;
+    private static BorderPane game = new BorderPane();
+    private static double cell;
+    private static Group marks = new Group();
+    public static void initialize(String[] args){
         launch(args);
     }
     @Override
@@ -65,7 +60,7 @@ public class GUI extends Application {
         stage.show();
         displayStart();
     }
-    private void displayStart(){
+    private static void displayStart(){
         Text ticTac = new Text("Tic tac");
         Text toe = new Text(" toe");
         Text ultimate = new Text(" Ultimate ");
@@ -119,14 +114,14 @@ public class GUI extends Application {
             });
         });
     }
-    private void translate(double startY, double endY, Node node){
+    private static void translate(double startY, double endY, Node node){
         TranslateTransition translateTransition = new TranslateTransition(Duration.seconds(2), node);
         translateTransition.setFromY(startY);
         translateTransition.setToY(endY);
         translateTransition.setCycleCount(1);
         translateTransition.play();
     }
-    private void rotate(int fromAngle, int toAngle, Node node){
+    private static void rotate(int fromAngle, int toAngle, Node node){
         RotateTransition rotateTransition = new RotateTransition(Duration.seconds(2), node);
         rotateTransition.setAxis(Rotate.X_AXIS);
         rotateTransition.setFromAngle(fromAngle);
@@ -134,7 +129,7 @@ public class GUI extends Application {
         rotateTransition.setCycleCount(1);
         rotateTransition.play();
     }
-    private void displayMainMenu() {
+    private static void displayMainMenu() {
         Text ticTac = new Text("Tic tac");
         Text ultimate = new Text(" Ultimate ");
         Rectangle background = new Rectangle();
@@ -165,7 +160,7 @@ public class GUI extends Application {
         menuPanel.setSpacing(25);
         root.getChildren().add(menuPanel);
     }
-    private Button makeButton(String text) {
+    private static Button makeButton(String text) {
         Button button = new Button(text);
         button.setTranslateY(root.getHeight()*0.25);
         button.setMinSize(200,80);
@@ -200,14 +195,14 @@ public class GUI extends Application {
         });
         return button;
     }
-    private void displayPopupMessage(String title, String message) {
+    private static void displayPopupMessage(String title, String message) {
         Alert alert = new Alert(Alert.AlertType.INFORMATION);
         alert.setTitle(title);
         alert.setHeaderText(null); // Setting header text to null means no header
         alert.setContentText(message);
         alert.showAndWait(); // Wait for user action (OK button click) before continuing
     }
-    private void displayGameSelection() {
+    private static void displayGameSelection() {
     root.getChildren().clear();
         VBox selectionPanel = new VBox();
         selectionPanel.setAlignment(Pos.CENTER);
@@ -293,22 +288,21 @@ public class GUI extends Application {
         selectionPanel.getChildren().addAll(gameType, playerOptions, gameDiffPanel, playGame);
 
     }
-    private void resetRadioButtons(ToggleGroup toggleGroup) {
+    private static void resetRadioButtons(ToggleGroup toggleGroup) {
         toggleGroup.getToggles().forEach(toggle -> {
             RadioButton radioButton = (RadioButton) toggle;
             radioButton.setSelected(false);
         });
     }
-    private void assignToggleGroup(HBox hbox, ToggleGroup toggleGroup) {
+    private static void assignToggleGroup(HBox hbox, ToggleGroup toggleGroup) {
         hbox.getChildren().forEach(node -> {
             if (node instanceof RadioButton) {
                 ((RadioButton) node).setToggleGroup(toggleGroup);
             }
         });
     }
-    private void displayGame() {
+    private static void displayGame() {
         root.getChildren().clear();
-        game = new BorderPane();
         game.setPadding(new Insets(10));
         root.getChildren().add(game);
 
@@ -338,7 +332,7 @@ public class GUI extends Application {
             ticTacToe(grid);
         Toss();
     }
-    private StackPane playerInfo(int player, Color color){
+    private static StackPane playerInfo(int player, Color color){
         Rectangle rectangle = makeRectangle(3.5/9, 0.95);
 
         Text playerName = new Text("Player " + player);
@@ -388,23 +382,23 @@ public class GUI extends Application {
         stackPane.getChildren().addAll(rectangle, info);
         return stackPane;
     }
-    public void Toss(){
+    public static void Toss(){
         String text = "Select your side for the toss";
         popUp(text,"Heads","Tails",1);
     }
-    private void Toss(int choice){
+    private static void Toss(int choice){
         if(choice == (int)(Math.random()*2)+1){
             System.out.println("player = 1");
-            Tic_Tac_Ultimate.setPlayer(1);
+            Runner.setPlayer(1);
             setTurn(1);
         }
         else{
             System.out.println("player = 2");
-            Tic_Tac_Ultimate.setPlayer(2);
+            Runner.setPlayer(2);
             setTurn(2);
         }
     }
-    public void popUp(String text, String button1Text, String button2Text, int method){
+    public static void popUp(String text, String button1Text, String button2Text, int method){
         BorderPane background = new BorderPane();
         StackPane popUp = new StackPane();
         background.setCenter(popUp);
@@ -412,10 +406,6 @@ public class GUI extends Application {
         Rectangle box = makeRectangle(0.4,0.2);
         popUp.getChildren().add(box);
 
-        List<Node> appNodes = root.getChildren();
-        for(Node node: appNodes){
-            node.setDisable(true);
-        }
         root.getChildren().add(background);
         VBox vBox = new VBox(new Text(text));
         vBox.setAlignment(Pos.CENTER);
@@ -428,10 +418,6 @@ public class GUI extends Application {
         button1.setOnAction(event -> {
             System.out.println("Button1 was pressed!");
             root.getChildren().remove(background);
-            List<Node> appNodes1 = root.getChildren();
-            for(Node node: appNodes1){
-                node.setDisable(false);
-            }
             if(method==1)
                 Toss(1);
             else if(method==2)
@@ -442,10 +428,6 @@ public class GUI extends Application {
         button2.setOnAction(event -> {
             System.out.println("Button2 was pressed!");
             root.getChildren().remove(background);
-            List<Node> appNodes12 = root.getChildren();
-            for(Node node: appNodes12){
-                node.setDisable(false);
-            }
             if(method==1)
                 Toss(2);
             else if(method==2)
@@ -457,7 +439,7 @@ public class GUI extends Application {
         vBox.getChildren().add(buttons);
 
     }
-    public void updateTurn(){
+    public static void updateTurn(){
         if(turn1.getFill()==Color.GREEN) {
             turn1.setFill(Color.LIGHTGREY);
             turn2.setFill(Color.GREEN);
@@ -484,7 +466,7 @@ public class GUI extends Application {
             }
         }
     }
-    private void setTurn(int player){
+    private static void setTurn(int player){
         if(player==1)
             turn1.setFill(Color.GREEN);
         else
@@ -500,7 +482,7 @@ public class GUI extends Application {
             }
         }
     }
-    public void clearTurn(){
+    public static void clearTurn(){
         turn1.setFill(Color.LIGHTGREY);
         turn2.setFill(Color.LIGHTGREY);
         if(ultimate){
@@ -513,11 +495,11 @@ public class GUI extends Application {
             }
         }
     }
-    private void showX(Group node){
+    private static void showX(Group node){
         markLine(0,0,100,100,Color.RED,0,node);
         markLine(100,0,0,100,Color.RED,0.2,node);
     }
-    private Rectangle makeRectangle(double widthMultiplier, double heightMultiplier){
+    private static Rectangle makeRectangle(double widthMultiplier, double heightMultiplier){
         Rectangle rectangle = new Rectangle();
         rectangle.setFill(midGround);
         rectangle.widthProperty().bind(root.heightProperty().multiply(widthMultiplier));
@@ -526,7 +508,7 @@ public class GUI extends Application {
         rectangle.setArcHeight(50);
         return rectangle;
     }
-    private void ticTacToe(Pane grid){
+    private static void ticTacToe(Pane grid){
         Platform.runLater(() -> {
             grid.setOnMouseClicked(event -> {
                 System.out.println("mouse Clicked!!");
@@ -549,7 +531,7 @@ public class GUI extends Application {
             grid.getChildren().add(marks);
         });
     }
-    private void superTicTacToe(Pane grid){
+    private static void superTicTacToe(Pane grid){
         Platform.runLater(() -> {
             grid.setOnMouseClicked(event -> {
                 System.out.println("mouse Clicked!!");
@@ -581,7 +563,7 @@ public class GUI extends Application {
             grid.getChildren().add(marks);
         });
     }
-    private Line makeHLine(double Multiplier, int stroke, Pane grid){
+    private static Line makeHLine(double Multiplier, int stroke, Pane grid){
         Line line = new Line();
         line.setStartY(0);
         line.endYProperty().bind(grid.maxHeightProperty());
@@ -590,7 +572,7 @@ public class GUI extends Application {
         line.setStrokeWidth(stroke);
         return line;
     }
-    private Line makeVLine(double Multiplier, int stroke, Pane grid){
+    private static Line makeVLine(double Multiplier, int stroke, Pane grid){
         Line line = new Line();
         line.startYProperty().bind(grid.maxHeightProperty().multiply(Multiplier));
         line.endYProperty().bind(grid.maxHeightProperty().multiply(Multiplier));
@@ -599,25 +581,25 @@ public class GUI extends Application {
         line.setStrokeWidth(stroke);
         return line;
     }
-    public void showTurn(int row, int col, int[] superIndex){
+    public static void showTurn(int row, int col, int[] superIndex){
         if(getPlayer()==1)
             markX(row,col,superIndex);
         else
             markO(row, col,superIndex);
     }
-    public void showTurn(int row, int col){
+    public static void showTurn(int row, int col){
         if(getPlayer()==1)
             markX(row,col);
         else
             markO(row, col);
     }
-    public void markDraw(int[] superIndex){
+    public static void markDraw(int[] superIndex){
         int x = (int)(superIndex[1]*cell)+4;
         int y = (int)(superIndex[0]*cell)+4;
         showMark(x,y,true);
         showMark(x + ((int) (cell * 0.2) - 4), y + ((int) (cell * 0.2) - 4), false);
     }
-    private void showMark(int x, int y,  boolean white){
+    private static void showMark(int x, int y,  boolean white){
         Image dIcon = new Image("D.png");
         Image darkIcon = new Image("white.png");
 
@@ -635,7 +617,7 @@ public class GUI extends Application {
         marks.getChildren().add(imageView);
         System.out.println("Marked on grid!");
     }
-    public void markLine(int value){
+    public static void markLine(int value){
         int[][] lineIndex = dictionary.get(value);
         int startX =(int)((lineIndex[0][1]*cell)+(int)(cell*0.5));
         int startY =(int)((lineIndex[0][0]*cell)+(int)(cell*0.5));
@@ -644,7 +626,7 @@ public class GUI extends Application {
 
         markLine(startX,startY,endX,endY,Color.LIGHTGOLDENRODYELLOW,0,marks);
     }
-    public void markLine(int[] superIndex,int value){
+    public static void markLine(int[] superIndex,int value){
         int[][] lineIndex = dictionary.get(value);
         int startX =(int)((superIndex[1]*cell)+(lineIndex[0][1]*(cell/3))+(int)((cell/3)*0.5));
         int startY =(int)((superIndex[0]*cell)+(lineIndex[0][0]*(cell/3))+(int)((cell/3)*0.5));
@@ -661,7 +643,7 @@ public class GUI extends Application {
         else
             markO(superIndex[0],superIndex[1]);
     }
-    private void markLine(int startX, int startY, int endX, int endY, Color color, double delay,Group node){
+    private static void markLine(int startX, int startY, int endX, int endY, Color color, double delay,Group node){
         Line line = new Line(startX, startY,startX, startY);
         line.setStrokeWidth(0);
         line.setStroke(color);
@@ -692,7 +674,7 @@ public class GUI extends Application {
         timeline.getKeyFrames().addAll(startFrame, endFrame);
         timeline.play();
     }
-    private void markX(int row, int col, int[] superIndex){
+    private static void markX(int row, int col, int[] superIndex){
         int startY = (int) ((int) (row*(cell/3))+(superIndex[0]*cell)+((cell/3)*0.2));
         int startX = (int) ((int) (col*(cell/3))+(superIndex[1]*cell)+((cell/3)*0.2));
         int endY = startY + (int)((cell/3)*0.6);
@@ -702,7 +684,7 @@ public class GUI extends Application {
         endX = endX - (int)((cell/3)*0.6);
         markLine(startX,startY,endX,endY,Color.RED,0.2,marks);
     }
-    private void markX(int row, int col){
+    private static void markX(int row, int col){
         int startY = (int)((row*cell)+(cell*0.2));
         int startX = (int)((col*cell)+(cell*0.2));
         int endY = startY + (int)(cell*0.6);
@@ -712,18 +694,18 @@ public class GUI extends Application {
         endX = endX - (int)(cell*0.6);
         markLine(startX,startY,endX,endY,Color.RED,0.2,marks);
     }
-    private void markO(int row, int col){
+    private static void markO(int row, int col){
         double y = (row*cell)+(cell*0.5);
         double x = (col*cell)+(cell*0.5);
         markO(x,y,cell*0.6,marks);
     }
 
-    private void markO(int row, int col, int[] superIndex){
+    private static void markO(int row, int col, int[] superIndex){
         double y =  (row*(cell/3))+(superIndex[0]*cell)+((cell/3)*0.5);
         double x =  (col*(cell/3))+(superIndex[1]*cell)+((cell/3)*0.5);
-        markO(x,y,((cell/3)*0.3),marks);
+        markO(x,y,((cell/3)*0.6),marks);
     }
-    private void markO(double x, double y, double radius,Group node){
+    private static void markO(double x, double y, double diameter,Group node){
         Circle circle = new Circle(x,y,0);
         circle.setFill(Color.BLUE);
         Circle inner = new Circle(x,y,0);
@@ -732,24 +714,24 @@ public class GUI extends Application {
 
         Timeline timeline = new Timeline();
         timeline.setCycleCount(1);
-        KeyValue keyValueRadius = new KeyValue(circle.radiusProperty(), (radius*0.5));
+        KeyValue keyValueRadius = new KeyValue(circle.radiusProperty(), (diameter*0.5));
         KeyFrame keyFrame = new KeyFrame(Duration.seconds(0.25), keyValueRadius);
         timeline.getKeyFrames().add(keyFrame);
         timeline.play();
 
         Timeline innerTimeLine = new Timeline();
         innerTimeLine.setCycleCount(1);
-        KeyValue keyValueRadiusInner = new KeyValue(inner.radiusProperty(), (radius*0.38));
+        KeyValue keyValueRadiusInner = new KeyValue(inner.radiusProperty(), (diameter*0.38));
         KeyFrame keyFrameInner = new KeyFrame(Duration.seconds(0.25), keyValueRadiusInner);
         innerTimeLine.getKeyFrames().add(keyFrameInner);
         innerTimeLine.play();
 
         node.getChildren().addAll(circle,inner);
     }
-    public void clearMarks(){
+    public static void clearMarks(){
         marks.getChildren().clear();
     }
-    public void clearGame(){
+    public static void clearGame(){
         clearMarks();
         marks = null;
         game = null;
