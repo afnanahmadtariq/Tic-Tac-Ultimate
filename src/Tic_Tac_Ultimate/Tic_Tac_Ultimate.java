@@ -13,7 +13,7 @@ public class Tic_Tac_Ultimate{
     public static boolean singlePlayer;
     public static String difficulty = "none";
     public static void main(String[] args) {
-        Application.launch(args);
+        gui.initialize(args);
     }
     public static void startGame(){
         if(ultimate)

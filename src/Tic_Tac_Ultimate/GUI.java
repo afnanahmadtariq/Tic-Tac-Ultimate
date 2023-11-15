@@ -38,7 +38,9 @@ public class GUI extends Application {
     private Group grid2;
     private Color backGround = Color.web("#f2f2f2");
     private Color midGround = Color.web("#fff");
-
+    public void initialize(String[] args){
+        launch(args);
+    }
     @Override
     public void start(Stage stage){
         this.stage = stage;
@@ -314,7 +316,7 @@ public class GUI extends Application {
         StackPane board = new StackPane();
         game.setCenter(board);
 
-        Rectangle rectangle = rectangle(0.95,0.95);
+        Rectangle rectangle = makeRectangle(0.95,0.95);
         Pane grid = new Pane();
         grid.maxWidthProperty().bind(root.heightProperty().multiply(0.8));
         grid.maxHeightProperty().bind(root.heightProperty().multiply(0.8));
@@ -332,7 +334,7 @@ public class GUI extends Application {
         Toss();
     }
     private StackPane playerInfo(int player, Color color){
-        Rectangle rectangle = rectangle(3.5/9, 0.95);
+        Rectangle rectangle = makeRectangle(3.5/9, 0.95);
 
         Text playerName = new Text("Player " + player);
         if(isSinglePlayer() && player==2)
@@ -363,13 +365,13 @@ public class GUI extends Application {
                 grid2 = grid;
             for (int i = 0; i < 3; i++) {
                 for (int j = 0; j < 3; j++) {
-                    Rectangle box = rectangle(.02, .02);
+                    Rectangle box = makeRectangle(.02, .02);
                     box.setTranslateX(20 * j);
                     box.setTranslateY(20 * i);
                     grid.getChildren().add(box);
                 }
             }
-            Rectangle back = rectangle(0.09, 0.09);
+            Rectangle back = makeRectangle(0.09, 0.09);
             back.setFill(Color.LIGHTGREY);
             StackPane turnIndicator = new StackPane(back, grid);
             turnIndicator.setAlignment(Pos.CENTER);
@@ -402,7 +404,7 @@ public class GUI extends Application {
         StackPane popUp = new StackPane();
         background.setCenter(popUp);
         background.setBackground(new Background(new BackgroundFill( Color.color(0,0,0,0.8), CornerRadii.EMPTY, Insets.EMPTY)));
-        Rectangle box = rectangle(0.4,0.2);
+        Rectangle box = makeRectangle(0.4,0.2);
         popUp.getChildren().add(box);
 
         List<Node> appNodes = root.getChildren();
@@ -510,7 +512,7 @@ public class GUI extends Application {
         markLine(0,0,100,100,Color.RED,0,node);
         markLine(100,0,0,100,Color.RED,0.2,node);
     }
-    private Rectangle rectangle(double widthMultiplier, double heightMultiplier){
+    private Rectangle makeRectangle(double widthMultiplier, double heightMultiplier){
         Rectangle rectangle = new Rectangle();
         rectangle.setFill(midGround);
         rectangle.widthProperty().bind(root.heightProperty().multiply(widthMultiplier));
@@ -533,20 +535,10 @@ public class GUI extends Application {
                 }
             });
             for (int i = 0; i<4; i++) {
-                Line hLine = new Line();
-                hLine.setStartY(0);
-                hLine.endYProperty().bind(grid.maxHeightProperty());
-                hLine.startXProperty().bind(grid.maxWidthProperty().multiply((double) i/3));
-                hLine.endXProperty().bind(grid.maxWidthProperty().multiply((double) i/3));
-                hLine.setStrokeWidth(5);
+                Line hLine = makeHLine((double) i/3,5, grid);
                 grid.getChildren().add(hLine);
 
-                Line vLine = new Line();
-                vLine.startYProperty().bind(grid.maxHeightProperty().multiply((double) i/3));
-                vLine.endYProperty().bind(grid.maxHeightProperty().multiply((double) i/3));
-                vLine.setStartX(0);
-                vLine.endXProperty().bind(grid.maxWidthProperty());
-                vLine.setStrokeWidth(5);
+                Line vLine = makeVLine((double) i/3,5, grid);
                 grid.getChildren().add(vLine);
             }
             marks = new Group();
@@ -568,32 +560,41 @@ public class GUI extends Application {
                 }
             });
             for (int i = 0; i < 10; i++) {
-                Line hLine = new Line();
-                hLine.setStartY(0);
-                hLine.endYProperty().bind(grid.maxHeightProperty());
-                hLine.startXProperty().bind(grid.maxWidthProperty().multiply((double) i/9));
-                hLine.endXProperty().bind(grid.maxWidthProperty().multiply((double) i/9));
+                Line hLine;
                 if (i == 0 || i == 3 || i == 6 || i == 9)
-                    hLine.setStrokeWidth(8);
+                    hLine = makeHLine((double) i/9, 8, grid);
                 else
-                    hLine.setStrokeWidth(3);
-                hLine.setPickOnBounds(false);
+                    hLine = makeHLine((double) i/9, 3, grid);
                 grid.getChildren().add(hLine);
 
-                Line vLine = new Line();
-                vLine.startYProperty().bind(grid.maxHeightProperty().multiply((double) i/9));
-                vLine.endYProperty().bind(grid.maxHeightProperty().multiply((double) i/9));
-                vLine.setStartX(0);
-                vLine.endXProperty().bind(grid.maxWidthProperty());
+                Line vLine;
                 if (i == 0 || i == 3 || i == 6 || i == 9)
-                    vLine.setStrokeWidth(8);
+                    vLine = makeVLine((double) i/9, 8, grid);
                 else
-                    vLine.setStrokeWidth(3);
+                    vLine = makeVLine((double) i/9, 3, grid);
                 grid.getChildren().add(vLine);
             }
             marks = new Group();
             grid.getChildren().add(marks);
         });
+    }
+    private Line makeHLine(double Multiplier, int stroke, Pane grid){
+        Line line = new Line();
+        line.setStartY(0);
+        line.endYProperty().bind(grid.maxHeightProperty());
+        line.startXProperty().bind(grid.maxWidthProperty().multiply(Multiplier));
+        line.endXProperty().bind(grid.maxWidthProperty().multiply(Multiplier));
+        line.setStrokeWidth(stroke);
+        return line;
+    }
+    private Line makeVLine(double Multiplier, int stroke, Pane grid){
+        Line line = new Line();
+        line.startYProperty().bind(grid.maxHeightProperty().multiply(Multiplier));
+        line.endYProperty().bind(grid.maxHeightProperty().multiply(Multiplier));
+        line.setStartX(0);
+        line.endXProperty().bind(grid.maxWidthProperty());
+        line.setStrokeWidth(stroke);
+        return line;
     }
     public void showTurn(int row, int col, int[] superIndex){
         if(getPlayer()==1)
@@ -708,36 +709,18 @@ public class GUI extends Application {
         endX = endX - (int)(cell*0.6);
         markLine(startX,startY,endX,endY,Color.RED,0.2,marks);
     }
-    private void markO(int row, int col, int[] superIndex){
-        double y =  (row*(cell/3))+(superIndex[0]*cell)+((cell/3)*0.5);
-        double x =  (col*(cell/3))+(superIndex[1]*cell)+((cell/3)*0.5);
-        Circle circle = new Circle(x, y, 0);
-        circle.setFill(Color.BLUE);
-        Circle inner = new Circle(x,y,0);
-        inner.setFill(Color.WHITE);
-
-        Timeline timeline = new Timeline();
-        timeline.setCycleCount(1);
-        KeyValue keyValueRadius = new KeyValue(circle.radiusProperty(), ((cell/3)*0.3));
-        KeyFrame keyFrame = new KeyFrame(Duration.seconds(0.2), keyValueRadius);
-        timeline.getKeyFrames().add(keyFrame);
-        timeline.play();
-
-        Timeline innerTimeLine = new Timeline();
-        innerTimeLine.setCycleCount(1);
-        KeyValue keyValueRadiusInner = new KeyValue(inner.radiusProperty(), ((cell/3)*0.2));
-        KeyFrame keyFrameInner = new KeyFrame(Duration.seconds(0.2), keyValueRadiusInner);
-        innerTimeLine.getKeyFrames().add(keyFrameInner);
-        innerTimeLine.play();
-
-        marks.getChildren().addAll(circle,inner);
-    }
     private void markO(int row, int col){
         double y = (row*cell)+(cell*0.5);
         double x = (col*cell)+(cell*0.5);
         markO(x,y,cell*0.6,marks);
     }
-    private void markO(double x, double y,double radius,Group node){
+
+    private void markO(int row, int col, int[] superIndex){
+        double y =  (row*(cell/3))+(superIndex[0]*cell)+((cell/3)*0.5);
+        double x =  (col*(cell/3))+(superIndex[1]*cell)+((cell/3)*0.5);
+        markO(x,y,((cell/3)*0.3),marks);
+    }
+    private void markO(double x, double y, double radius,Group node){
         Circle circle = new Circle(x,y,0);
         circle.setFill(Color.BLUE);
         Circle inner = new Circle(x,y,0);
@@ -747,14 +730,14 @@ public class GUI extends Application {
         Timeline timeline = new Timeline();
         timeline.setCycleCount(1);
         KeyValue keyValueRadius = new KeyValue(circle.radiusProperty(), (radius*0.5));
-        KeyFrame keyFrame = new KeyFrame(Duration.seconds(0.3), keyValueRadius);
+        KeyFrame keyFrame = new KeyFrame(Duration.seconds(0.25), keyValueRadius);
         timeline.getKeyFrames().add(keyFrame);
         timeline.play();
 
         Timeline innerTimeLine = new Timeline();
         innerTimeLine.setCycleCount(1);
         KeyValue keyValueRadiusInner = new KeyValue(inner.radiusProperty(), (radius*0.38));
-        KeyFrame keyFrameInner = new KeyFrame(Duration.seconds(0.3), keyValueRadiusInner);
+        KeyFrame keyFrameInner = new KeyFrame(Duration.seconds(0.25), keyValueRadiusInner);
         innerTimeLine.getKeyFrames().add(keyFrameInner);
         innerTimeLine.play();
 
