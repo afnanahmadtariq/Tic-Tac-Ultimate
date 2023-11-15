@@ -1,17 +1,11 @@
 package Tic_Tac_Ultimate;
 
-
 import java.util.Arrays;
 
 public class Controller extends Board{
-    private Player players[];
-    private boolean singlePlayer;
+    private final boolean singlePlayer;
     private int player;
-    public String difficulty;
-    
-    Controller(){
-        this(false,"medium");
-    }
+    private final String difficulty;
     Controller(boolean singlePlayer, String difficulty){
         super();
         this.singlePlayer = singlePlayer;
@@ -23,16 +17,13 @@ public class Controller extends Board{
         System.out.println("Player set as: " + player);
         cpuTurn();
     }
-    public void setDifficulty(String difficulty){
-        this.difficulty = difficulty;
-    }
     public int getPlayer(){
         return this.player;
     }
     public boolean isSinglePlayer(){
         return singlePlayer;
     }
-    public void cpuTurn(){
+    private void cpuTurn(){
         if(player==2 && singlePlayer) {
             int[] index = Brain.compTurn(super.board, difficulty);
             System.out.println("index of cpu: " + Arrays.toString(index));
@@ -51,7 +42,7 @@ public class Controller extends Board{
             };
             if(!end){
                 player = (player%2)+1;
-                GUI.updateTurn();
+                Tic_Tac_Ultimate.gui.updateTurn();
                 System.out.println("Player Changed!");
                 cpuTurn();
             }
@@ -64,7 +55,7 @@ public class Controller extends Board{
         if(super.board[index[0]][index[1]] != 0)
             return false;
         super.board[index[0]][index[1]] = player;
-        System.out.println("Player: " + player + " did ----i: " + index[0] + "  j: " + index[1]);
+        System.out.println("Player: " + player + " marked ---->i: " + index[0] + "  |  j: " + index[1]);
         return true;
     }
     private boolean end(boolean win){
@@ -75,9 +66,6 @@ public class Controller extends Board{
             super.game = 0;
         }
         Tic_Tac_Ultimate.endGame(win, super.winValue);
-        //agr event listener game variable pe lga dain to ye func complete
-        //boolean win se win ya draw ka pta chal rha
-        //int player se kon jeeta ye pta lag rha
         return true;
     }
 }

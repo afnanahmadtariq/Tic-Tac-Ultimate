@@ -14,7 +14,6 @@ public class SuperBoard {
         game = -1;
         winValue = 0;
     }
-
     public int check(int[] superIndex){
         if (win(superIndex))
             return 1;
@@ -31,8 +30,7 @@ public class SuperBoard {
         else
             return -1;
     }
-
-    public boolean win(int[] superIndex){
+    private boolean win(int[] superIndex){
         int count = 1;
         for(int i=0;i<3;i++) {
             if (superBoard[superIndex[0]][superIndex[1]].board[i][0] == superBoard[superIndex[0]][superIndex[1]].board[i][1] && superBoard[superIndex[0]][superIndex[1]].board[i][1] == superBoard[superIndex[0]][superIndex[1]].board[i][2] && superBoard[superIndex[0]][superIndex[1]].board[i][2] != 0) {
@@ -56,7 +54,7 @@ public class SuperBoard {
         }
         return false;
     }
-    public boolean draw(int[] superIndex){
+    private boolean draw(int[] superIndex){
         for(int i=0;i<3;i++) {
             for(int j=1;j<=3;j++){
                 if (superBoard[superIndex[0]][superIndex[1]].board[i][j-1] == superBoard[superIndex[0]][superIndex[1]].board[i][j%3] && (superBoard[superIndex[0]][superIndex[1]].board[i][j % 3] == 0 || superBoard[superIndex[0]][superIndex[1]].board[i][(j+1)%3] == 0))
@@ -74,8 +72,7 @@ public class SuperBoard {
         }
         return true;
     }
-    
-    public boolean win() {
+    private boolean win() {
         int count = 1;
         for (int i = 0; i < 3; i++) {
             if (superBoard[i][0].game == superBoard[i][1].game && superBoard[i][1].game == superBoard[i][2].game && superBoard[i][2].game != -1 && superBoard[i][2].game != 0) {
@@ -98,7 +95,7 @@ public class SuperBoard {
         }
         return  false;
     }
-    public boolean draw(){
+    private boolean draw(){
         for(int i=0;i<3;i++) {
             for(int j=1;j<=3;j++){
                 if (superBoard[i][j-1].game == superBoard[i][j%3].game && (superBoard[i][j % 3].game == -1 || superBoard[i][(j+1)%3].game == -1))
