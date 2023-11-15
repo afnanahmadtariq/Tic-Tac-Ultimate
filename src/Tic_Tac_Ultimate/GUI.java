@@ -36,8 +36,13 @@ public class GUI extends Application {
     private Text turn2;
     private Group grid1;
     private Group grid2;
-    private Color backGround = Color.web("#f2f2f2");
-    private Color midGround = Color.web("#fff");
+    private Color backGround;
+    private Color midGround;
+    public GUI(){
+        marks = new Group();
+        backGround = Color.web("#f2f2f2");
+        midGround = Color.web("#fff");
+    }
     public void initialize(String[] args){
         launch(args);
     }
@@ -541,7 +546,6 @@ public class GUI extends Application {
                 Line vLine = makeVLine((double) i/3,5, grid);
                 grid.getChildren().add(vLine);
             }
-            marks = new Group();
             grid.getChildren().add(marks);
         });
     }
@@ -574,7 +578,6 @@ public class GUI extends Application {
                     vLine = makeVLine((double) i/9, 3, grid);
                 grid.getChildren().add(vLine);
             }
-            marks = new Group();
             grid.getChildren().add(marks);
         });
     }
