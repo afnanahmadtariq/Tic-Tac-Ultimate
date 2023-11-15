@@ -10,9 +10,7 @@ import javafx.geometry.Pos;
 import javafx.scene.Group;
 import javafx.scene.Node;
 import javafx.scene.Scene;
-import javafx.scene.control.Button;
-import javafx.scene.control.RadioButton;
-import javafx.scene.control.ToggleGroup;
+import javafx.scene.control.*;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseEvent;
@@ -41,7 +39,7 @@ public class GUI extends Application {
     private static Group marks;
     private static StackPane root;
     private static double cell;
-    private static Color backGround = Color.LIGHTGRAY;
+    private static Color backGround = Color.web("#f2f2f2");
     private static Color midGround = Color.web("#fff");
     private ToggleGroup difficultyToggleGroup;
     private ToggleGroup playerToggleGroup;
@@ -64,15 +62,14 @@ public class GUI extends Application {
         Scene scene = new Scene(root);
         stage.setScene(scene);
         stage.show();
-        displayGame();
+        displayStart();
     }
     private void displayStart(){
         Text ticTac = new Text("Tic tac");
         Text toe = new Text(" toe");
         Text ultimate = new Text(" Ultimate ");
         Rectangle background = new Rectangle();
-        Rectangle plane = new Rectangle();
-        StackPane transitionComplex = new StackPane(background, ultimate, plane, toe);
+        StackPane transitionComplex = new StackPane(toe, background, ultimate);
         transitionComplex.setAlignment(Pos.CENTER_LEFT);
         HBox title = new HBox(ticTac,transitionComplex);
         title.setAlignment(Pos.CENTER);
@@ -92,10 +89,6 @@ public class GUI extends Application {
         ultimate.setFill(Color.WHITE);
         ultimate.setTranslateY(-ultimate.getLayoutBounds().getHeight());
 
-        plane.setWidth(ultimate.getLayoutBounds().getWidth()*1.2);
-        plane.setHeight(ultimate.getLayoutBounds().getWidth()*1.2);
-        plane.setFill(Color.WHITE);
-
         background.setWidth(ultimate.getLayoutBounds().getWidth());
         background.setHeight(ultimate.getLayoutBounds().getHeight());
         background.setTranslateY(-ultimate.getLayoutBounds().getHeight());
@@ -103,11 +96,10 @@ public class GUI extends Application {
 
 
         Region empty = new Region();
-        TranslateTransition emptyTransition = new TranslateTransition(Duration.seconds(2), empty);
+        TranslateTransition emptyTransition = new TranslateTransition(Duration.seconds(0.6), empty);
         emptyTransition.play();
         emptyTransition.setOnFinished(event -> {
             System.out.println("Transition completed");
-            transitionComplex.getChildren().setAll(plane, toe, background, ultimate);
             rotate(0,90, toe);
             translate(0,ultimate.getLayoutBounds().getHeight()/2, toe);
 
@@ -115,22 +107,23 @@ public class GUI extends Application {
             translate(-ultimate.getLayoutBounds().getHeight()/2,0, ultimate);
 
             rotate(-90, 0, background);
-            translate(-ultimate.getLayoutBounds().getHeight()/2,0, background).setOnFinished(event2 -> {
+            translate(-ultimate.getLayoutBounds().getHeight()/2,0, background);
+
+            FillTransition color = new FillTransition(Duration.seconds(2.5),background);
+            color.setToValue(Color.RED);
+            color.play();
+            color.setOnFinished(event2 -> {
                 System.out.println("Transition2 completed");
                 displayNavPage();
             });
-            FillTransition color = new FillTransition(Duration.seconds(2),background);
-            color.setToValue(Color.RED);
-            color.play();
         });
     }
-    private TranslateTransition translate(double startY, double endY, Node node){
+    private void translate(double startY, double endY, Node node){
         TranslateTransition translateTransition = new TranslateTransition(Duration.seconds(2), node);
         translateTransition.setFromY(startY);
         translateTransition.setToY(endY);
         translateTransition.setCycleCount(1);
         translateTransition.play();
-        return translateTransition;
     }
     private void rotate(int fromAngle, int toAngle, Node node){
         RotateTransition rotateTransition = new RotateTransition(Duration.seconds(2), node);
@@ -189,12 +182,32 @@ public class GUI extends Application {
                 if(text.equals("Start"))
                     displayGameSelection();
                 else if(text.equals("Options"))
-                    displayOptions();
-                else
-                    stage.close();
+                    displayPopupMessage("Under Development", "Option Button is under development", Alert.AlertType.INFORMATION);
+                else {
+                    Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
+                    alert.setTitle("Exit Game");
+                    alert.setContentText("Are you sure you want to exit?");
+
+                    ButtonType exitButton = new ButtonType("Exit");
+                    ButtonType cancelButton = new ButtonType("Cancel");
+                    alert.getButtonTypes().setAll(exitButton, cancelButton);
+
+                    alert.showAndWait().ifPresent(response -> {
+                        if (response == exitButton) {
+                            stage.close();
+                        }
+                    });
+                }
             }
         });
         return button;
+    }
+    private static void displayPopupMessage(String title, String message, Alert.AlertType type) {
+        Alert alert = new Alert(type);
+        alert.setTitle(title);
+        alert.setHeaderText(null); // Setting header text to null means no header
+        alert.setContentText(message);
+        alert.showAndWait(); // Wait for user action (OK button click) before continuing
     }
     private void displayGameSelection() {
         Text ticTacToe = new Text("Tic Tac Toe");

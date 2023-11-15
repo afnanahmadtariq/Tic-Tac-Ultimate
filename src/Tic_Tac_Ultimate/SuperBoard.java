@@ -39,18 +39,15 @@ public class SuperBoard {
         winValue = 0;
     }
 
-    public int[] check(int[] superIndex){
-        int[] win = new int[2];
+    public int check(int[] superIndex){
         if (win(superIndex))
-            win[0] = 1;
+            return 1;
         else if (draw(superIndex))
-            win[0] = 0;
+            return 0;
         else
-            win[0] = -1;
-        win[1] = check();
-        return win;
+            return -1;
     }
-    private int check() {
+    public int check() {
         if (win())
             return 1;
         else if (draw())
@@ -113,6 +110,7 @@ public class SuperBoard {
                 winValue = ++count;
                 return true;
             }
+            count +=2;
         }
         if (superBoard[0][0].game == superBoard[1][1].game && superBoard[1][1].game == superBoard[2][2].game && superBoard[2][2].game != -1 && superBoard[2][2].game != 0) {
             winValue = count;

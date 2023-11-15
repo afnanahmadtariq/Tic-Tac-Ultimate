@@ -19,7 +19,7 @@ public class SuperController extends SuperBoard{
     public void setPlayer(int player){
         this.player = player;
         System.out.println("Player set as: " + player);
-        cpuTurn(new int[]{-1, -1});
+        cpuTurn();
     }
     public void setDifficulty(String difficulty){
         this.difficulty = difficulty;
@@ -33,13 +33,11 @@ public class SuperController extends SuperBoard{
     public boolean isSinglePlayer(){
         return singlePlayer;
     }
-    public void cpuTurn(int[] superIndex){
+    public void cpuTurn(){
         if(player==2 && singlePlayer){
             System.out.println("Super index BEFORE cpu turn_ row:" + this.superIndex[0] + " col: " + this.superIndex[1]);
             int[][] compute = SuperBrain.compTurn(superIndex,super.superBoard, difficulty);
-            int[] index = compute[0];
-            this.superIndex = superIndex = compute[1];
-            doTurn(index,superIndex);
+            doTurn(compute[0],compute[1]);
             System.out.println("Super index AFTER cpu turn_ row:" + this.superIndex[0] + " col: " + this.superIndex[1]);
         }
     }
@@ -48,20 +46,23 @@ public class SuperController extends SuperBoard{
         if(markTurn(index,superIndex)){
             System.out.println("registered!!...............");
             Tic_Tac_Ultimate.showTurn(index, superIndex);
-            int[] check = super.check(superIndex);
-            switch(check[0]){
+            switch(super.check(superIndex)){
                 case 1 -> end(true,superIndex);
                 case 0 -> end(false,superIndex);
             }
-            boolean end = switch(check[1]){
+            boolean end = switch(super.check()){
                 case 1 -> end(true);
                 case 0 -> end(false);
                 default -> false;
             };
+            if(super.superBoard[index[0]][index[1]].game == -1)
+                this.superIndex = index;
+            else
+                this.superIndex = new int[] {-1, -1};
             if(!end){
                 player = (player%2)+1;
                 System.out.println("Player Changed!");
-                cpuTurn(this.superIndex);
+                cpuTurn();
             }
             System.out.println("Super index FOR player: " + player +" turn_ row:" + this.superIndex[0] + " col: " + this.superIndex[1]);
             return true;
@@ -72,12 +73,8 @@ public class SuperController extends SuperBoard{
     public boolean checkSuperIndex(int[] superIndex){
         if(super.superBoard[superIndex[0]][superIndex[1]].game != -1)
             return false;
-        if(this.superIndex[0] == -1 && this.superIndex[1] == -1)
+        else if(this.superIndex[0] == -1 && this.superIndex[1] == -1)
             return true;
-        else if(super.superBoard[this.superIndex[0]][this.superIndex[1]].game != -1) {
-            this.superIndex = new int[] {-1, -1};
-            return true;
-        }
         else return this.superIndex[0] == superIndex[0] && this.superIndex[1] == superIndex[1];
     }
     public boolean markTurn(int[] index, int[] superIndex){
@@ -87,9 +84,6 @@ public class SuperController extends SuperBoard{
             return false;
         super.superBoard[superIndex[0]][superIndex[1]].board[index[0]][index[1]] = player;
         System.out.println("Player: " + player + " did at super index:__ x: "+ superIndex[0] + "y: " + superIndex[1] + "and at index----i: " + index[0] + "  j: " + index[1]);
-        this.superIndex = index;
-        if(!checkSuperIndex(index))
-            this.superIndex = new int[] {-1, -1};
         return true;
     }
 //    public int[] superUser(int a, int b, int i,int j, SuperBoard superGame ){
