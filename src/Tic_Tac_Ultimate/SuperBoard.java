@@ -1,7 +1,6 @@
 package Tic_Tac_Ultimate;
 
 public class SuperBoard {
-
     public Board[][] superBoard;
     public int game;
     public int winValue;

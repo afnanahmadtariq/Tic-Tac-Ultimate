@@ -5,7 +5,6 @@ public class SuperController extends SuperBoard{
     private int player;
     public String difficulty;
     private int[] superIndex;
-
     SuperController(boolean singlePlayer, String difficulty){
         super();
         this.singlePlayer = singlePlayer;
