@@ -35,9 +35,9 @@ public class GUI extends Application {
     private static Text turn2;
     private static Group grid1;
     private static Group grid2;
-    private static BorderPane game = new BorderPane();
+    private static BorderPane game;
     private static double cell;
-    private static Group marks = new Group();
+    private static Group marks;
     public static void initialize(String[] args){
         launch(args);
     }
@@ -303,6 +303,7 @@ public class GUI extends Application {
     }
     private static void displayGame() {
         root.getChildren().clear();
+        game = new BorderPane();
         game.setPadding(new Insets(10));
         root.getChildren().add(game);
 
@@ -528,6 +529,7 @@ public class GUI extends Application {
                 Line vLine = makeVLine((double) i/3,5, grid);
                 grid.getChildren().add(vLine);
             }
+            marks = new Group();
             grid.getChildren().add(marks);
         });
     }
@@ -560,6 +562,7 @@ public class GUI extends Application {
                     vLine = makeVLine((double) i/9, 3, grid);
                 grid.getChildren().add(vLine);
             }
+            marks = new Group();
             grid.getChildren().add(marks);
         });
     }
