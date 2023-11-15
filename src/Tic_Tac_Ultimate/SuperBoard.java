@@ -1,34 +1,10 @@
-/*
- * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
- */
 package Tic_Tac_Ultimate;
 
-import java.util.HashMap;
-import java.util.Map;
-
-/**
- *
- * @author Pc
- */
 public class SuperBoard {
 
     public Board[][] superBoard;
     public int game;
-    public int winValue;;
-    static Map<Integer, int[][]> dictionary;
-
-    static {
-        dictionary = new HashMap<>();
-        int count = 1;
-        for(int row=0; row<3; row++){
-            dictionary.put(count++, new int[][]{{row,0},{row,1},{row,2}});
-            int col = row;
-            dictionary.put(count++, new int[][]{{0,col},{1,col},{2,col}});
-        }
-        dictionary.put(count++, new int[][]{{0,0},{1,1},{2,2}});
-        dictionary.put(count, new int[][]{{0,2},{1,1},{2,0}});
-    }
+    public int winValue;
     public SuperBoard() {
         superBoard = new Board[3][3];
         for(int i=0; i<3; i++){

@@ -1,6 +1,8 @@
 package Tic_Tac_Ultimate;
 
 
+import java.util.Arrays;
+
 public class Controller extends Board{
     private Player players[];
     private boolean singlePlayer;
@@ -8,7 +10,7 @@ public class Controller extends Board{
     public String difficulty;
     
     Controller(){
-        this(true,"medium");
+        this(false,"medium");
     }
     Controller(boolean singlePlayer, String difficulty){
         super();
@@ -33,7 +35,9 @@ public class Controller extends Board{
     public void cpuTurn(){
         if(player==2 && singlePlayer) {
             int[] index = Brain.compTurn(super.board, difficulty);
-            doTurn(index);
+            System.out.println("index of cpu: " + Arrays.toString(index));
+            if(!doTurn(index))
+                System.out.println("BARi nhi hui cpu se");
         }
     }
     public boolean doTurn(int[] index){
@@ -47,6 +51,7 @@ public class Controller extends Board{
             };
             if(!end){
                 player = (player%2)+1;
+                GUI.updateTurn();
                 System.out.println("Player Changed!");
                 cpuTurn();
             }

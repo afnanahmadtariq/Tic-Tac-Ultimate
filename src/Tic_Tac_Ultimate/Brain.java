@@ -1,26 +1,22 @@
 package Tic_Tac_Ultimate;
+
+import java.util.Arrays;
+
 public class Brain {
     public static int[] compTurn(int[][] board, String difficulty){
         return switch(difficulty){
-            case "easy" -> easy(board);
-            case "med" -> med(board);
-            case "hard" -> hard(board);
-            case "extreme" -> extreme(board);
-            case "practice" -> practice(board);
+            case "Easy" -> easy(board);
+            case "Medium" -> med(board);
+            case "Hard" -> hard(board);
+            case "Extreme" -> extreme(board);
             default -> new int[]{(int)(Math.random()*3),(int)(Math.random()*3)};
         };
     }
     private static int[] easy(int[][] board){
+        System.out.println("BOArd before cpu ki bari oi oui: ____" + Arrays.toString(board));
         int[] index = new int[]{(int)(Math.random()*3),(int)(Math.random()*3)};
         while(board[index[0]][index[1]] !=0)
             index = new int[]{(int)(Math.random()*3),(int)(Math.random()*3)};
-//        try {
-//            // Delay for 1 second (1000 milliseconds)
-//            Thread.sleep(2000);
-//        } catch (InterruptedException e) {
-//            // Handle any exceptions that may occur
-//            e.printStackTrace();
-//        }
         return index;
     }
     private static int[] med(int[][] board){
@@ -109,10 +105,5 @@ public class Brain {
 
         return 0;
     }
-    private static int[] practice(int[][] board){
-        return new int[]{(int)(Math.random()*3),(int)(Math.random()*3)};
-    }
-    
-
 }
 

@@ -13,7 +13,7 @@ public class Tic_Tac_Ultimate extends GUI{
     public static boolean singlePlayer;
     public static String difficulty;
     public static void main(String[] args) {
-        startGame(true,false);
+        startGame(false,true);
         Application.launch(args);
     }
     public static void startGame(boolean singlePlayer, boolean ultimate){
@@ -42,6 +42,9 @@ public class Tic_Tac_Ultimate extends GUI{
             return superTicTacToe.getPlayer();
         else
             return ticTacToe.getPlayer();
+    }
+    public static int[] getSuperIndex(){
+        return superTicTacToe.getSuperIndex();
     }
     public static boolean isSinglePlayer(){
         if(ultimate)
@@ -86,6 +89,7 @@ public class Tic_Tac_Ultimate extends GUI{
             System.out.println("\n\n\n\n---------   New Game---------");
             startGame();
             clearMarks();
+            clearTurn();
             Toss();
         }
         else{

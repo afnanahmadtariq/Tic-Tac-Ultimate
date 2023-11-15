@@ -37,7 +37,8 @@ public class SuperController extends SuperBoard{
         if(player==2 && singlePlayer){
             System.out.println("Super index BEFORE cpu turn_ row:" + this.superIndex[0] + " col: " + this.superIndex[1]);
             int[][] compute = SuperBrain.compTurn(superIndex,super.superBoard, difficulty);
-            doTurn(compute[0],compute[1]);
+            if(!doTurn(compute[0],compute[1]))
+                System.out.println("BARi nhi hui cpu se");
             System.out.println("Super index AFTER cpu turn_ row:" + this.superIndex[0] + " col: " + this.superIndex[1]);
         }
     }
@@ -61,6 +62,7 @@ public class SuperController extends SuperBoard{
                 this.superIndex = new int[] {-1, -1};
             if(!end){
                 player = (player%2)+1;
+                GUI.updateTurn();
                 System.out.println("Player Changed!");
                 cpuTurn();
             }
