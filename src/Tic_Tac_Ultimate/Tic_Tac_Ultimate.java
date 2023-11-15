@@ -8,16 +8,24 @@ import static Tic_Tac_Ultimate.Board.dictionary;
 public class Tic_Tac_Ultimate extends GUI{
     public static SuperController superTicTacToe;
     public static Controller ticTacToe;
+    public static GUI gui = new GUI();
     public static boolean ultimate;
+    public static boolean singlePlayer;
+    public static String difficulty;
     public static void main(String[] args) {
-        start(true,"easy",true);
+        startGame(true,false);
         Application.launch(args);
     }
-    public static void start(boolean singlePlayer, boolean ultimate){
-        start(singlePlayer,"easy",ultimate);
+    public static void startGame(boolean singlePlayer, boolean ultimate){
+        startGame(singlePlayer, "easy", ultimate);
     }
-    public static void start(boolean singlePlayer, String difficulty, boolean ultimate){
+    public static void startGame(boolean singlePlayer, String difficulty, boolean ultimate){
+        Tic_Tac_Ultimate.singlePlayer = singlePlayer;
         Tic_Tac_Ultimate.ultimate = ultimate;
+        Tic_Tac_Ultimate.difficulty = difficulty;
+        startGame();
+    }
+    private static void startGame(){
         if(ultimate)
             superTicTacToe = new SuperController(singlePlayer,difficulty);
         else
@@ -76,12 +84,13 @@ public class Tic_Tac_Ultimate extends GUI{
     public static void endGame(int choice){
         if(choice==1) {
             System.out.println("\n\n\n\n---------   New Game---------");
-            if(ultimate)
-                superTicTacToe = new SuperController(true, "easy");
-            else
-                ticTacToe = new Controller(true, "easy");
+            startGame();
             clearMarks();
             Toss();
+        }
+        else{
+            System.out.println("\n\n\n\n---------  Exit Game---------");
+            gui.clearGame();
         }
     }
     public static void endGame(int[] superIndex, boolean win, int winValue){
