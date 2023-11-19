@@ -3,12 +3,12 @@ package Tic_Tac_Ultimate;
 import java.util.Arrays;
 
 public class Controller extends Board{
-    private final boolean singlePlayer;
+    private final boolean SINGLE_PLAYER;
     private int player;
     private final String difficulty;
     Controller(boolean singlePlayer, String difficulty){
         super();
-        this.singlePlayer = singlePlayer;
+        this.SINGLE_PLAYER = singlePlayer;
         this.difficulty = difficulty;
         player = 1;
     }
@@ -20,11 +20,8 @@ public class Controller extends Board{
     public int getPlayer(){
         return this.player;
     }
-    public boolean isSinglePlayer(){
-        return singlePlayer;
-    }
     private void cpuTurn(){
-        if(player==2 && singlePlayer) {
+        if(player==2 && SINGLE_PLAYER) {
             int[] index = Brain.compTurn(super.board, difficulty);
             System.out.println("index of cpu: " + Arrays.toString(index));
             if(!doTurn(index))
