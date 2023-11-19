@@ -34,12 +34,6 @@ public class Runner {
     public static int[] getSuperIndex(){
         return superTicTacToe.getSuperIndex();
     }
-    public static boolean isSinglePlayer(){
-        if(ultimate)
-            return superTicTacToe.isSinglePlayer();
-        else
-            return ticTacToe.isSinglePlayer();
-    }
     public static void showTurn(int[] index){
         GUI.showTurn(index[0],index[1]);
         System.out.println("Show GUI mark Done!");

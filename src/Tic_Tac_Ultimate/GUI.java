@@ -21,7 +21,6 @@ import javafx.scene.transform.Rotate;
 import javafx.stage.Stage;
 import javafx.util.Duration;
 
-import java.util.List;
 
 import static Tic_Tac_Ultimate.Board.dictionary;
 import static Tic_Tac_Ultimate.Runner.*;
@@ -345,7 +344,7 @@ public class GUI extends Application {
         Rectangle rectangle = makeRectangle(3.5/9, 0.95);
 
         Text playerName = new Text("Player " + player);
-        if(isSinglePlayer() && player==2)
+        if(singlePlayer && player==2)
             playerName = new Text("CPU");
         playerName.setFont(Font.font("Franklin Gothic Heavy", FontWeight.BOLD, 74));
         playerName.setFill(color);
@@ -525,7 +524,7 @@ public class GUI extends Application {
                 double y = event.getY();
                 int row = (int) (y/cell);
                 int col = (int) (x/cell);
-                if(getPlayer()!=2 || !isSinglePlayer()){
+                if(getPlayer()!=2 || !singlePlayer){
                     if(turn(row, col))
                         System.out.println("registered!!...............");
                 }
@@ -551,7 +550,7 @@ public class GUI extends Application {
                 int sJ = (int) (x  / cell);
                 int i = (int) (y  / (cell / 3)) % 3;
                 int sI = (int) (y  / cell);
-                if (getPlayer() != 2 || !isSinglePlayer()) {
+                if (getPlayer() != 2 || !singlePlayer) {
                     turn(i, j, sI, sJ);
                 }
             });
