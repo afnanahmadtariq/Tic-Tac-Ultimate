@@ -42,7 +42,7 @@ public class GUI extends Application {
     private static Group grid2;
     private static Group box1;
     private static Group box2;
-    private static BorderPane game;
+    private static BorderPane gamePane;
     private static Pane boxPane;
     private static Pane arrowPane;
     private static double cell;
@@ -270,7 +270,7 @@ public class GUI extends Application {
                     switch (selectedGameType.getText()) {
                         case "Tic Tac Toe" -> {
                             if(selectedDifficulty.getText().equals("Easy") || selectedDifficulty.getText().equals("Medium")) {
-                                ultimate = false;
+                                Runner.gameType = 1;
                                 startGame();
                                 displayGame();
                                 System.out.println("Tic Tac Toe was Selected");
@@ -283,7 +283,7 @@ public class GUI extends Application {
                         }
                         case "Super Tic Tac Toe" -> {
                             if(selectedDifficulty.getText().equals("Easy")) {
-                                ultimate = true;
+                                Runner.gameType = 2;
                                 startGame();
                                 displayGame();
                                 System.out.println("Selected Super Tic Tac Toe");
@@ -327,18 +327,18 @@ public class GUI extends Application {
     }
     private static void displayGame() {
         root.getChildren().clear();
-        game = new BorderPane();
-        game.setPadding(new Insets(10));
-        root.getChildren().add(game);
+        gamePane = new BorderPane();
+        gamePane.setPadding(new Insets(10));
+        root.getChildren().add(gamePane);
 
         StackPane player1 = playerInfo(1, Color.RED);
-        game.setLeft(player1);
+        gamePane.setLeft(player1);
 
         StackPane player2 = playerInfo(2, Color.BLUE);
-        game.setRight(player2);
+        gamePane.setRight(player2);
 
         StackPane center = new StackPane();
-        game.setCenter(center);
+        gamePane.setCenter(center);
 
         Rectangle rectangle = makeRectangle(0.95,0.95);
         Pane board = new Pane();
@@ -539,7 +539,7 @@ public class GUI extends Application {
         info.setAlignment(Pos.TOP_CENTER);
         info.setSpacing(50);
         info.setTranslateY(100);
-        if(ultimate) {
+        if(gameType==2) {
             Group grid = new Group();
             if(player==1)
                 grid1 = grid;
@@ -631,7 +631,7 @@ public class GUI extends Application {
             turn1.setFill(Color.GREEN);
             turn2.setFill(Color.LIGHTGREY);
         }
-        if(ultimate) {
+        if(gameType==2) {
             int[] superIndex = getSuperIndex();
             int number = (superIndex[0] * 3) + superIndex[1];
             for (int i=0; i<9; i++) {
@@ -654,7 +654,7 @@ public class GUI extends Application {
             turn1.setFill(Color.GREEN);
         else
             turn2.setFill(Color.GREEN);
-        if(ultimate){
+        if(gameType==2){
             for (int i=0; i<9; i++) {
                 Rectangle box;
                 if(player==1)
@@ -668,7 +668,7 @@ public class GUI extends Application {
     public static void clearTurn(){
         turn1.setFill(Color.LIGHTGREY);
         turn2.setFill(Color.LIGHTGREY);
-        if(ultimate){
+        if(gameType==2){
             for (int i=0; i<9; i++) {
                 Rectangle box;
                 box = (Rectangle) grid1.getChildren().get(i);
@@ -984,7 +984,7 @@ public class GUI extends Application {
     public static void clearGame(){
         clearMarks();
         marks = null;
-        game = null;
+        gamePane = null;
         displayMainMenu();
     }
 }

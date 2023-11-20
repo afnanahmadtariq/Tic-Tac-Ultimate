@@ -5,31 +5,36 @@ import java.util.Arrays;
 import static Tic_Tac_Ultimate.Board.dictionary;
 
 public class Runner {
+    private static QuxioController quxio;
     private static SuperController superTicTacToe;
     private static Controller ticTacToe;
-    public static boolean ultimate;
-    public static boolean singlePlayer;
+    public static int gameType = 3;
+    public static boolean singlePlayer = false;
     public static String difficulty = "none";
     public static void main(String[] args) {
+        startGame();
         GUI.initialize(args);
     }
     public static void startGame(){
-        if(ultimate)
-            superTicTacToe = new SuperController(singlePlayer,difficulty);
-        else
-            ticTacToe = new Controller(singlePlayer,difficulty);
+        switch(gameType){
+            case 2-> superTicTacToe = new SuperController(singlePlayer,difficulty);
+            case 3-> quxio = new QuxioController(singlePlayer,difficulty);
+            default -> ticTacToe = new Controller(singlePlayer,difficulty);
+        }
     }
     public static void setPlayer(int player){
-        if(ultimate)
-            superTicTacToe.setPlayer(player);
-        else
-            ticTacToe.setPlayer(player);
+        switch(gameType){
+            case 2-> superTicTacToe.setPlayer(player);
+            case 3-> quxio.setPlayer(player);
+            default -> ticTacToe.setPlayer(player);
+        }
     }
     public static int getPlayer(){
-        if(ultimate)
-            return superTicTacToe.getPlayer();
-        else
-            return ticTacToe.getPlayer();
+        return switch(gameType){
+            case 2-> superTicTacToe.getPlayer();
+            case 3-> quxio.getPlayer();
+            default -> ticTacToe.getPlayer();
+        };
     }
     public static int[] getSuperIndex(){
         return superTicTacToe.getSuperIndex();
