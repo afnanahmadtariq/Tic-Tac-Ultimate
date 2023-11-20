@@ -24,6 +24,7 @@ import javafx.stage.Stage;
 import javafx.util.Duration;
 
 
+import java.util.List;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicInteger;
 
@@ -372,6 +373,7 @@ public class GUI extends Application {
                 box.setTranslateX(130 * j);
                 box.setTranslateY(130 * i);
                 box.setId(""+i+j);
+                System.out.println(box.getId());
                 boxPane.getChildren().add(box);
             }
         }
@@ -443,7 +445,6 @@ public class GUI extends Application {
         imageView.setFitWidth(100);
         imageView.setFitHeight(100);
         pane.getChildren().add(imageView);
-        pane.setStyle("-fx-cursor: pointer");
         if(imageName.equalsIgnoreCase("up") || imageName.equalsIgnoreCase("down")) {
             TranslateTransition transition = new TranslateTransition(Duration.seconds(0.5), pane);
             transition.setFromY(y);
@@ -460,6 +461,9 @@ public class GUI extends Application {
             transition.setCycleCount(Animation.INDEFINITE);
             transition.play();
         }
+        pane.setOnMouseEntered(MouseEvent -> {
+            pane.setStyle("-fx-cursor: pointer");
+        });
         pane.setOnMouseClicked(MouseEvent->{
             if(imageName.equalsIgnoreCase("up") || imageName.equalsIgnoreCase("down")){
                 turn((x-20)/130, draw, y<0?0:4,(x-20)/130);
@@ -483,7 +487,14 @@ public class GUI extends Application {
             int length = 0;
             if(value<colI) {
                 System.out.println("Row kon si hai: " + row + "\nAnd COl: " + col);
-                boxPane.lookup("" + row + col).setId("temp");
+                String id = "" + 0 + 2;
+                System.out.println("ID is yeah: " + id);
+//                boxPane.lookup(id).setId("temp");
+                List<Node> boxList = boxPane.getChildren();
+                for(Node box : boxList){
+                    if(box.getId().equals(id))
+                        box.setId("temp");
+                }
                 value++;
                 for (; value < colI; value++) {
                     Rectangle select = (Rectangle) boxPane.lookup("" + row + value);
