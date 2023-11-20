@@ -3,6 +3,8 @@ package Tic_Tac_Ultimate;
 import javafx.animation.*;
 import javafx.application.Application;
 import javafx.application.Platform;
+import javafx.beans.binding.DoubleBinding;
+import javafx.beans.property.DoubleProperty;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Group;
@@ -22,6 +24,9 @@ import javafx.stage.Stage;
 import javafx.util.Duration;
 
 
+import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.concurrent.atomic.AtomicInteger;
+
 import static Tic_Tac_Ultimate.Board.dictionary;
 import static Tic_Tac_Ultimate.Runner.*;
 
@@ -30,11 +35,16 @@ public class GUI extends Application {
     private static StackPane root;
     private static Color backGround = Color.web("#f2f2f2");
     private static Color midGround = Color.web("#fff");
+    private static Color foreGround = Color.web("#000000");
     private static Text turn1;
     private static Text turn2;
     private static Group grid1;
     private static Group grid2;
+    private static Group box1;
+    private static Group box2;
     private static BorderPane game;
+    private static Pane boxPane;
+    private static Pane arrowPane;
     private static double cell;
     private static Group marks;
     public static void initialize(String[] args){
@@ -57,7 +67,7 @@ public class GUI extends Application {
         Scene scene = new Scene(root);
         stage.setScene(scene);
         stage.show();
-        displayStart();
+        displayGame();
     }
     private static void displayStart(){
         Text ticTac = new Text("Tic tac");
@@ -96,13 +106,13 @@ public class GUI extends Application {
         emptyTransition.setOnFinished(event -> {
             System.out.println("Transition completed");
             rotate(0,90, toe);
-            translate(0,ultimate.getLayoutBounds().getHeight()/2, toe);
+            translateY(0,ultimate.getLayoutBounds().getHeight()/2, toe);
 
             rotate(-90,0, ultimate);
-            translate(-ultimate.getLayoutBounds().getHeight()/2,0, ultimate);
+            translateY(-ultimate.getLayoutBounds().getHeight()/2,0, ultimate);
 
             rotate(-90, 0, background);
-            translate(-ultimate.getLayoutBounds().getHeight()/2,0, background);
+            translateY(-ultimate.getLayoutBounds().getHeight()/2,0, background);
 
             FillTransition color = new FillTransition(Duration.seconds(2.5),background);
             color.setToValue(Color.RED);
@@ -113,10 +123,17 @@ public class GUI extends Application {
             });
         });
     }
-    private static void translate(double startY, double endY, Node node){
+    private static void translateY(double startY, double endY, Node node){
         TranslateTransition translateTransition = new TranslateTransition(Duration.seconds(2), node);
         translateTransition.setFromY(startY);
         translateTransition.setToY(endY);
+        translateTransition.setCycleCount(1);
+        translateTransition.play();
+    }
+    private static void translateX(double startX, double endX, Node node){
+        TranslateTransition translateTransition = new TranslateTransition(Duration.seconds(2), node);
+        translateTransition.setFromX(startX);
+        translateTransition.setToX(endX);
         translateTransition.setCycleCount(1);
         translateTransition.play();
     }
@@ -320,25 +337,183 @@ public class GUI extends Application {
         StackPane player2 = playerInfo(2, Color.BLUE);
         game.setRight(player2);
 
-        StackPane board = new StackPane();
-        game.setCenter(board);
+        StackPane center = new StackPane();
+        game.setCenter(center);
 
         Rectangle rectangle = makeRectangle(0.95,0.95);
-        Pane grid = new Pane();
-        grid.maxWidthProperty().bind(root.heightProperty().multiply(0.8));
-        grid.maxHeightProperty().bind(root.heightProperty().multiply(0.8));
-        if(cell==0.0)
-            Platform.runLater(()->{
-                cell = grid.getHeight()/3;
-                System.out.println("Cell size: " + cell);
-            });
-        board.getChildren().addAll(rectangle, grid);
+        Pane board = new Pane();
+        board.maxWidthProperty().bind(root.heightProperty().multiply(0.8));
+        board.maxHeightProperty().bind(root.heightProperty().multiply(0.8));
+//        if(cell==0.0)
+//            Platform.runLater(()->{
+//                cell = board.getHeight()/3;
+//                System.out.println("Cell size: " + cell);
+//            });
+        center.getChildren().addAll(rectangle, board);
 
-        if(ultimate)
-            superTicTacToe(grid);
-        else
-            ticTacToe(grid);
+//        if(ultimate)
+//            superTicTacToe(board);
+//        else
+//            ticTacToe(board);
+        Quxio(board);
         Toss();
+    }
+    private static void Quxio(Pane board){
+        Rectangle backRectangle = makeRectangle(0.8,0.8);
+        backRectangle.setFill(foreGround);
+        boxPane = new Pane();
+        boxPane.setTranslateX(10);
+        boxPane.setTranslateY(10);
+        marks = new Group();
+        arrowPane = new Pane();
+        board.getChildren().addAll(backRectangle, boxPane, arrowPane);
+        for (int i = 0; i < 5; i++) {
+            for (int j = 0; j < 5; j++) {
+                Rectangle box = makeBox();
+                box.setTranslateX(130 * j);
+                box.setTranslateY(130 * i);
+                box.setId(""+i+j);
+                boxPane.getChildren().add(box);
+            }
+        }
+        boxPane.getChildren().add(marks);
+
+    }
+    private static Rectangle makeBox(){
+        Rectangle box = makeRectangle(0.15,0.15);
+        Color original = (Color) box.getFill();
+        AtomicBoolean flag = new AtomicBoolean(true);
+        AtomicInteger row = new AtomicInteger();
+        AtomicInteger col = new AtomicInteger();
+        Platform.runLater(()->{
+            String id = box.getId();
+            row.set(Integer.parseInt(id.substring(0, 1)));
+            col.set(Integer.parseInt(id.substring(1)));
+        });
+        box.setOnMouseEntered(mouseEvent -> {
+            if(row.get() ==0 || row.get() ==4 || col.get() ==0 || col.get() ==4)
+                box.setFill(Color.YELLOW);
+        });
+        box.setOnMouseExited(mouseEvent -> {
+            if(row.get() ==0 || row.get() ==4 || col.get() ==0 || col.get() ==4) {
+                if (flag.get())
+                    box.setFill(original);
+                else
+                    box.setFill(Color.DARKGRAY);
+                flag.set(true);
+            }
+        });
+        box.setOnMouseClicked(mouseEvent -> {
+            System.out.println("Received row: " + row + " and Col: " + col);
+            if(row.get() ==0 || row.get() ==4 || col.get() ==0 || col.get() ==4) {
+                flag.set(false);
+                showArrows(row.get(), col.get());
+//                draw(row, col);
+            }
+//            turn(Integer.parseInt(box.getId().substring(0,1)),Integer.parseInt(box.getId().substring(1)));
+            System.out.println("mouse Clicked!");
+        });
+        return box;
+    }
+    public static void showArrows(int row, int col) {
+        if(row!=0){
+            Pane arrow = arrow((130*col)+20,-90,"down", col);
+            arrowPane.getChildren().add(arrow);
+        }
+        if(row!=4){
+            Pane arrow = arrow((130*col)+20,130*5,"up", col);
+            arrowPane.getChildren().add(arrow);
+        }
+        if(col!=0){
+            Pane arrow = arrow(-90,(130*row)+20,"right", row);
+            arrowPane.getChildren().add(arrow);
+        }
+        if(col!=4){
+            Pane arrow = arrow(130*5,(130*row)+20,"left", row);
+            arrowPane.getChildren().add(arrow);
+        }
+        arrowPane.setPrefWidth(root.getHeight()*0.8);
+        arrowPane.setPrefHeight(root.getHeight()*0.8);
+    }
+    private static Pane arrow(int x, int y, String imageName, int draw){
+        Pane pane = new Pane();
+        pane.setTranslateX(x);
+        pane.setTranslateY(y);
+        Image arrowImage = new Image( "Arrows/" + imageName + ".png");
+        ImageView imageView = new ImageView(arrowImage);
+        imageView.setFitWidth(100);
+        imageView.setFitHeight(100);
+        pane.getChildren().add(imageView);
+        pane.setStyle("-fx-cursor: pointer");
+        if(imageName.equalsIgnoreCase("up") || imageName.equalsIgnoreCase("down")) {
+            TranslateTransition transition = new TranslateTransition(Duration.seconds(0.5), pane);
+            transition.setFromY(y);
+            transition.setToY(imageName.equals("down")?y-20:y+20);
+            transition.setAutoReverse(true);
+            transition.setCycleCount(Animation.INDEFINITE);
+            transition.play();
+        }
+        else {
+            TranslateTransition transition = new TranslateTransition(Duration.seconds(0.5), pane);
+            transition.setFromX(x);
+            transition.setToX(imageName.equals("right")?x-20:x+20);
+            transition.setAutoReverse(true);
+            transition.setCycleCount(Animation.INDEFINITE);
+            transition.play();
+        }
+        pane.setOnMouseClicked(MouseEvent->{
+            if(imageName.equalsIgnoreCase("up") || imageName.equalsIgnoreCase("down")){
+                turn((x-20)/130, draw, y<0?0:4,(x-20)/130);
+                slide((x-20)/130, draw, y<0?0:4,(x-20)/130);
+            }
+            else{
+                turn(draw,(y-20)/130, (y-20)/130, x<0?0:4);
+                slide(draw,(y-20)/130, (y-20)/130, x<0?0:4);
+            }
+            arrowPane.getChildren().clear();
+            arrowPane.setPrefHeight(0);
+            arrowPane.setPrefWidth(0);
+            System.out.println("Show GUI mark Done!");
+
+        });
+        return pane;
+    }
+    private static void slide(int row, int col, int rowI, int colI){
+        if(row == rowI){//row ke liye
+            int value = col;
+            int length = 0;
+            if(value<colI) {
+                System.out.println("Row kon si hai: " + row + "\nAnd COl: " + col);
+                boxPane.lookup("" + row + col).setId("temp");
+                value++;
+                for (; value < colI; value++) {
+                    Rectangle select = (Rectangle) boxPane.lookup("" + row + value);
+                    translateX(select.getTranslateX(),select.getTranslateX()-130,select);
+//                    select.setTranslateX(select.getTranslateX()-130);
+                    select.setId("" + row + (value - 1));
+//                    super.board[row][value] = super.board[row][value+1];
+                    length++;
+                }
+                Rectangle select = (Rectangle) boxPane.lookup("temp");
+                select.setTranslateX(select.getTranslateX()+(length*130));
+                select.setId(""+ row + colI);
+            }
+//            else
+//                for(;value>colI;value--){
+//                    super.board[drawIndex[0]][value] = super.board[drawIndex[0]][value-1];
+//                }
+//        }
+//        else {//col ke liye
+//            int value = row;
+//            if (value < rowI)
+//                for (; value < rowI; value++) {
+//                    super.board[value][drawIndex[1]] = super.board[value + 1][drawIndex[1]];
+//                }
+//            else
+//                for (; value > rowI; value--) {
+//                    super.board[value][drawIndex[0]] = super.board[value - 1][drawIndex[0]];
+//                }
+        }
     }
     private static StackPane playerInfo(int player, Color color){
         Rectangle rectangle = makeRectangle(3.5/9, 0.95);
@@ -709,7 +884,6 @@ public class GUI extends Application {
         double x = (col*cell)+(cell*0.5);
         markO(x,y,cell*0.6,marks);
     }
-
     private static void markO(int row, int col, int[] superIndex){
         double y =  (row*(cell/3))+(superIndex[0]*cell)+((cell/3)*0.5);
         double x =  (col*(cell/3))+(superIndex[1]*cell)+((cell/3)*0.5);
@@ -732,6 +906,72 @@ public class GUI extends Application {
         Timeline innerTimeLine = new Timeline();
         innerTimeLine.setCycleCount(1);
         KeyValue keyValueRadiusInner = new KeyValue(inner.radiusProperty(), (diameter*0.38));
+        KeyFrame keyFrameInner = new KeyFrame(Duration.seconds(0.25), keyValueRadiusInner);
+        innerTimeLine.getKeyFrames().add(keyFrameInner);
+        innerTimeLine.play();
+
+        node.getChildren().addAll(circle,inner);
+    }
+    private static void markX2(int row, int col){
+        Rectangle box = (Rectangle) boxPane.lookup("#"+row+col);
+        DoubleBinding startY = box.translateYProperty().add(box.heightProperty().multiply(0.2));
+        DoubleBinding startX = box.translateYProperty().add(box.widthProperty().multiply(0.2));
+        DoubleBinding endY = box.translateYProperty().add(box.heightProperty().multiply(0.6));
+        DoubleBinding endX = box.translateYProperty().add(box.widthProperty().multiply(0.6));
+        markLine2(startX,startY,endX,endY,Color.RED,0,marks);
+        startX = endX;
+        endX = box.translateYProperty().add(box.widthProperty().multiply(0.2));
+        markLine2(startX,startY,endX,endY,Color.RED,0.2,marks);
+    }
+    private static void markLine2(DoubleBinding startX, DoubleBinding startY, DoubleBinding endX, DoubleBinding endY, Color color, double delay, Group node){
+        Line line = new Line();
+        line.startXProperty().bind(startX);
+        line.startYProperty().bind(startY);
+        line.endXProperty().bind(endX);
+        line.endYProperty().bind(endY);
+        line.setStrokeWidth(20);
+        line.setStroke(color);
+        line.setStrokeLineCap(StrokeLineCap.ROUND);
+        node.getChildren().add(line);
+        Timeline timeline = new Timeline();
+        KeyFrame startFrame = new KeyFrame(Duration.seconds(delay),
+                new KeyValue(line.endXProperty(), startX.getValue()),
+                new KeyValue(line.endYProperty(), startY.getValue()));
+        KeyFrame endFrame = new KeyFrame(Duration.seconds(delay+0.3),
+                new KeyValue(line.endXProperty(), endX.getValue()),
+                new KeyValue(line.endYProperty(), endY.getValue()));
+        timeline.getKeyFrames().addAll(startFrame, endFrame);
+        timeline.play();
+    }
+    private static void markO2(int row, int col){
+        Rectangle box = (Rectangle) boxPane.lookup("#"+row+col);
+        DoubleBinding y = box.translateYProperty().add(box.heightProperty().multiply(0.5));
+        DoubleBinding x = box.translateYProperty().add(box.widthProperty().multiply(0.5));
+        markO2(x,y,box.widthProperty(),marks);
+    }
+    private static void markO2(DoubleBinding x, DoubleBinding y, DoubleProperty radiusFull, Group node){
+        Circle circle = new Circle(0);
+        circle.radiusProperty().bind(radiusFull.multiply(0.3));
+        circle.centerXProperty().bind(x);
+        circle.centerYProperty().bind(y);
+        circle.setFill(Color.BLUE);
+        Circle inner = new Circle(0);
+        inner.radiusProperty().bind(radiusFull.multiply(0.2));
+        inner.centerXProperty().bind(x);
+        inner.centerYProperty().bind(y);
+        inner.setFill(Color.WHITE);
+
+
+        Timeline timeline = new Timeline();
+        timeline.setCycleCount(1);
+        KeyValue keyValueRadius = new KeyValue(circle.radiusProperty(), (radiusFull.getValue()*0.3));
+        KeyFrame keyFrame = new KeyFrame(Duration.seconds(0.25), keyValueRadius);
+        timeline.getKeyFrames().add(keyFrame);
+        timeline.play();
+
+        Timeline innerTimeLine = new Timeline();
+        innerTimeLine.setCycleCount(1);
+        KeyValue keyValueRadiusInner = new KeyValue(inner.radiusProperty(), (radiusFull.getValue()*0.2));
         KeyFrame keyFrameInner = new KeyFrame(Duration.seconds(0.25), keyValueRadiusInner);
         innerTimeLine.getKeyFrames().add(keyFrameInner);
         innerTimeLine.play();
