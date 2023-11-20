@@ -344,21 +344,20 @@ public class GUI extends Application {
         Pane board = new Pane();
         board.maxWidthProperty().bind(root.heightProperty().multiply(0.8));
         board.maxHeightProperty().bind(root.heightProperty().multiply(0.8));
-//        if(cell==0.0)
-//            Platform.runLater(()->{
-//                cell = board.getHeight()/3;
-//                System.out.println("Cell size: " + cell);
-//            });
+        if(cell==0.0 && gameType!=3)
+            Platform.runLater(()->{
+                cell = board.getHeight()/3;
+                System.out.println("Cell size: " + cell);
+            });
         center.getChildren().addAll(rectangle, board);
-
-//        if(ultimate)
-//            superTicTacToe(board);
-//        else
-//            ticTacToe(board);
-        Quxio(board);
+        switch(gameType){
+            case 2-> superTicTacToe(board);
+            case 3-> quxio(board);
+            default -> ticTacToe(board);
+        }
         Toss();
     }
-    private static void Quxio(Pane board){
+    private static void quxio(Pane board){
         Rectangle backRectangle = makeRectangle(0.8,0.8);
         backRectangle.setFill(foreGround);
         boxPane = new Pane();
