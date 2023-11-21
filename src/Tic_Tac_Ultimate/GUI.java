@@ -392,19 +392,18 @@ public class GUI extends Application {
         Rectangle box = makeRectangle(0.15,0.15);
         Color original = (Color) box.getFill();
         AtomicBoolean flag = new AtomicBoolean(true);
-        AtomicInteger row = new AtomicInteger();
-        AtomicInteger col = new AtomicInteger();
-        Platform.runLater(()->{
-            String id = box.getId();
-            row.set(Integer.parseInt(id.substring(0, 1)));
-            col.set(Integer.parseInt(id.substring(1)));
-        });
         box.setOnMouseEntered(mouseEvent -> {
-            if(row.get() ==0 || row.get() ==4 || col.get() ==0 || col.get() ==4)
+            String id = box.getId();
+            int row = Integer.parseInt(id.substring(0, 1));
+            int col = Integer.parseInt(id.substring(1));
+            if(row ==0 || row ==4 || col ==0 || col ==4)
                 box.setFill(Color.YELLOW);
         });
         box.setOnMouseExited(mouseEvent -> {
-            if(row.get() ==0 || row.get() ==4 || col.get() ==0 || col.get() ==4) {
+            String id = box.getId();
+            int row = Integer.parseInt(id.substring(0, 1));
+            int col = Integer.parseInt(id.substring(1));
+            if(row ==0 || row ==4 || col ==0 || col ==4) {
                 if (flag.get())
                     box.setFill(original);
                 else
@@ -413,10 +412,13 @@ public class GUI extends Application {
             }
         });
         box.setOnMouseClicked(mouseEvent -> {
+            String id = box.getId();
+            int row = Integer.parseInt(id.substring(0, 1));
+            int col = Integer.parseInt(id.substring(1));
             System.out.println("Received row: " + row + " and Col: " + col);
-            if(row.get() ==0 || row.get() ==4 || col.get() ==0 || col.get() ==4) {
+            if(row ==0 || row ==4 || col ==0 || col ==4) {
                 flag.set(false);
-                showArrows(row.get(), col.get());
+                showArrows(row, col);
 //                draw(row, col);
             }
 //            turn(Integer.parseInt(box.getId().substring(0,1)),Integer.parseInt(box.getId().substring(1)));
@@ -583,13 +585,13 @@ public class GUI extends Application {
                         System.out.println("Ye Id set ho gai: " + box.getId());
                     }
                 }
-                value--;
+                value++;
                 for (; value <= rowI; value++) {
                     for(Node box : boxList){
                         if(box.getId().equals("" + value + col)) {
                             translateY(box.getTranslateY(),box.getTranslateY()-130,box, 1);
                             System.out.println("Ye ho giya translate: " + box.getId());
-                            box.setId("" + row + (value + 1));
+                            box.setId("" + (value - 1) + col);
                         }
                     }
                     length++;
@@ -613,7 +615,7 @@ public class GUI extends Application {
             }
             else {// neche se draw uphar insert
                 for(Node box : boxList){
-                    if(box.getId().equals("" + row + value)) {
+                    if(box.getId().equals("" + value + col)) {
                         box.setId("temp");
                         System.out.println("Ye Id set ho gai: " + box.getId());
                     }
@@ -621,10 +623,10 @@ public class GUI extends Application {
                 value--;
                 for (; value >= rowI; value--) {
                     for(Node box : boxList){
-                        if(box.getId().equals("" + row + value)) {
-                            translateY(box.getTranslateY(),box.getTranslateY()-130,box, 1);
+                        if(box.getId().equals("" + value + col)) {
+                            translateY(box.getTranslateY(),box.getTranslateY()+130,box, 1);
                             System.out.println("Ye ho giya translate: " + box.getId());
-                            box.setId("" + row + (value + 1));
+                            box.setId("" + (value + 1) + col);
                         }
                     }
                     length++;
@@ -636,10 +638,10 @@ public class GUI extends Application {
                         double size = rect.getScaleX();
                         System.out.println("Ye ho giya wapis original translate: " + rect.getId());
                         scale(0,0,rect,1);
-                        TranslateTransition transition = translateY(rect.getTranslateY(), rect.getTranslateY()-65, rect, 1);
+                        TranslateTransition transition = translateY(rect.getTranslateY(), rect.getTranslateY()+65, rect, 1);
                         int finalLength = length;
                         transition.setOnFinished(event->{
-                            rect.setTranslateY(rect.getTranslateY()+(finalLength *130)+65);
+                            rect.setTranslateY(rect.getTranslateY()-(finalLength *130)-65);
                             rect.setFill(Color.WHITE);
                             scale(size,size,rect,0.5);
                         });
