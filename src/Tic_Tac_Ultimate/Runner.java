@@ -57,6 +57,9 @@ public class Runner {
             return superTicTacToe.doTurn(new int[] {i, j}, new int[] {sI, sJ});
         return false;
     }
+    public static boolean turn2(int row, int col, int rowI, int colI){
+        return quxio.doTurn(new int[]{row, col}, new int[]{rowI, colI});
+    }
     public static void endGame(boolean win, int winValue){
         if(win){
             GUI.markLine(winValue);

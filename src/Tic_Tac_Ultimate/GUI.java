@@ -20,6 +20,7 @@ import javafx.scene.text.Font;
 import javafx.scene.text.FontWeight;
 import javafx.scene.text.Text;
 import javafx.scene.transform.Rotate;
+import javafx.scene.transform.Translate;
 import javafx.stage.Stage;
 import javafx.util.Duration;
 
@@ -107,13 +108,13 @@ public class GUI extends Application {
         emptyTransition.setOnFinished(event -> {
             System.out.println("Transition completed");
             rotate(0,90, toe);
-            translateY(0,ultimate.getLayoutBounds().getHeight()/2, toe);
+            translateY(0,ultimate.getLayoutBounds().getHeight()/2, toe, 2);
 
             rotate(-90,0, ultimate);
-            translateY(-ultimate.getLayoutBounds().getHeight()/2,0, ultimate);
+            translateY(-ultimate.getLayoutBounds().getHeight()/2,0, ultimate, 2);
 
             rotate(-90, 0, background);
-            translateY(-ultimate.getLayoutBounds().getHeight()/2,0, background);
+            translateY(-ultimate.getLayoutBounds().getHeight()/2,0, background, 2);
 
             FillTransition color = new FillTransition(Duration.seconds(2.5),background);
             color.setToValue(Color.RED);
@@ -124,15 +125,15 @@ public class GUI extends Application {
             });
         });
     }
-    private static void translateY(double startY, double endY, Node node){
-        TranslateTransition translateTransition = new TranslateTransition(Duration.seconds(2), node);
+    private static void translateY(double startY, double endY, Node node, double sec){
+        TranslateTransition translateTransition = new TranslateTransition(Duration.seconds(sec), node);
         translateTransition.setFromY(startY);
         translateTransition.setToY(endY);
         translateTransition.setCycleCount(1);
         translateTransition.play();
     }
-    private static void translateX(double startX, double endX, Node node){
-        TranslateTransition translateTransition = new TranslateTransition(Duration.seconds(2), node);
+    private static void translateX(double startX, double endX, Node node, double sec){
+        TranslateTransition translateTransition = new TranslateTransition(Duration.seconds(sec), node);
         translateTransition.setFromX(startX);
         translateTransition.setToX(endX);
         translateTransition.setCycleCount(1);
@@ -366,7 +367,7 @@ public class GUI extends Application {
         boxPane.setTranslateY(10);
         marks = new Group();
         arrowPane = new Pane();
-        board.getChildren().addAll(backRectangle, boxPane, arrowPane);
+        board.getChildren().addAll(backRectangle, boxPane, marks, arrowPane);
         for (int i = 0; i < 5; i++) {
             for (int j = 0; j < 5; j++) {
                 Rectangle box = makeBox();
@@ -377,8 +378,6 @@ public class GUI extends Application {
                 boxPane.getChildren().add(box);
             }
         }
-        boxPane.getChildren().add(marks);
-
     }
     private static Rectangle makeBox(){
         Rectangle box = makeRectangle(0.15,0.15);
@@ -417,26 +416,34 @@ public class GUI extends Application {
         return box;
     }
     public static void showArrows(int row, int col) {
-        if(row!=0){
-            Pane arrow = arrow((130*col)+20,-90,"down", col);
-            arrowPane.getChildren().add(arrow);
-        }
-        if(row!=4){
-            Pane arrow = arrow((130*col)+20,130*5,"up", col);
-            arrowPane.getChildren().add(arrow);
-        }
-        if(col!=0){
-            Pane arrow = arrow(-90,(130*row)+20,"right", row);
-            arrowPane.getChildren().add(arrow);
-        }
-        if(col!=4){
-            Pane arrow = arrow(130*5,(130*row)+20,"left", row);
-            arrowPane.getChildren().add(arrow);
-        }
+        if(row!=0)
+            arrowPane.getChildren().add(arrow(row,col,"down"));
+        if(row!=4)
+            arrowPane.getChildren().add(arrow(row,col,"up"));
+        if(col!=0)
+            arrowPane.getChildren().add(arrow(row,col,"right"));
+        if(col!=4)
+            arrowPane.getChildren().add(arrow(row,col,"left"));
         arrowPane.setPrefWidth(root.getHeight()*0.8);
         arrowPane.setPrefHeight(root.getHeight()*0.8);
     }
-    private static Pane arrow(int x, int y, String imageName, int draw){
+    private static Pane arrow(int row, int col, String imageName){
+        double x,y;
+        if(imageName.equals("up") || imageName.equals("down")){
+            x = (130*col)+20;
+            if(imageName.equals("up"))
+                y = 130*5;
+
+            else
+                y = -90;
+        }
+        else {
+            y = (130*row)+20;
+            if(imageName.equals("right"))
+                x = -90;
+            else
+                x = 130*5;
+        }
         Pane pane = new Pane();
         pane.setTranslateX(x);
         pane.setTranslateY(y);
@@ -466,12 +473,12 @@ public class GUI extends Application {
         });
         pane.setOnMouseClicked(MouseEvent->{
             if(imageName.equalsIgnoreCase("up") || imageName.equalsIgnoreCase("down")){
-                turn((x-20)/130, draw, y<0?0:4,(x-20)/130);
-                slide((x-20)/130, draw, y<0?0:4,(x-20)/130);
+                turn2(row, col, y<0?0:4,col);
+                slide(row, col, y<0?0:4,col);
             }
             else{
-                turn(draw,(y-20)/130, (y-20)/130, x<0?0:4);
-                slide(draw,(y-20)/130, (y-20)/130, x<0?0:4);
+                turn2(row, col, row, x<0?0:4);
+                slide(row, col, row, x<0?0:4);
             }
             arrowPane.getChildren().clear();
             arrowPane.setPrefHeight(0);
@@ -487,32 +494,69 @@ public class GUI extends Application {
             int length = 0;
             if(value<colI) {
                 System.out.println("Row kon si hai: " + row + "\nAnd COl: " + col);
-                String id = "" + 0 + 2;
+                String id = "" + row + value;
                 System.out.println("ID is yeah: " + id);
 //                boxPane.lookup(id).setId("temp");
                 List<Node> boxList = boxPane.getChildren();
                 for(Node box : boxList){
-                    if(box.getId().equals(id))
+                    if(box.getId().equals(id)) {
                         box.setId("temp");
+                        System.out.println("Ye Id set ho gai: " + box.getId());
+                    }
                 }
                 value++;
-                for (; value < colI; value++) {
-                    Rectangle select = (Rectangle) boxPane.lookup("" + row + value);
-                    translateX(select.getTranslateX(),select.getTranslateX()-130,select);
+                for (; value <= colI; value++) {
+                    for(Node box : boxList){
+                        if(box.getId().equals("" + row + value)) {
+                            translateX(box.getTranslateX(),box.getTranslateX()-130,box, 1);
+                            System.out.println("Ye ho giya translate: " + box.getId());
+                            box.setId("" + row + (value - 1));
+                        }
+                    }
+//                    Node select = boxPane.lookup("" + row + value);
+//                    translateX(select.getTranslateX(),select.getTranslateX()-130,select);
 //                    select.setTranslateX(select.getTranslateX()-130);
-                    select.setId("" + row + (value - 1));
+//                    select.setId("" + row + (value - 1));
 //                    super.board[row][value] = super.board[row][value+1];
                     length++;
                 }
-                Rectangle select = (Rectangle) boxPane.lookup("temp");
-                select.setTranslateX(select.getTranslateX()+(length*130));
-                select.setId(""+ row + colI);
+                for(Node node : boxList){
+                    if(node.getId().equals("temp")) {
+                        Rectangle rect = (Rectangle) node;
+                        double size = rect.getScaleX();
+                        System.out.println("Ye ho giya wapis original translate: " + rect.getId());
+                        ScaleTransition transition = new ScaleTransition(Duration.seconds(1), rect);
+                        transition.setToX(0);
+                        transition.setToY(0);
+                        transition.setCycleCount(1);
+                        transition.play();
+                        TranslateTransition transition2 = new TranslateTransition(Duration.seconds(1), rect);
+                        transition2.setToX(rect.getTranslateX()-65);
+                        transition2.setCycleCount(1);
+                        transition2.play();
+                        int finalLength = length;
+                        transition2.setOnFinished(event->{
+                        rect.setTranslateX(rect.getTranslateX()+(finalLength *130)+65);
+                        rect.setId(""+ row + colI);
+                        rect.setFill(Color.WHITE);
+                            ScaleTransition transition3 = new ScaleTransition(Duration.seconds(0.5), rect);
+                            transition3.setToX(size);
+                            transition3.setToY(size);
+                            transition3.setCycleCount(1);
+                            transition3.play();
+                        });
+                    }
+                }
+//                Rectangle select = (Rectangle) boxPane.lookup("temp");
+//                select.setTranslateX(select.getTranslateX()+(length*130));
+//                select.setId(""+ row + colI);
             }
-//            else
-//                for(;value>colI;value--){
-//                    super.board[drawIndex[0]][value] = super.board[drawIndex[0]][value-1];
-//                }
-//        }
+            else {
+                for (; value >= colI; value--) {
+//                    super.board[drawIndex[0]][value] = super.board[drawIndex[0]][value - 1];
+                }
+            }
+        }
 //        else {//col ke liye
 //            int value = row;
 //            if (value < rowI)
@@ -523,7 +567,7 @@ public class GUI extends Application {
 //                for (; value > rowI; value--) {
 //                    super.board[value][drawIndex[0]] = super.board[value - 1][drawIndex[0]];
 //                }
-        }
+//        }
     }
     private static StackPane playerInfo(int player, Color color){
         Rectangle rectangle = makeRectangle(3.5/9, 0.95);
