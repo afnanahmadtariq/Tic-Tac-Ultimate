@@ -138,12 +138,13 @@ public class GUI extends Application {
         transition.play();
         return transition;
     }
-    private static void scale(double toX, double toY, Node node, double sec){
+    private static ScaleTransition scale(double toX, double toY, Node node, double sec){
         ScaleTransition transition = new ScaleTransition(Duration.seconds(sec), node);
         transition.setToX(toX);
         transition.setToY(toY);
         transition.setCycleCount(1);
         transition.play();
+        return transition;
     }
     private static void rotate(int fromAngle, int toAngle, Node node){
         RotateTransition transition = new RotateTransition(Duration.seconds(2), node);
@@ -489,12 +490,12 @@ public class GUI extends Application {
         });
         pane.setOnMouseClicked(MouseEvent->{
             if(imageName.equalsIgnoreCase("up") || imageName.equalsIgnoreCase("down")){
-                turn2(row, col, y<0?0:4,col);
                 slide(row, col, y<0?0:4,col);
+//                turn2(row, col, y<0?0:4,col);
             }
             else{
-                turn2(row, col, row, x<0?0:4);
                 slide(row, col, row, x<0?0:4);
+//                turn2(row, col, row, x<0?0:4);
             }
             arrowPane.getChildren().clear();
             arrowPane.setPrefHeight(0);
@@ -527,8 +528,11 @@ public class GUI extends Application {
                 transition.setOnFinished(event->{
                     rect.setTranslateX(rect.getTranslateX()+(finalLength *130)+65);
                     rect.setFill(Color.WHITE);
-                    scale(size,size, rect,0.5);
-                    mark(rowI, colI);
+                    ScaleTransition scaleTransition = scale(size,size, rect,0.5);
+                    scaleTransition.setOnFinished(scaleEvent ->{
+                        mark(rowI, colI);
+                        turn2(row, col, rowI, colI);
+                    });
                 });
             }
             else {// right se draw left pe insert
@@ -549,8 +553,11 @@ public class GUI extends Application {
                 transition.setOnFinished(event->{
                     rect.setTranslateX(rect.getTranslateX()-(finalLength *130)-65);
                     rect.setFill(Color.WHITE);
-                    scale(size,size,rect,0.5);
-                    mark(rowI, colI);
+                    ScaleTransition scaleTransition = scale(size,size, rect,0.5);
+                    scaleTransition.setOnFinished(scaleEvent ->{
+                        mark(rowI, colI);
+                        turn2(row, col, rowI, colI);
+                    });
                 });
             }
         }
@@ -574,8 +581,11 @@ public class GUI extends Application {
                 transition.setOnFinished(event->{
                     rect.setTranslateY(rect.getTranslateY()+(finalLength *130)+65);
                     rect.setFill(Color.WHITE);
-                    scale(size,size,rect,0.5);
-                    mark(rowI, colI);
+                    ScaleTransition scaleTransition = scale(size,size, rect,0.5);
+                    scaleTransition.setOnFinished(scaleEvent ->{
+                        mark(rowI, colI);
+                        turn2(row, col, rowI, colI);
+                    });
                 });
             }
             else {// neche se draw uphar insert
@@ -596,13 +606,15 @@ public class GUI extends Application {
                 transition.setOnFinished(event->{
                     rect.setTranslateY(rect.getTranslateY()-(finalLength *130)-65);
                     rect.setFill(Color.WHITE);
-                    scale(size,size,rect,0.5);
-                    mark(rowI, colI);
+                    ScaleTransition scaleTransition = scale(size,size, rect,0.5);
+                    scaleTransition.setOnFinished(scaleEvent ->{
+                        mark(rowI, colI);
+                        turn2(row, col, rowI, colI);
+                    });
                 });
             }
         }
     }
-
     private static void mark(int row, int col) {
         if(getPlayer()==1)
             markX2(row, col, 1);
@@ -667,8 +679,8 @@ public class GUI extends Application {
     private static void Toss(int choice){
         if(choice == (int)(Math.random()*2)+1){
             System.out.println("player = 1");
-            Runner.setPlayer(2);
-            setTurn(2);
+            Runner.setPlayer(1);
+            setTurn(1);
         }
         else{
             System.out.println("player = 2");
@@ -1025,35 +1037,35 @@ public class GUI extends Application {
         KeyFrame startFrame, endFrame;
         if(step == 2) {
             startFrame = new KeyFrame(Duration.seconds(delay),
-                    new KeyValue(line.endXProperty(), box.getTranslateX()+(box.getWidth()*0.6)),
-                    new KeyValue(line.endYProperty(), box.getTranslateY()+(box.getHeight()*0.2)));
+                    new KeyValue(line.endXProperty(), box.getLayoutX()+(box.getWidth()*0.8)),
+                    new KeyValue(line.endYProperty(), box.getLayoutY()+(box.getHeight()*0.2)));
             endFrame = new KeyFrame(Duration.seconds(delay+0.3),
-                    new KeyValue(line.endXProperty(), box.getTranslateX()+(box.getWidth()*0.2)),
-                    new KeyValue(line.endYProperty(), box.getTranslateY()+(box.getHeight()*0.6)));
+                    new KeyValue(line.endXProperty(), box.getLayoutX()+(box.getWidth()*0.2)),
+                    new KeyValue(line.endYProperty(), box.getLayoutY()+(box.getHeight()*0.8)));
         }
         else {
             startFrame = new KeyFrame(Duration.seconds(delay),
-                    new KeyValue(line.endXProperty(), box.getTranslateX()+(box.getWidth()*0.2)),
-                    new KeyValue(line.endYProperty(), box.getTranslateY()+(box.getHeight()*0.2)));
+                    new KeyValue(line.endXProperty(), box.getLayoutX()+(box.getWidth()*0.2)),
+                    new KeyValue(line.endYProperty(), box.getLayoutY()+(box.getHeight()*0.2)));
             endFrame = new KeyFrame(Duration.seconds(delay+0.3),
-                    new KeyValue(line.endXProperty(), box.getTranslateX()+(box.getWidth()*0.6)),
-                    new KeyValue(line.endYProperty(), box.getTranslateY()+(box.getHeight()*0.6)));
+                    new KeyValue(line.endXProperty(), box.getLayoutX()+(box.getWidth()*0.6)),
+                    new KeyValue(line.endYProperty(), box.getLayoutY()+(box.getHeight()*0.8)));
         }
 
         timeline.getKeyFrames().addAll(startFrame, endFrame);
-        timeline.play();
-        timeline.setOnFinished(event -> {
+//        timeline.play();
+//        timeline.setOnFinished(event -> {
             if(step == 2) {
-                line.startXProperty().bind(box.translateXProperty().add(box.widthProperty().multiply(0.6)));
+                line.startXProperty().bind(box.translateXProperty().add(box.widthProperty().multiply(0.8)));
                 line.endXProperty().bind(box.translateXProperty().add(box.widthProperty().multiply(0.2)));
             }
             else {
                 line.startXProperty().bind(box.translateXProperty().add(box.widthProperty().multiply(0.2)));
-                line.endXProperty().bind(box.translateXProperty().add(box.widthProperty().multiply(0.6)));
+                line.endXProperty().bind(box.translateXProperty().add(box.widthProperty().multiply(0.8)));
             }
             line.startYProperty().bind(box.translateYProperty().add(box.heightProperty().multiply(0.2)));
-            line.endYProperty().bind(box.translateYProperty().add(box.heightProperty().multiply(0.6)));
-        });
+            line.endYProperty().bind(box.translateYProperty().add(box.heightProperty().multiply(0.8)));
+//        });
     }
     private static void markO2(int row, int col){
         Rectangle box = (Rectangle) boxPane.lookup("#"+row+col);
@@ -1065,27 +1077,27 @@ public class GUI extends Application {
 
         Timeline timeline = new Timeline();
         timeline.setCycleCount(1);
-        KeyValue keyValueRadius = new KeyValue(circle.radiusProperty(), (box.getWidth()*0.3));
+        KeyValue keyValueRadius = new KeyValue(circle.radiusProperty(), (box.getWidth()*0.4));
         KeyFrame keyFrame = new KeyFrame(Duration.seconds(0.25), keyValueRadius);
         timeline.getKeyFrames().add(keyFrame);
         timeline.play();
 
         Timeline innerTimeLine = new Timeline();
         innerTimeLine.setCycleCount(1);
-        KeyValue keyValueRadiusInner = new KeyValue(inner.radiusProperty(), (box.getWidth()*0.2));
+        KeyValue keyValueRadiusInner = new KeyValue(inner.radiusProperty(), (box.getWidth()*0.3));
         KeyFrame keyFrameInner = new KeyFrame(Duration.seconds(0.25), keyValueRadiusInner);
         innerTimeLine.getKeyFrames().add(keyFrameInner);
         innerTimeLine.play();
 
-        timeline.setOnFinished(event -> {
-//            circle.radiusProperty().bind(box.widthProperty().multiply(0.3));
+//        timeline.setOnFinished(event -> {
+//            circle.radiusProperty().bind(box.widthProperty().multiply(0.4));
             circle.centerXProperty().bind(box.translateXProperty().add(box.widthProperty().multiply(0.5)));
             circle.centerYProperty().bind(box.translateYProperty().add(box.heightProperty().multiply(0.5)));
 
-//            inner.radiusProperty().bind(box.widthProperty().multiply(0.2));
+//            inner.radiusProperty().bind(box.widthProperty().multiply(0.3));
             inner.centerXProperty().bind(box.translateXProperty().add(box.widthProperty().multiply(0.5)));
             inner.centerYProperty().bind(box.translateYProperty().add(box.heightProperty().multiply(0.5)));
-        });
+//        });
 
         marks.getChildren().addAll(circle,inner);
     }
