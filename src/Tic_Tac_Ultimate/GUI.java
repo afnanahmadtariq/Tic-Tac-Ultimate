@@ -125,27 +125,36 @@ public class GUI extends Application {
             });
         });
     }
-    private static void translateY(double startY, double endY, Node node, double sec){
-        TranslateTransition translateTransition = new TranslateTransition(Duration.seconds(sec), node);
-        translateTransition.setFromY(startY);
-        translateTransition.setToY(endY);
-        translateTransition.setCycleCount(1);
-        translateTransition.play();
+    private static TranslateTransition translateY(double startY, double endY, Node node, double sec){
+        TranslateTransition transition = new TranslateTransition(Duration.seconds(sec), node);
+        transition.setFromY(startY);
+        transition.setToY(endY);
+        transition.setCycleCount(1);
+        transition.play();
+        return transition;
     }
-    private static void translateX(double startX, double endX, Node node, double sec){
-        TranslateTransition translateTransition = new TranslateTransition(Duration.seconds(sec), node);
-        translateTransition.setFromX(startX);
-        translateTransition.setToX(endX);
-        translateTransition.setCycleCount(1);
-        translateTransition.play();
+    private static TranslateTransition translateX(double startX, double endX, Node node, double sec){
+        TranslateTransition transition = new TranslateTransition(Duration.seconds(sec), node);
+        transition.setFromX(startX);
+        transition.setToX(endX);
+        transition.setCycleCount(1);
+        transition.play();
+        return transition;
+    }
+    private static void scale(double toX, double toY, Node node, double sec){
+        ScaleTransition transition = new ScaleTransition(Duration.seconds(sec), node);
+        transition.setToX(toX);
+        transition.setToY(toY);
+        transition.setCycleCount(1);
+        transition.play();
     }
     private static void rotate(int fromAngle, int toAngle, Node node){
-        RotateTransition rotateTransition = new RotateTransition(Duration.seconds(2), node);
-        rotateTransition.setAxis(Rotate.X_AXIS);
-        rotateTransition.setFromAngle(fromAngle);
-        rotateTransition.setToAngle(toAngle);
-        rotateTransition.setCycleCount(1);
-        rotateTransition.play();
+        RotateTransition transition = new RotateTransition(Duration.seconds(2), node);
+        transition.setAxis(Rotate.X_AXIS);
+        transition.setFromAngle(fromAngle);
+        transition.setToAngle(toAngle);
+        transition.setCycleCount(1);
+        transition.play();
     }
     private static void displayMainMenu() {
         Text ticTac = new Text("Tic tac");
@@ -489,17 +498,14 @@ public class GUI extends Application {
         return pane;
     }
     private static void slide(int row, int col, int rowI, int colI){
+//        boxPane.lookup(id).setId("temp");
+        int length = 0;
+        List<Node> boxList = boxPane.getChildren();
         if(row == rowI){//row ke liye
             int value = col;
-            int length = 0;
-            if(value<colI) {
-                System.out.println("Row kon si hai: " + row + "\nAnd COl: " + col);
-                String id = "" + row + value;
-                System.out.println("ID is yeah: " + id);
-//                boxPane.lookup(id).setId("temp");
-                List<Node> boxList = boxPane.getChildren();
+            if(value<colI) {// left se draw right pe insert
                 for(Node box : boxList){
-                    if(box.getId().equals(id)) {
+                    if(box.getId().equals("" + row + value)) {
                         box.setId("temp");
                         System.out.println("Ye Id set ho gai: " + box.getId());
                     }
@@ -513,61 +519,134 @@ public class GUI extends Application {
                             box.setId("" + row + (value - 1));
                         }
                     }
-//                    Node select = boxPane.lookup("" + row + value);
-//                    translateX(select.getTranslateX(),select.getTranslateX()-130,select);
-//                    select.setTranslateX(select.getTranslateX()-130);
-//                    select.setId("" + row + (value - 1));
-//                    super.board[row][value] = super.board[row][value+1];
                     length++;
                 }
                 for(Node node : boxList){
                     if(node.getId().equals("temp")) {
                         Rectangle rect = (Rectangle) node;
+                        rect.setId(""+ rowI + colI);
                         double size = rect.getScaleX();
                         System.out.println("Ye ho giya wapis original translate: " + rect.getId());
-                        ScaleTransition transition = new ScaleTransition(Duration.seconds(1), rect);
-                        transition.setToX(0);
-                        transition.setToY(0);
-                        transition.setCycleCount(1);
-                        transition.play();
-                        TranslateTransition transition2 = new TranslateTransition(Duration.seconds(1), rect);
-                        transition2.setToX(rect.getTranslateX()-65);
-                        transition2.setCycleCount(1);
-                        transition2.play();
+                        scale(0,0,rect,1);
+                        TranslateTransition transition = translateX(rect.getTranslateX(), rect.getTranslateX()-65, rect, 1);
                         int finalLength = length;
-                        transition2.setOnFinished(event->{
-                        rect.setTranslateX(rect.getTranslateX()+(finalLength *130)+65);
-                        rect.setId(""+ row + colI);
-                        rect.setFill(Color.WHITE);
-                            ScaleTransition transition3 = new ScaleTransition(Duration.seconds(0.5), rect);
-                            transition3.setToX(size);
-                            transition3.setToY(size);
-                            transition3.setCycleCount(1);
-                            transition3.play();
+                        transition.setOnFinished(event->{
+                            rect.setTranslateX(rect.getTranslateX()+(finalLength *130)+65);
+                            rect.setFill(Color.WHITE);
+                            scale(size,size,rect,0.5);
                         });
                     }
                 }
-//                Rectangle select = (Rectangle) boxPane.lookup("temp");
-//                select.setTranslateX(select.getTranslateX()+(length*130));
-//                select.setId(""+ row + colI);
             }
-            else {
+            else {// right se draw left pe insert
+                for(Node box : boxList){
+                    if(box.getId().equals("" + row + value)) {
+                        box.setId("temp");
+                        System.out.println("Ye Id set ho gai: " + box.getId());
+                    }
+                }
+                value--;
                 for (; value >= colI; value--) {
-//                    super.board[drawIndex[0]][value] = super.board[drawIndex[0]][value - 1];
+                    for(Node box : boxList){
+                        if(box.getId().equals("" + row + value)) {
+                            translateX(box.getTranslateX(),box.getTranslateX()+130,box, 1);
+                            System.out.println("Ye ho giya translate: " + box.getId());
+                            box.setId("" + row + (value + 1));
+                        }
+                    }
+                    length++;
+                }
+                for(Node node : boxList){
+                    if(node.getId().equals("temp")) {
+                        Rectangle rect = (Rectangle) node;
+                        rect.setId(""+ rowI + colI);
+                        double size = rect.getScaleX();
+                        System.out.println("Ye ho giya wapis original translate: " + rect.getId());
+                        scale(0,0,rect,1);
+                        TranslateTransition transition = translateX(rect.getTranslateX(), rect.getTranslateX()+65, rect, 1);
+                        int finalLength = length;
+                        transition.setOnFinished(event->{
+                            rect.setTranslateX(rect.getTranslateX()-(finalLength *130)-65);
+                            rect.setFill(Color.WHITE);
+                            scale(size,size,rect,0.5);
+                        });
+                    }
                 }
             }
         }
-//        else {//col ke liye
-//            int value = row;
-//            if (value < rowI)
-//                for (; value < rowI; value++) {
-//                    super.board[value][drawIndex[1]] = super.board[value + 1][drawIndex[1]];
-//                }
-//            else
-//                for (; value > rowI; value--) {
-//                    super.board[value][drawIndex[0]] = super.board[value - 1][drawIndex[0]];
-//                }
-//        }
+        else {//col ke liye
+            int value = row;
+            if (value < rowI) {// uphar se draw neche insert
+                for(Node box : boxList){
+                    if(box.getId().equals("" + value + col)) {
+                        box.setId("temp");
+                        System.out.println("Ye Id set ho gai: " + box.getId());
+                    }
+                }
+                value--;
+                for (; value <= rowI; value++) {
+                    for(Node box : boxList){
+                        if(box.getId().equals("" + value + col)) {
+                            translateY(box.getTranslateY(),box.getTranslateY()-130,box, 1);
+                            System.out.println("Ye ho giya translate: " + box.getId());
+                            box.setId("" + row + (value + 1));
+                        }
+                    }
+                    length++;
+                }
+                for(Node node : boxList){
+                    if(node.getId().equals("temp")) {
+                        Rectangle rect = (Rectangle) node;
+                        rect.setId(""+ rowI + colI);
+                        double size = rect.getScaleX();
+                        System.out.println("Ye ho giya wapis original translate: " + rect.getId());
+                        scale(0,0,rect,1);
+                        TranslateTransition transition = translateY(rect.getTranslateY(), rect.getTranslateY()-65, rect, 1);
+                        int finalLength = length;
+                        transition.setOnFinished(event->{
+                            rect.setTranslateY(rect.getTranslateY()+(finalLength *130)+65);
+                            rect.setFill(Color.WHITE);
+                            scale(size,size,rect,0.5);
+                        });
+                    }
+                }
+            }
+            else {// neche se draw uphar insert
+                for(Node box : boxList){
+                    if(box.getId().equals("" + row + value)) {
+                        box.setId("temp");
+                        System.out.println("Ye Id set ho gai: " + box.getId());
+                    }
+                }
+                value--;
+                for (; value >= rowI; value--) {
+                    for(Node box : boxList){
+                        if(box.getId().equals("" + row + value)) {
+                            translateY(box.getTranslateY(),box.getTranslateY()-130,box, 1);
+                            System.out.println("Ye ho giya translate: " + box.getId());
+                            box.setId("" + row + (value + 1));
+                        }
+                    }
+                    length++;
+                }
+                for(Node node : boxList){
+                    if(node.getId().equals("temp")) {
+                        Rectangle rect = (Rectangle) node;
+                        rect.setId(""+ rowI + colI);
+                        double size = rect.getScaleX();
+                        System.out.println("Ye ho giya wapis original translate: " + rect.getId());
+                        scale(0,0,rect,1);
+                        TranslateTransition transition = translateY(rect.getTranslateY(), rect.getTranslateY()-65, rect, 1);
+                        int finalLength = length;
+                        transition.setOnFinished(event->{
+                            rect.setTranslateY(rect.getTranslateY()+(finalLength *130)+65);
+                            rect.setFill(Color.WHITE);
+                            scale(size,size,rect,0.5);
+                        });
+                    }
+                }
+            }
+        }
     }
     private static StackPane playerInfo(int player, Color color){
         Rectangle rectangle = makeRectangle(3.5/9, 0.95);
