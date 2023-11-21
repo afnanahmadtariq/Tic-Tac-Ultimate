@@ -376,7 +376,7 @@ public class GUI extends Application {
         boxPane.setTranslateY(10);
         marks = new Group();
         arrowPane = new Pane();
-        board.getChildren().addAll(backRectangle, boxPane, marks, arrowPane);
+        board.getChildren().addAll(backRectangle, boxPane, arrowPane);
         for (int i = 0; i < 5; i++) {
             for (int j = 0; j < 5; j++) {
                 Rectangle box = makeBox();
@@ -387,22 +387,24 @@ public class GUI extends Application {
                 boxPane.getChildren().add(box);
             }
         }
+        boxPane.getChildren().add(marks);
+        marks.setId("marks");
     }
     private static Rectangle makeBox(){
         Rectangle box = makeRectangle(0.15,0.15);
         Color original = (Color) box.getFill();
         AtomicBoolean flag = new AtomicBoolean(true);
         box.setOnMouseEntered(mouseEvent -> {
-            String id = box.getId();
-            int row = Integer.parseInt(id.substring(0, 1));
-            int col = Integer.parseInt(id.substring(1));
+            int[] index = getId(box);
+            int row = index[0];
+            int col = index[1];
             if(row ==0 || row ==4 || col ==0 || col ==4)
                 box.setFill(Color.YELLOW);
         });
         box.setOnMouseExited(mouseEvent -> {
-            String id = box.getId();
-            int row = Integer.parseInt(id.substring(0, 1));
-            int col = Integer.parseInt(id.substring(1));
+            int[] index = getId(box);
+            int row = index[0];
+            int col = index[1];
             if(row ==0 || row ==4 || col ==0 || col ==4) {
                 if (flag.get())
                     box.setFill(original);
@@ -412,9 +414,9 @@ public class GUI extends Application {
             }
         });
         box.setOnMouseClicked(mouseEvent -> {
-            String id = box.getId();
-            int row = Integer.parseInt(id.substring(0, 1));
-            int col = Integer.parseInt(id.substring(1));
+            int[] index = getId(box);
+            int row = index[0];
+            int col = index[1];
             System.out.println("Received row: " + row + " and Col: " + col);
             if(row ==0 || row ==4 || col ==0 || col ==4) {
                 flag.set(false);
@@ -425,6 +427,12 @@ public class GUI extends Application {
             System.out.println("mouse Clicked!");
         });
         return box;
+    }
+    private static int[] getId(Node node){
+        String id = node.getId();
+        int row = Integer.parseInt(id.substring(0, 1));
+        int col = Integer.parseInt(id.substring(1));
+        return new int[] {row, col};
     }
     public static void showArrows(int row, int col) {
         if(row!=0)
@@ -536,6 +544,7 @@ public class GUI extends Application {
                             rect.setTranslateX(rect.getTranslateX()+(finalLength *130)+65);
                             rect.setFill(Color.WHITE);
                             scale(size,size,rect,0.5);
+                            mark(rowI, colI);
                         });
                     }
                 }
@@ -571,6 +580,7 @@ public class GUI extends Application {
                             rect.setTranslateX(rect.getTranslateX()-(finalLength *130)-65);
                             rect.setFill(Color.WHITE);
                             scale(size,size,rect,0.5);
+                            mark(rowI, colI);
                         });
                     }
                 }
@@ -609,6 +619,7 @@ public class GUI extends Application {
                             rect.setTranslateY(rect.getTranslateY()+(finalLength *130)+65);
                             rect.setFill(Color.WHITE);
                             scale(size,size,rect,0.5);
+                            mark(rowI, colI);
                         });
                     }
                 }
@@ -644,12 +655,21 @@ public class GUI extends Application {
                             rect.setTranslateY(rect.getTranslateY()-(finalLength *130)-65);
                             rect.setFill(Color.WHITE);
                             scale(size,size,rect,0.5);
+                            mark(rowI, colI);
                         });
                     }
                 }
             }
         }
     }
+
+    private static void mark(int row, int col) {
+        if(getPlayer()==1)
+            markX2(row, col);
+        else
+            markO2(row, col);
+    }
+
     private static StackPane playerInfo(int player, Color color){
         Rectangle rectangle = makeRectangle(3.5/9, 0.95);
 
@@ -707,8 +727,8 @@ public class GUI extends Application {
     private static void Toss(int choice){
         if(choice == (int)(Math.random()*2)+1){
             System.out.println("player = 1");
-            Runner.setPlayer(1);
-            setTurn(1);
+            Runner.setPlayer(2);
+            setTurn(2);
         }
         else{
             System.out.println("player = 2");
@@ -1053,6 +1073,7 @@ public class GUI extends Application {
         DoubleBinding startX = box.translateYProperty().add(box.widthProperty().multiply(0.2));
         DoubleBinding endY = box.translateYProperty().add(box.heightProperty().multiply(0.6));
         DoubleBinding endX = box.translateYProperty().add(box.widthProperty().multiply(0.6));
+        System.out.println("\nstartX: -------->" + startX.getValue() + "\nstartY: -------->" + startY.getValue() +"\nendX: -------->" + endX.getValue() + "\nendY: -------->" + endY.getValue());
         markLine2(startX,startY,endX,endY,Color.RED,0,marks);
         startX = endX;
         endX = box.translateYProperty().add(box.widthProperty().multiply(0.2));
@@ -1060,10 +1081,6 @@ public class GUI extends Application {
     }
     private static void markLine2(DoubleBinding startX, DoubleBinding startY, DoubleBinding endX, DoubleBinding endY, Color color, double delay, Group node){
         Line line = new Line();
-        line.startXProperty().bind(startX);
-        line.startYProperty().bind(startY);
-        line.endXProperty().bind(endX);
-        line.endYProperty().bind(endY);
         line.setStrokeWidth(20);
         line.setStroke(color);
         line.setStrokeLineCap(StrokeLineCap.ROUND);
@@ -1077,6 +1094,12 @@ public class GUI extends Application {
                 new KeyValue(line.endYProperty(), endY.getValue()));
         timeline.getKeyFrames().addAll(startFrame, endFrame);
         timeline.play();
+        timeline.setOnFinished(event -> {
+            line.startXProperty().bind(startX);
+            line.startYProperty().bind(startY);
+            line.endXProperty().bind(endX);
+            line.endYProperty().bind(endY);
+        });
     }
     private static void markO2(int row, int col){
         Rectangle box = (Rectangle) boxPane.lookup("#"+row+col);
@@ -1086,14 +1109,8 @@ public class GUI extends Application {
     }
     private static void markO2(DoubleBinding x, DoubleBinding y, DoubleProperty radiusFull, Group node){
         Circle circle = new Circle(0);
-        circle.radiusProperty().bind(radiusFull.multiply(0.3));
-        circle.centerXProperty().bind(x);
-        circle.centerYProperty().bind(y);
         circle.setFill(Color.BLUE);
         Circle inner = new Circle(0);
-        inner.radiusProperty().bind(radiusFull.multiply(0.2));
-        inner.centerXProperty().bind(x);
-        inner.centerYProperty().bind(y);
         inner.setFill(Color.WHITE);
 
 
@@ -1110,6 +1127,16 @@ public class GUI extends Application {
         KeyFrame keyFrameInner = new KeyFrame(Duration.seconds(0.25), keyValueRadiusInner);
         innerTimeLine.getKeyFrames().add(keyFrameInner);
         innerTimeLine.play();
+
+        timeline.setOnFinished(event -> {
+//            circle.radiusProperty().bind(radiusFull.multiply(0.3));
+            circle.centerXProperty().bind(x);
+            circle.centerYProperty().bind(y);
+
+//            inner.radiusProperty().bind(radiusFull.multiply(0.2));
+            inner.centerXProperty().bind(x);
+            inner.centerYProperty().bind(y);
+        });
 
         node.getChildren().addAll(circle,inner);
     }
