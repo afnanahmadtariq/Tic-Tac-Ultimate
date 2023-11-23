@@ -3,8 +3,6 @@ package Tic_Tac_Ultimate;
 import javafx.animation.*;
 import javafx.application.Application;
 import javafx.application.Platform;
-import javafx.beans.binding.DoubleBinding;
-import javafx.beans.property.DoubleProperty;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Group;
@@ -26,6 +24,7 @@ import javafx.util.Duration;
 
 import java.util.concurrent.atomic.AtomicBoolean;
 
+import static Tic_Tac_Ultimate.QuxioBoard.quxioWinValues;
 import static Tic_Tac_Ultimate.Runner.*;
 import static Tic_Tac_Ultimate.Board.*;
 
@@ -43,9 +42,13 @@ public class GUI extends Application {
     private static Group box2;
     private static BorderPane gamePane;
     private static Pane boxPane;
-    private static Pane arrowPane;
+    private static Group arrowGroup;
     private static double cell;
     private static Group marks;
+    private static boolean listen;
+    static {
+        listen = true;
+    }
     public static void initialize(String[] args){
         launch(args);
     }
@@ -373,8 +376,8 @@ public class GUI extends Application {
         boxPane.setTranslateX(10);
         boxPane.setTranslateY(10);
         marks = new Group();
-        arrowPane = new Pane();
-        board.getChildren().addAll(backRectangle, boxPane, arrowPane);
+        arrowGroup = new Group();
+        board.getChildren().addAll(backRectangle, boxPane, arrowGroup);
         for (int i = 0; i < 5; i++) {
             for (int j = 0; j < 5; j++) {
                 Rectangle box = makeBox();
@@ -391,12 +394,12 @@ public class GUI extends Application {
     private static Rectangle makeBox(){
         Rectangle box = makeRectangle(0.15,0.15);
         Color original = (Color) box.getFill();
-        AtomicBoolean flag = new AtomicBoolean(true);
+//        AtomicBoolean flag = new AtomicBoolean(true);
         box.setOnMouseEntered(mouseEvent -> {
             int[] index = getId(box);
             int row = index[0];
             int col = index[1];
-            if(row ==0 || row ==4 || col ==0 || col ==4)
+            if((row ==0 || row ==4 || col ==0 || col ==4) && listen)
                 box.setFill(Color.YELLOW);
         });
         box.setOnMouseExited(mouseEvent -> {
@@ -404,11 +407,11 @@ public class GUI extends Application {
             int row = index[0];
             int col = index[1];
             if(row ==0 || row ==4 || col ==0 || col ==4) {
-                if (flag.get())
+                if (listen)
                     box.setFill(original);
-                else
-                    box.setFill(Color.DARKGRAY);
-                flag.set(true);
+//                else
+//                    box.setFill(Color.DARKGRAY);
+//                flag.set(true);
             }
         });
         box.setOnMouseClicked(mouseEvent -> {
@@ -416,10 +419,21 @@ public class GUI extends Application {
             int row = index[0];
             int col = index[1];
             System.out.println("Received row: " + row + " and Col: " + col);
-            if(row ==0 || row ==4 || col ==0 || col ==4) {
-                flag.set(false);
+            if((row ==0 || row ==4 || col ==0 || col ==4) && listen) {
+                box.setFill(Color.DARKGRAY);
+//                flag.set(false);
                 showArrows(row, col);
 //                draw(row, col);
+            }
+            else{
+                Color curent = (Color) box.getFill();
+                FillTransition fill = new FillTransition(Duration.seconds(0.08),box);
+                fill.setFromValue(curent);
+                fill.setToValue(Color.MEDIUMVIOLETRED);
+                fill.setAutoReverse(true);
+                fill.setCycleCount(3);
+                fill.play();
+                fill.setOnFinished(event -> box.setFill(curent));
             }
 //            turn(Integer.parseInt(box.getId().substring(0,1)),Integer.parseInt(box.getId().substring(1)));
             System.out.println("mouse Clicked!");
@@ -434,15 +448,16 @@ public class GUI extends Application {
     }
     public static void showArrows(int row, int col) {
         if(row!=0)
-            arrowPane.getChildren().add(arrow(row,col,"down"));
+            arrowGroup.getChildren().add(arrow(row,col,"down"));
         if(row!=4)
-            arrowPane.getChildren().add(arrow(row,col,"up"));
+            arrowGroup.getChildren().add(arrow(row,col,"up"));
         if(col!=0)
-            arrowPane.getChildren().add(arrow(row,col,"right"));
+            arrowGroup.getChildren().add(arrow(row,col,"right"));
         if(col!=4)
-            arrowPane.getChildren().add(arrow(row,col,"left"));
-        arrowPane.setPrefWidth(root.getHeight()*0.8);
-        arrowPane.setPrefHeight(root.getHeight()*0.8);
+            arrowGroup.getChildren().add(arrow(row,col,"left"));
+        listen = false;
+//        arrowPane.setPrefWidth(root.getHeight()*0.8);
+//        arrowPane.setPrefHeight(root.getHeight()*0.8);
     }
     private static Pane arrow(int row, int col, String imageName){
         double x,y;
@@ -489,6 +504,8 @@ public class GUI extends Application {
             pane.setStyle("-fx-cursor: pointer");
         });
         pane.setOnMouseClicked(MouseEvent->{
+//            listen = false;
+            System.out.println("Listen value BEFORE completion of move: " + listen);
             if(imageName.equalsIgnoreCase("up") || imageName.equalsIgnoreCase("down")){
                 slide(row, col, y<0?0:4,col);
 //                turn2(row, col, y<0?0:4,col);
@@ -497,9 +514,9 @@ public class GUI extends Application {
                 slide(row, col, row, x<0?0:4);
 //                turn2(row, col, row, x<0?0:4);
             }
-            arrowPane.getChildren().clear();
-            arrowPane.setPrefHeight(0);
-            arrowPane.setPrefWidth(0);
+            arrowGroup.getChildren().clear();
+//            arrowPane.setPrefHeight(0);
+//            arrowPane.setPrefWidth(0);
             System.out.println("Show GUI mark Done!");
 
         });
@@ -517,6 +534,11 @@ public class GUI extends Application {
                     Node box = boxPane.lookup("#" + row + value);
                     translateX(box.getTranslateX(),box.getTranslateX()-130,box, 1);
                     box.setId("" + row + (value - 1));
+                    Circle circle = (Circle) marks.lookup("#" + row + value + "inner");
+                    if(circle!=null){
+                        circle.setId("#" + row + (value - 1) + "inner");
+                        System.out.println("Circle set!");
+                    }
                     length++;
                 }
                 Rectangle rect = (Rectangle) boxPane.lookup("#temp");
@@ -532,6 +554,8 @@ public class GUI extends Application {
                     scaleTransition.setOnFinished(scaleEvent ->{
                         mark(rowI, colI);
                         turn2(row, col, rowI, colI);
+                        listen = true;
+                        System.out.println("Listen value after completion of move: " + listen);
                     });
                 });
             }
@@ -542,6 +566,11 @@ public class GUI extends Application {
                     Node box = boxPane.lookup("#" + row + value);
                     translateX(box.getTranslateX(),box.getTranslateX()+130,box, 1);
                     box.setId("" + row + (value + 1));
+                    Circle circle = (Circle) marks.lookup("#" + row + value + "inner");
+                    if(circle!=null){
+                        circle.setId("#" + row + (value + 1) + "inner");
+                        System.out.println("Circle set!");
+                    }
                     length++;
                 }
                 Rectangle rect = (Rectangle) boxPane.lookup("#temp");
@@ -557,6 +586,8 @@ public class GUI extends Application {
                     scaleTransition.setOnFinished(scaleEvent ->{
                         mark(rowI, colI);
                         turn2(row, col, rowI, colI);
+                        listen = true;
+                        System.out.println("Listen value after completion of move: " + listen);
                     });
                 });
             }
@@ -570,6 +601,11 @@ public class GUI extends Application {
                     Node box = boxPane.lookup("#" + value + col);
                     translateY(box.getTranslateY(),box.getTranslateY()-130,box, 1);
                     box.setId("" + (value - 1) + col);
+                    Circle circle = (Circle) marks.lookup("#" + value + col + "inner");
+                    if(circle!=null){
+                        circle.setId("#" + (value - 1) + col + "inner");
+                        System.out.println("Circle set!");
+                    }
                     length++;
                 }
                 Rectangle rect = (Rectangle) boxPane.lookup("#temp");
@@ -585,6 +621,8 @@ public class GUI extends Application {
                     scaleTransition.setOnFinished(scaleEvent ->{
                         mark(rowI, colI);
                         turn2(row, col, rowI, colI);
+                        listen = true;
+                        System.out.println("Listen value after completion of move: " + listen);
                     });
                 });
             }
@@ -595,6 +633,11 @@ public class GUI extends Application {
                     Node box = boxPane.lookup("#" + value + col);
                     translateY(box.getTranslateY(),box.getTranslateY()+130,box, 1);
                     box.setId("" + (value + 1) + col);
+                    Circle circle = (Circle) marks.lookup("#" + value + col + "inner");
+                    if(circle!=null){
+                        circle.setId("#" + (value + 1) + col + "inner");
+                        System.out.println("Circle set!");
+                    }
                     length++;
                 }
                 Rectangle rect = (Rectangle) boxPane.lookup("#temp");
@@ -610,6 +653,8 @@ public class GUI extends Application {
                     scaleTransition.setOnFinished(scaleEvent ->{
                         mark(rowI, colI);
                         turn2(row, col, rowI, colI);
+                        listen = true;
+                        System.out.println("Listen value after completion of move: " + listen);
                     });
                 });
             }
@@ -910,13 +955,25 @@ public class GUI extends Application {
         System.out.println("Marked on grid!");
     }
     public static void markLine(int value){
-        int[][] lineIndex = dictionary.get(value);
-        int startX =(int)((lineIndex[0][1]*cell)+(int)(cell*0.5));
-        int startY =(int)((lineIndex[0][0]*cell)+(int)(cell*0.5));
-        int endX = (int) ((lineIndex[2][1]*cell)+(int)(cell*0.5));
-        int endY = (int) ((lineIndex[2][0]*cell)+(int)(cell*0.5));
+        int[][] lineIndex;
+        if(gameType==3) {
+            lineIndex = quxioWinValues.get(value);
+            for(int[] index: lineIndex){
+                Rectangle box = (Rectangle) boxPane.lookup("#" + index[0] + index[1]);
+                box.setFill(getPlayer()==1?Color.LIGHTSKYBLUE:Color.HOTPINK);
+                Circle circle = (Circle) marks.lookup("#" + index[0] + index[1] + "inner");
+                if(circle!=null) circle.setFill(Color.HOTPINK);
+            }
+        }
+        else {
+            lineIndex = dictionary.get(value);
+            int startX = (int) ((lineIndex[0][1] * cell) + (int) (cell * 0.5));
+            int startY = (int) ((lineIndex[0][0] * cell) + (int) (cell * 0.5));
+            int endX = (int) ((lineIndex[2][1] * cell) + (int) (cell * 0.5));
+            int endY = (int) ((lineIndex[2][0] * cell) + (int) (cell * 0.5));
 
-        markLine(startX,startY,endX,endY,Color.LIGHTGOLDENRODYELLOW,0,marks);
+            markLine(startX, startY, endX, endY, Color.LIGHTGOLDENRODYELLOW, 0, marks);
+        }
     }
     public static void markLine(int[] superIndex,int value){
         int[][] lineIndex = dictionary.get(value);
@@ -1033,6 +1090,7 @@ public class GUI extends Application {
         line.setStroke(Color.RED);
         line.setStrokeLineCap(StrokeLineCap.ROUND);
         marks.getChildren().add(line);
+        line.setId("" + row + col + step);
         Timeline timeline = new Timeline();
         KeyFrame startFrame, endFrame;
         if(step == 2) {
@@ -1100,6 +1158,8 @@ public class GUI extends Application {
 //        });
 
         marks.getChildren().addAll(circle,inner);
+        circle.setId("" + row + col + "circle");
+        inner.setId("" + row + col + "inner");
     }
     public static void clearMarks(){
         marks.getChildren().clear();

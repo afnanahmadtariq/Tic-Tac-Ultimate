@@ -63,7 +63,6 @@ public class Runner {
     public static void endGame(boolean win, int winValue){
         if(win){
             GUI.markLine(winValue);
-            System.out.println("place 'player' at index");
             System.out.println("Won with value: " + winValue);
             System.out.println("index at: " + Arrays.deepToString(dictionary.get(winValue)));
         }
@@ -84,7 +83,7 @@ public class Runner {
         }
         else{
             System.out.println("\n\n\n\n---------  Exit Game---------");
-            GUI.clearGame();
+//            GUI.clearGame();
         }
     }
     public static void endGame(int[] superIndex, boolean win, int winValue){

@@ -30,8 +30,11 @@ public class QuxioController  extends QuxioBoard{
     }
     public boolean doTurn(int[] drawIndex, int[] insertIndex){
         if(markTurn(drawIndex,insertIndex)){
-            System.out.println("registered!!...............");
-            boolean end = switch(super.check(player)){
+            System.out.println("Board now: \n" + Arrays.deepToString(super.board));
+            int check = super.check(player);
+            int value = check;
+            System.out.println("check value: "  + value);
+            boolean end = switch(value){
                 case 1 -> end(true,1);
                 case 2 -> end(true,2);
                 case 0 -> end(false, 0);
@@ -72,7 +75,7 @@ public class QuxioController  extends QuxioBoard{
                 }
             else
                 for(;value>insertIndex[0];value--){
-                    super.board[value][drawIndex[0]] = super.board[value-1][drawIndex[0]];
+                    super.board[value][drawIndex[1]] = super.board[value-1][drawIndex[1]];
                 }
         }
         super.board[insertIndex[0]][insertIndex[1]] = player;
