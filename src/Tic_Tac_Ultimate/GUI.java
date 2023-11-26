@@ -21,9 +21,6 @@ import javafx.scene.transform.Rotate;
 import javafx.stage.Stage;
 import javafx.util.Duration;
 
-
-import java.util.concurrent.atomic.AtomicBoolean;
-
 import static Tic_Tac_Ultimate.QuxioBoard.quxioWinValues;
 import static Tic_Tac_Ultimate.Runner.*;
 import static Tic_Tac_Ultimate.Board.*;
@@ -46,6 +43,8 @@ public class GUI extends Application {
     private static double cell;
     private static Group marks;
     private static boolean listen;
+    private static int check;
+
     static {
         listen = true;
     }
@@ -419,7 +418,8 @@ public class GUI extends Application {
             int row = index[0];
             int col = index[1];
             System.out.println("Received row: " + row + " and Col: " + col);
-            if((row ==0 || row ==4 || col ==0 || col ==4) && listen) {
+            check = checkDraw(row, col);
+            if((row ==0 || row ==4 || col ==0 || col ==4) && listen && check!=-1) {
                 box.setFill(Color.DARKGRAY);
 //                flag.set(false);
                 showArrows(row, col);
@@ -534,11 +534,6 @@ public class GUI extends Application {
                     Node box = boxPane.lookup("#" + row + value);
                     translateX(box.getTranslateX(),box.getTranslateX()-130,box, 1);
                     box.setId("" + row + (value - 1));
-                    Circle circle = (Circle) marks.lookup("#" + row + value + "inner");
-                    if(circle!=null){
-                        circle.setId("#" + row + (value - 1) + "inner");
-                        System.out.println("Circle set!");
-                    }
                     length++;
                 }
                 Rectangle rect = (Rectangle) boxPane.lookup("#temp");
@@ -552,7 +547,7 @@ public class GUI extends Application {
                     rect.setFill(Color.WHITE);
                     ScaleTransition scaleTransition = scale(size,size, rect,0.5);
                     scaleTransition.setOnFinished(scaleEvent ->{
-                        mark(rowI, colI);
+                        if(check==0)mark(rowI, colI);
                         turn2(row, col, rowI, colI);
                         listen = true;
                         System.out.println("Listen value after completion of move: " + listen);
@@ -566,11 +561,6 @@ public class GUI extends Application {
                     Node box = boxPane.lookup("#" + row + value);
                     translateX(box.getTranslateX(),box.getTranslateX()+130,box, 1);
                     box.setId("" + row + (value + 1));
-                    Circle circle = (Circle) marks.lookup("#" + row + value + "inner");
-                    if(circle!=null){
-                        circle.setId("#" + row + (value + 1) + "inner");
-                        System.out.println("Circle set!");
-                    }
                     length++;
                 }
                 Rectangle rect = (Rectangle) boxPane.lookup("#temp");
@@ -584,7 +574,7 @@ public class GUI extends Application {
                     rect.setFill(Color.WHITE);
                     ScaleTransition scaleTransition = scale(size,size, rect,0.5);
                     scaleTransition.setOnFinished(scaleEvent ->{
-                        mark(rowI, colI);
+                        if(check==0)mark(rowI, colI);
                         turn2(row, col, rowI, colI);
                         listen = true;
                         System.out.println("Listen value after completion of move: " + listen);
@@ -601,11 +591,6 @@ public class GUI extends Application {
                     Node box = boxPane.lookup("#" + value + col);
                     translateY(box.getTranslateY(),box.getTranslateY()-130,box, 1);
                     box.setId("" + (value - 1) + col);
-                    Circle circle = (Circle) marks.lookup("#" + value + col + "inner");
-                    if(circle!=null){
-                        circle.setId("#" + (value - 1) + col + "inner");
-                        System.out.println("Circle set!");
-                    }
                     length++;
                 }
                 Rectangle rect = (Rectangle) boxPane.lookup("#temp");
@@ -619,7 +604,7 @@ public class GUI extends Application {
                     rect.setFill(Color.WHITE);
                     ScaleTransition scaleTransition = scale(size,size, rect,0.5);
                     scaleTransition.setOnFinished(scaleEvent ->{
-                        mark(rowI, colI);
+                        if(check==0)mark(rowI, colI);
                         turn2(row, col, rowI, colI);
                         listen = true;
                         System.out.println("Listen value after completion of move: " + listen);
@@ -633,11 +618,6 @@ public class GUI extends Application {
                     Node box = boxPane.lookup("#" + value + col);
                     translateY(box.getTranslateY(),box.getTranslateY()+130,box, 1);
                     box.setId("" + (value + 1) + col);
-                    Circle circle = (Circle) marks.lookup("#" + value + col + "inner");
-                    if(circle!=null){
-                        circle.setId("#" + (value + 1) + col + "inner");
-                        System.out.println("Circle set!");
-                    }
                     length++;
                 }
                 Rectangle rect = (Rectangle) boxPane.lookup("#temp");
@@ -651,7 +631,7 @@ public class GUI extends Application {
                     rect.setFill(Color.WHITE);
                     ScaleTransition scaleTransition = scale(size,size, rect,0.5);
                     scaleTransition.setOnFinished(scaleEvent ->{
-                        mark(rowI, colI);
+                        if(check==0)mark(rowI, colI);;
                         turn2(row, col, rowI, colI);
                         listen = true;
                         System.out.println("Listen value after completion of move: " + listen);
@@ -997,6 +977,7 @@ public class GUI extends Application {
         line.setStrokeWidth(0);
         line.setStroke(color);
         line.setStrokeLineCap(StrokeLineCap.ROUND);
+        line.setMouseTransparent(true);
         node.getChildren().add(line);
         double width, time;
         if(endY-startY<(cell/3)) {
@@ -1074,6 +1055,8 @@ public class GUI extends Application {
         innerTimeLine.getKeyFrames().add(keyFrameInner);
         innerTimeLine.play();
 
+        circle.setMouseTransparent(true);
+        inner.setMouseTransparent(true);
         node.getChildren().addAll(circle,inner);
     }
     private static void markX2(int row, int col, int step){
@@ -1089,8 +1072,10 @@ public class GUI extends Application {
         line.setStrokeWidth(20);
         line.setStroke(Color.RED);
         line.setStrokeLineCap(StrokeLineCap.ROUND);
+        line.setMouseTransparent(true);
+        line.scaleXProperty().bind(box.scaleXProperty());
+        line.scaleYProperty().bind(box.scaleYProperty());
         marks.getChildren().add(line);
-        line.setId("" + row + col + step);
         Timeline timeline = new Timeline();
         KeyFrame startFrame, endFrame;
         if(step == 2) {
@@ -1157,9 +1142,14 @@ public class GUI extends Application {
             inner.centerYProperty().bind(box.translateYProperty().add(box.heightProperty().multiply(0.5)));
 //        });
 
+        circle.scaleXProperty().bind(box.scaleXProperty());
+        circle.scaleYProperty().bind(box.scaleYProperty());
+        circle.setMouseTransparent(true);
+        inner.scaleXProperty().bind(box.scaleXProperty());
+        inner.scaleYProperty().bind(box.scaleYProperty());
+        inner.fillProperty().bind(box.fillProperty());
+        inner.setMouseTransparent(true);
         marks.getChildren().addAll(circle,inner);
-        circle.setId("" + row + col + "circle");
-        inner.setId("" + row + col + "inner");
     }
     public static void clearMarks(){
         marks.getChildren().clear();

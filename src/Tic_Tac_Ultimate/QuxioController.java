@@ -28,6 +28,14 @@ public class QuxioController  extends QuxioBoard{
                 System.out.println("BARi nhi hui cpu se");
         }
     }
+    public int checkDraw(int[] drawIndex){
+        if(super.board[drawIndex[0]][drawIndex[1]] == player)
+            return 1;
+        else if(super.board[drawIndex[0]][drawIndex[1]] == 0)
+            return 0;
+        else
+            return -1;
+    }
     public boolean doTurn(int[] drawIndex, int[] insertIndex){
         if(markTurn(drawIndex,insertIndex)){
             System.out.println("Board now: \n" + Arrays.deepToString(super.board));
