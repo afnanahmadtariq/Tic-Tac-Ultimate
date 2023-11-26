@@ -69,11 +69,17 @@ public class Runner {
             System.out.println("Won with value: " + winValue);
             System.out.println("index at: " + Arrays.deepToString(dictionary.get(winValue)));
         }
-        else
+        else {
             System.out.println("place 'D' at index");
-
-        String text = (win? "Player"+getPlayer()+" won!" : "It is a draw!")+" Play Again?";
-        System.out.println(win? "Player"+getPlayer()+" won!" : "It is a draw!");
+            ///Quxio ke liye kiya hai bakiyon mai check
+            String text = (win? "Player"+getPlayer()+" won!" : "It is a draw!")+" Play Again?";
+            System.out.println(win? "Player"+getPlayer()+" won!" : "It is a draw!");
+            GUI.popUp(text,"Yes","Exit",2);
+        }
+    }
+    public static void endGame2(){
+        String text = "Player"+getPlayer()+" won! Play Again?";
+        System.out.println("Player"+getPlayer()+" won!");
         GUI.popUp(text,"Yes","Exit",2);
     }
     public static void endGame(int choice){

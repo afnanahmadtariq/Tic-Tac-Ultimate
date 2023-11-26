@@ -938,12 +938,7 @@ public class GUI extends Application {
         int[][] lineIndex;
         if(gameType==3) {
             lineIndex = quxioWinValues.get(value);
-            for(int[] index: lineIndex){
-                Rectangle box = (Rectangle) boxPane.lookup("#" + index[0] + index[1]);
-                box.setFill(getPlayer()==1?Color.LIGHTSKYBLUE:Color.HOTPINK);
-                Circle circle = (Circle) marks.lookup("#" + index[0] + index[1] + "inner");
-                if(circle!=null) circle.setFill(Color.HOTPINK);
-            }
+            markUp(0, lineIndex);
         }
         else {
             lineIndex = dictionary.get(value);
@@ -954,6 +949,23 @@ public class GUI extends Application {
 
             markLine(startX, startY, endX, endY, Color.LIGHTGOLDENRODYELLOW, 0, marks);
         }
+    }
+    private static void markUp(int num, int[][] lineIndex){
+        int[] index = lineIndex[num];
+        Rectangle box = (Rectangle) boxPane.lookup("#" + index[0] + index[1]);
+        Color color = getPlayer()==1?Color.LIGHTSKYBLUE:Color.HOTPINK;
+        FillTransition transition = new FillTransition(Duration.seconds(0.25), box);
+        transition.setToValue(color);
+        transition.play();
+        num++;
+        int finalNum = num;
+        transition.setOnFinished(event -> {
+            if(finalNum <=4)
+                markUp(finalNum, lineIndex);
+            else{
+                endGame2();
+            }
+        });
     }
     public static void markLine(int[] superIndex,int value){
         int[][] lineIndex = dictionary.get(value);
