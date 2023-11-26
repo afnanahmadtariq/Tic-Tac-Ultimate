@@ -954,7 +954,7 @@ public class GUI extends Application {
         int[] index = lineIndex[num];
         Rectangle box = (Rectangle) boxPane.lookup("#" + index[0] + index[1]);
         Color color = getPlayer()==1?Color.LIGHTSKYBLUE:Color.HOTPINK;
-        FillTransition transition = new FillTransition(Duration.seconds(0.25), box);
+        FillTransition transition = new FillTransition(Duration.seconds(0.2), box);
         transition.setToValue(color);
         transition.play();
         num++;
