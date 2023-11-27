@@ -3,8 +3,6 @@ package Tic_Tac_Ultimate;
 import javafx.animation.*;
 import javafx.application.Application;
 import javafx.application.Platform;
-import javafx.event.ActionEvent;
-import javafx.event.EventHandler;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Group;
@@ -22,8 +20,6 @@ import javafx.scene.text.Text;
 import javafx.stage.Stage;
 import javafx.util.Duration;
 
-import java.util.List;
-
 import static Tic_Tac_Ultimate.GuiUtility.*;
 import static Tic_Tac_Ultimate.Runner.*;
 import static Tic_Tac_Ultimate.Board.*;
@@ -39,8 +35,6 @@ public class GUI extends Application {
     private static Text turn2;
     private static Group grid1;
     private static Group grid2;
-    private static Group box1;
-    private static Group box2;
     private static BorderPane gamePane;
     private static Pane boxPane;
     private static Group arrowGroup;
@@ -492,7 +486,6 @@ public class GUI extends Application {
         return pane;
     }
     public static void slide(int row, int col, int rowI, int colI){
-//        boxPane.lookup(id).setId("temp");
         int length = 0;
         if(row == rowI){//row ke liye
             int value = col;

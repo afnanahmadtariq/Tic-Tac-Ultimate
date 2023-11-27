@@ -33,16 +33,17 @@ public class QuxioController  extends QuxioBoard{
     public int checkDraw(int[] drawIndex){
         if(draw[0] == drawIndex[0] && draw[1] == drawIndex[1])
             return 10;
-        if(super.board[drawIndex[0]][drawIndex[1]] == player) {
-            draw = drawIndex;
-            return 1;
+        if (draw[0] == -1) {
+            if (super.board[drawIndex[0]][drawIndex[1]] == player) {
+                draw = drawIndex;
+                return 1;
+            }
+            else if (super.board[drawIndex[0]][drawIndex[1]] == 0) {
+                draw = drawIndex;
+                return 0;
+            }
         }
-        else if(super.board[drawIndex[0]][drawIndex[1]] == 0) {
-            draw = drawIndex;
-            return 0;
-        }
-        else
-            return -1;
+        return -1;
     }
     public void clearDraw(){
         draw = new int[] {-1, -1};
