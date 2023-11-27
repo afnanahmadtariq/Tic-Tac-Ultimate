@@ -60,6 +60,9 @@ public class Runner {
     public static int checkDraw(int row, int col){
         return quxio.checkDraw(new int[] {row, col});
     }
+    public static void clearDraw(){
+        quxio.clearDraw();
+    }
     public static boolean turn2(int row, int col, int rowI, int colI){
         return quxio.doTurn(new int[]{row, col}, new int[]{rowI, colI});
     }
@@ -70,17 +73,15 @@ public class Runner {
             System.out.println("index at: " + Arrays.deepToString(dictionary.get(winValue)));
         }
         else {
-            System.out.println("place 'D' at index");
-            ///Quxio ke liye kiya hai bakiyon mai check
-            String text = (win? "Player"+getPlayer()+" won!" : "It is a draw!")+" Play Again?";
-            System.out.println(win? "Player"+getPlayer()+" won!" : "It is a draw!");
-            GUI.popUp(text,"Yes","Exit",2);
+            String text = "It is a draw! Play Again?";
+            System.out.println(text);
+            GuiUtility.popUp(text,"Yes","Exit",2);
         }
     }
-    public static void endGame2(){
+    public static void endGame(){
         String text = "Player"+getPlayer()+" won! Play Again?";
-        System.out.println("Player"+getPlayer()+" won!");
-        GUI.popUp(text,"Yes","Exit",2);
+        System.out.println(text);
+        GuiUtility.popUp(text,"Yes","Exit",2);
     }
     public static void endGame(int choice){
         if(choice==1) {
@@ -92,7 +93,7 @@ public class Runner {
         }
         else{
             System.out.println("\n\n\n\n---------  Exit Game---------");
-//            GUI.clearGame();
+            GUI.clearGame();
         }
     }
     public static void endGame(int[] superIndex, boolean win, int winValue){

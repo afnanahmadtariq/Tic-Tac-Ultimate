@@ -3,6 +3,8 @@ package Tic_Tac_Ultimate;
 import javafx.animation.*;
 import javafx.application.Application;
 import javafx.application.Platform;
+import javafx.event.ActionEvent;
+import javafx.event.EventHandler;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Group;
@@ -17,19 +19,21 @@ import javafx.scene.shape.*;
 import javafx.scene.text.Font;
 import javafx.scene.text.FontWeight;
 import javafx.scene.text.Text;
-import javafx.scene.transform.Rotate;
 import javafx.stage.Stage;
 import javafx.util.Duration;
 
-import static Tic_Tac_Ultimate.QuxioBoard.quxioWinValues;
+import java.util.List;
+
+import static Tic_Tac_Ultimate.GuiUtility.*;
 import static Tic_Tac_Ultimate.Runner.*;
 import static Tic_Tac_Ultimate.Board.*;
+import static Tic_Tac_Ultimate.QuxioBoard.quxioWinValues;
 
 public class GUI extends Application {
     private static Stage stage;
-    private static StackPane root;
-    private static Color backGround = Color.web("#f2f2f2");
-    private static Color midGround = Color.web("#fff");
+    public static StackPane root;
+    public static Color backGround = Color.web("#f2f2f2");
+    public static Color midGround = Color.web("#fff");
     private static Color foreGround = Color.web("#000000");
     private static Text turn1;
     private static Text turn2;
@@ -68,7 +72,7 @@ public class GUI extends Application {
         Scene scene = new Scene(root);
         stage.setScene(scene);
         stage.show();
-        displayGame();
+        displayStart();
     }
     private static void displayStart(){
         Text ticTac = new Text("Tic tac");
@@ -115,46 +119,12 @@ public class GUI extends Application {
             rotate(-90, 0, background);
             translateY(-ultimate.getLayoutBounds().getHeight()/2,0, background, 2);
 
-            FillTransition color = new FillTransition(Duration.seconds(2.5),background);
-            color.setToValue(Color.RED);
-            color.play();
+            FillTransition color = fill((Color)background.getFill(), Color.RED, 2.5, background, 1, false);
             color.setOnFinished(event2 -> {
                 System.out.println("Transition2 completed");
                 displayMainMenu();
             });
         });
-    }
-    private static TranslateTransition translateY(double startY, double endY, Node node, double sec){
-        TranslateTransition transition = new TranslateTransition(Duration.seconds(sec), node);
-        transition.setFromY(startY);
-        transition.setToY(endY);
-        transition.setCycleCount(1);
-        transition.play();
-        return transition;
-    }
-    private static TranslateTransition translateX(double startX, double endX, Node node, double sec){
-        TranslateTransition transition = new TranslateTransition(Duration.seconds(sec), node);
-        transition.setFromX(startX);
-        transition.setToX(endX);
-        transition.setCycleCount(1);
-        transition.play();
-        return transition;
-    }
-    private static ScaleTransition scale(double toX, double toY, Node node, double sec){
-        ScaleTransition transition = new ScaleTransition(Duration.seconds(sec), node);
-        transition.setToX(toX);
-        transition.setToY(toY);
-        transition.setCycleCount(1);
-        transition.play();
-        return transition;
-    }
-    private static void rotate(int fromAngle, int toAngle, Node node){
-        RotateTransition transition = new RotateTransition(Duration.seconds(2), node);
-        transition.setAxis(Rotate.X_AXIS);
-        transition.setFromAngle(fromAngle);
-        transition.setToAngle(toAngle);
-        transition.setCycleCount(1);
-        transition.play();
     }
     private static void displayMainMenu() {
         Text ticTac = new Text("Tic tac");
@@ -313,7 +283,6 @@ public class GUI extends Application {
                 displayPopupMessage("Missing Outputs", "Please Select all fields");
         });
 
-
         // Assign toggle groups to radio buttons
         assignToggleGroup(gameType, gameToggleGroup);
         assignToggleGroup(playerOptions, playerToggleGroup);
@@ -419,21 +388,20 @@ public class GUI extends Application {
             int col = index[1];
             System.out.println("Received row: " + row + " and Col: " + col);
             check = checkDraw(row, col);
-            if((row ==0 || row ==4 || col ==0 || col ==4) && listen && check!=-1) {
+            if(check == 10){
+                listen = true;
+                box.setFill(Color.WHITE);
+                arrowGroup.getChildren().clear();
+                clearDraw();
+            }
+            else if((row ==0 || row ==4 || col ==0 || col ==4) && listen && check!=-1) {
                 box.setFill(Color.DARKGRAY);
 //                flag.set(false);
                 showArrows(row, col);
 //                draw(row, col);
             }
             else{
-                Color curent = (Color) box.getFill();
-                FillTransition fill = new FillTransition(Duration.seconds(0.08),box);
-                fill.setFromValue(curent);
-                fill.setToValue(Color.MEDIUMVIOLETRED);
-                fill.setAutoReverse(true);
-                fill.setCycleCount(3);
-                fill.play();
-                fill.setOnFinished(event -> box.setFill(curent));
+                blink(box, 1);
             }
 //            turn(Integer.parseInt(box.getId().substring(0,1)),Integer.parseInt(box.getId().substring(1)));
             System.out.println("mouse Clicked!");
@@ -514,6 +482,7 @@ public class GUI extends Application {
                 slide(row, col, row, x<0?0:4);
 //                turn2(row, col, row, x<0?0:4);
             }
+            clearDraw();
             arrowGroup.getChildren().clear();
 //            arrowPane.setPrefHeight(0);
 //            arrowPane.setPrefWidth(0);
@@ -701,7 +670,7 @@ public class GUI extends Application {
         String text = "Select your side for the toss";
         popUp(text,"Heads","Tails",1);
     }
-    private static void Toss(int choice){
+    static void Toss(int choice){
         if(choice == (int)(Math.random()*2)+1){
             System.out.println("player = 1");
             Runner.setPlayer(1);
@@ -712,47 +681,6 @@ public class GUI extends Application {
             Runner.setPlayer(2);
             setTurn(2);
         }
-    }
-    public static void popUp(String text, String button1Text, String button2Text, int method){
-        BorderPane background = new BorderPane();
-        StackPane popUp = new StackPane();
-        background.setCenter(popUp);
-        background.setBackground(new Background(new BackgroundFill( Color.color(0,0,0,0.8), CornerRadii.EMPTY, Insets.EMPTY)));
-        Rectangle box = makeRectangle(0.4,0.2);
-        popUp.getChildren().add(box);
-
-        root.getChildren().add(background);
-        VBox vBox = new VBox(new Text(text));
-        vBox.setAlignment(Pos.CENTER);
-        vBox.setSpacing(25);
-        popUp.getChildren().add(vBox);
-
-
-        Button button1 = new Button(button1Text);
-        button1.setMinSize(80,20);
-        button1.setOnAction(event -> {
-            System.out.println("Button1 was pressed!");
-            root.getChildren().remove(background);
-            if(method==1)
-                Toss(1);
-            else if(method==2)
-                endGame(1);
-        });
-        Button button2 = new Button(button2Text);
-        button2.setMinSize(80,20);
-        button2.setOnAction(event -> {
-            System.out.println("Button2 was pressed!");
-            root.getChildren().remove(background);
-            if(method==1)
-                Toss(2);
-            else if(method==2)
-                endGame(2);
-        });
-        HBox buttons = new HBox(button1,button2);
-        buttons.setAlignment(Pos.BASELINE_CENTER);
-        buttons.setSpacing(25);
-        vBox.getChildren().add(buttons);
-
     }
     public static void updateTurn(){
         if(turn1.getFill()==Color.GREEN) {
@@ -814,42 +742,33 @@ public class GUI extends Application {
         markLine(0,0,100,100,Color.RED,0,node);
         markLine(100,0,0,100,Color.RED,0.2,node);
     }
-    private static Rectangle makeRectangle(double widthMultiplier, double heightMultiplier){
-        Rectangle rectangle = new Rectangle();
-        rectangle.setFill(midGround);
-        rectangle.widthProperty().bind(root.heightProperty().multiply(widthMultiplier));
-        rectangle.heightProperty().bind(root.heightProperty().multiply(heightMultiplier));
-        rectangle.setArcWidth(50);
-        rectangle.setArcHeight(50);
-        return rectangle;
-    }
-    private static void ticTacToe(Pane grid){
+    private static void ticTacToe(Pane board){
         Platform.runLater(() -> {
-            grid.setOnMouseClicked(event -> {
+            board.setOnMouseClicked(event -> {
                 System.out.println("mouse Clicked!!");
                 double x = event.getX();
                 double y = event.getY();
                 int row = (int) (y/cell);
                 int col = (int) (x/cell);
                 if(getPlayer()!=2 || !singlePlayer){
-                    if(turn(row, col))
-                        System.out.println("registered!!...............");
+                    if(!turn(row, col))
+                        reject(board);;
                 }
             });
             for (int i = 0; i<4; i++) {
-                Line hLine = makeHLine((double) i/3,5, grid);
-                grid.getChildren().add(hLine);
+                Line hLine = makeHLine((double) i/3,5, board);
+                board.getChildren().add(hLine);
 
-                Line vLine = makeVLine((double) i/3,5, grid);
-                grid.getChildren().add(vLine);
+                Line vLine = makeVLine((double) i/3,5, board);
+                board.getChildren().add(vLine);
             }
             marks = new Group();
-            grid.getChildren().add(marks);
+            board.getChildren().add(marks);
         });
     }
-    private static void superTicTacToe(Pane grid){
+    private static void superTicTacToe(Pane board){
         Platform.runLater(() -> {
-            grid.setOnMouseClicked(event -> {
+            board.setOnMouseClicked(event -> {
                 System.out.println("mouse Clicked!!");
                 double x = event.getX();
                 double y = event.getY();
@@ -858,45 +777,48 @@ public class GUI extends Application {
                 int i = (int) (y  / (cell / 3)) % 3;
                 int sI = (int) (y  / cell);
                 if (getPlayer() != 2 || !singlePlayer) {
-                    turn(i, j, sI, sJ);
+                    if(!turn(i, j, sI, sJ))
+                        reject(board);
                 }
             });
             for (int i = 0; i < 10; i++) {
                 Line hLine;
                 if (i == 0 || i == 3 || i == 6 || i == 9)
-                    hLine = makeHLine((double) i/9, 8, grid);
+                    hLine = makeHLine((double) i/9, 8, board);
                 else
-                    hLine = makeHLine((double) i/9, 3, grid);
-                grid.getChildren().add(hLine);
+                    hLine = makeHLine((double) i/9, 3, board);
+                board.getChildren().add(hLine);
 
                 Line vLine;
                 if (i == 0 || i == 3 || i == 6 || i == 9)
-                    vLine = makeVLine((double) i/9, 8, grid);
+                    vLine = makeVLine((double) i/9, 8, board);
                 else
-                    vLine = makeVLine((double) i/9, 3, grid);
-                grid.getChildren().add(vLine);
+                    vLine = makeVLine((double) i/9, 3, board);
+                board.getChildren().add(vLine);
             }
             marks = new Group();
-            grid.getChildren().add(marks);
+            board.getChildren().add(marks);
         });
     }
-    private static Line makeHLine(double Multiplier, int stroke, Pane grid){
-        Line line = new Line();
-        line.setStartY(0);
-        line.endYProperty().bind(grid.maxHeightProperty());
-        line.startXProperty().bind(grid.maxWidthProperty().multiply(Multiplier));
-        line.endXProperty().bind(grid.maxWidthProperty().multiply(Multiplier));
-        line.setStrokeWidth(stroke);
-        return line;
+    private void displayOptions(){
+        root.getChildren().clear();
+
     }
-    private static Line makeVLine(double Multiplier, int stroke, Pane grid){
-        Line line = new Line();
-        line.startYProperty().bind(grid.maxHeightProperty().multiply(Multiplier));
-        line.endYProperty().bind(grid.maxHeightProperty().multiply(Multiplier));
-        line.setStartX(0);
-        line.endXProperty().bind(grid.maxWidthProperty());
-        line.setStrokeWidth(stroke);
-        return line;
+    private void displayRuleBook(){
+        root.getChildren().clear();
+
+    }
+    private void displayHelp(){
+        root.getChildren().clear();
+
+    }
+    private void displayAboutUs(){
+        root.getChildren().clear();
+
+    }
+    private void displayProfile(){
+        root.getChildren().clear();
+
     }
     public static void showTurn(int row, int col, int[] superIndex){
         if(getPlayer()==1)
@@ -947,23 +869,22 @@ public class GUI extends Application {
             int endX = (int) ((lineIndex[2][1] * cell) + (int) (cell * 0.5));
             int endY = (int) ((lineIndex[2][0] * cell) + (int) (cell * 0.5));
 
-            markLine(startX, startY, endX, endY, Color.LIGHTGOLDENRODYELLOW, 0, marks);
+            Timeline timeline = markLine(startX, startY, endX, endY, Color.LIGHTGOLDENRODYELLOW, 0, marks);
+            timeline.setOnFinished(end ->  endGame());
         }
     }
     private static void markUp(int num, int[][] lineIndex){
         int[] index = lineIndex[num];
         Rectangle box = (Rectangle) boxPane.lookup("#" + index[0] + index[1]);
         Color color = getPlayer()==1?Color.LIGHTSKYBLUE:Color.HOTPINK;
-        FillTransition transition = new FillTransition(Duration.seconds(0.2), box);
-        transition.setToValue(color);
-        transition.play();
+        FillTransition transition = fill((Color)box.getFill(), color, 0.2, box, 1, false);
         num++;
         int finalNum = num;
         transition.setOnFinished(event -> {
             if(finalNum <=4)
                 markUp(finalNum, lineIndex);
             else{
-                endGame2();
+                Runner.endGame();
             }
         });
     }
@@ -984,7 +905,7 @@ public class GUI extends Application {
         else
             markO(superIndex[0],superIndex[1]);
     }
-    private static void markLine(int startX, int startY, int endX, int endY, Color color, double delay,Group node){
+    private static Timeline markLine(int startX, int startY, int endX, int endY, Color color, double delay,Group node){
         Line line = new Line(startX, startY,startX, startY);
         line.setStrokeWidth(0);
         line.setStroke(color);
@@ -1015,6 +936,7 @@ public class GUI extends Application {
                 new KeyValue(line.endYProperty(), endY));
         timeline.getKeyFrames().addAll(startFrame, endFrame);
         timeline.play();
+        return timeline;
     }
     private static void markX(int row, int col, int[] superIndex){
         int startY = (int) ((int) (row*(cell/3))+(superIndex[0]*cell)+((cell/3)*0.2));

@@ -6,6 +6,7 @@ public class QuxioController  extends QuxioBoard{
     private final boolean SINGLE_PLAYER;
     private int player;
     private final String difficulty;
+    private int[] draw = new int[] {-1, -1};
     QuxioController(boolean singlePlayer, String difficulty){
         super();
         this.SINGLE_PLAYER = singlePlayer;
@@ -29,12 +30,21 @@ public class QuxioController  extends QuxioBoard{
         }
     }
     public int checkDraw(int[] drawIndex){
-        if(super.board[drawIndex[0]][drawIndex[1]] == player)
+        if(draw[0] == drawIndex[0] && draw[1] == drawIndex[1])
+            return 10;
+        if(super.board[drawIndex[0]][drawIndex[1]] == player) {
+            draw = drawIndex;
             return 1;
-        else if(super.board[drawIndex[0]][drawIndex[1]] == 0)
+        }
+        else if(super.board[drawIndex[0]][drawIndex[1]] == 0) {
+            draw = drawIndex;
             return 0;
+        }
         else
             return -1;
+    }
+    public void clearDraw(){
+        draw = new int[] {-1, -1};
     }
     public boolean doTurn(int[] drawIndex, int[] insertIndex){
         if(markTurn(drawIndex,insertIndex)){
