@@ -1,10 +1,13 @@
 package Tic_Tac_Ultimate;
 
-public class QuxioBrain     {
+public class QuxioBrain {
     public static int[][] compTurn(int[][] board, String difficulty) {
         return switch (difficulty) {
             case "Easy" -> easy(board);
             case "Medium" -> med(board);
+            case "Hard" -> hard(board);
+            case "Extreme" -> extreme(board);
+            case "Practice" -> practice(board);
             default -> easy(board);
         };
     }
@@ -37,6 +40,15 @@ public class QuxioBrain     {
 //            else if (board[indexes[i - 1][0]][indexes[i - 1][1]] == board[indexes[i % 3][0]][indexes[i % 3][1]] && board[indexes[i % 3][0]][indexes[i % 3][1]] != 0 && board[indexes[(i + 1) % 3][0]][indexes[(i + 1) % 3][1]] == 0)
 //                return indexes[(i + 1) % 3];
 //        }
+        return easy(board);
+    }
+    private static int[][] hard(int[][] board){
+        return easy(board);
+    }
+    private static int[][] extreme(int[][] board){
+        return easy(board);
+    }
+    private static int[][] practice(int[][] board){
         return easy(board);
     }
 }

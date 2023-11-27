@@ -72,7 +72,7 @@ public class GUI extends Application {
         Scene scene = new Scene(root);
         stage.setScene(scene);
         stage.show();
-        displayStart();
+        displayGame();
     }
     private static void displayStart(){
         Text ticTac = new Text("Tic tac");
@@ -491,7 +491,7 @@ public class GUI extends Application {
         });
         return pane;
     }
-    private static void slide(int row, int col, int rowI, int colI){
+    public static void slide(int row, int col, int rowI, int colI){
 //        boxPane.lookup(id).setId("temp");
         int length = 0;
         if(row == rowI){//row ke liye

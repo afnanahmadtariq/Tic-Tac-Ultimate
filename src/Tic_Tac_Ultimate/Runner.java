@@ -10,7 +10,7 @@ public class Runner {
     private static Controller ticTacToe;
     public static int gameType = 3;
     public static boolean singlePlayer = false;
-    public static String difficulty = "none";
+    public static String difficulty = "Easy";
     public static void main(String[] args) {
         startGame();
         GUI.initialize(args);

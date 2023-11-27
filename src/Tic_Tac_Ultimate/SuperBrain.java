@@ -2,11 +2,11 @@ package Tic_Tac_Ultimate;
 public class SuperBrain {
     public static int[][] compTurn(int[] superIndex, Board[][] superBoard, String difficulty) {
         return switch(difficulty){
-            case "easy" -> easy(superIndex, superBoard);
-            case "med" -> med(superIndex, superBoard);
-            case "hard" -> hard(superIndex, superBoard);
-            case "extreme" -> extreme(superIndex, superBoard);
-            case "practice" -> practice(superIndex, superBoard);
+            case "Easy" -> easy(superIndex, superBoard);
+            case "Medium" -> med(superIndex, superBoard);
+            case "Hard" -> hard(superIndex, superBoard);
+            case "Extreme" -> extreme(superIndex, superBoard);
+            case "Practice" -> practice(superIndex, superBoard);
             default -> new int[][]{{(int)(Math.random()*3),(int)(Math.random()*3)},{(int)(Math.random()*3),(int)(Math.random()*3)}};
         };
     }
