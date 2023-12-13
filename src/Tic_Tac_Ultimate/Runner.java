@@ -60,6 +60,9 @@ public class Runner {
     public static int checkDraw(int row, int col){
         return quxio.checkDraw(new int[] {row, col});
     }
+    public static void setDraw(int row, int col){
+        quxio.setDraw(new int[] {row, col});
+    }
     public static void clearDraw(){
         quxio.clearDraw();
     }

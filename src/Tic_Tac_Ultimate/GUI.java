@@ -390,6 +390,7 @@ public class GUI extends Application {
             }
             else if((row ==0 || row ==4 || col ==0 || col ==4) && listen && check!=-1) {
                 box.setFill(Color.DARKGRAY);
+                setDraw(row, col);
 //                flag.set(false);
                 showArrows(row, col);
 //                draw(row, col);
