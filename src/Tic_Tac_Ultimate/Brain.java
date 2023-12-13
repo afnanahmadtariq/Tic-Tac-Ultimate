@@ -1,7 +1,13 @@
 package Tic_Tac_Ultimate;
+
 public class Brain {
+<<<<<<< HEAD
+    public static int[] compTurn(int[][] board, String difficulty) {
+        return switch (difficulty) {
+=======
     public static int[] compTurn(int[][] board, String difficulty){
         return switch(difficulty){
+>>>>>>> ee60ea9a0780710a8fcd47bc24e9509bbc7f56d0
             case "Easy" -> easy(board);
             case "Medium" -> med(board);
             case "Hard" -> hard(board);
@@ -9,20 +15,11 @@ public class Brain {
             case "Practice" -> practice(board);
             default -> new int[]{(int)(Math.random()*3),(int)(Math.random()*3)};
         };
-        
-        
     }
-    private static int[] easy(int[][] board){
-        int[] index = new int[]{(int)(Math.random()*3),(int)(Math.random()*3)};
-        while(board[index[0]][index[1]] !=0)
-            index = new int[]{(int)(Math.random()*3),(int)(Math.random()*3)};
-//        try {
-//            // Delay for 1 second (1000 milliseconds)
-//            Thread.sleep(2000);
-//        } catch (InterruptedException e) {
-//            // Handle any exceptions that may occur
-//            e.printStackTrace();
-//        }
+    private static int[] easy(int[][] board) {
+        int[] index = new int[]{(int) (Math.random() * 3), (int) (Math.random() * 3)};
+        while (board[index[0]][index[1]] != 0)
+            index = new int[]{(int) (Math.random() * 3), (int) (Math.random() * 3)};
         return index;
     }
     private static int[] med(int[][] board){
@@ -47,9 +44,35 @@ public class Brain {
         return index;
     }
     private static int[] hard(int[][] board){
-        return new int[]{(int)(Math.random()*3),(int)(Math.random()*3)};
+        int chance = (int)(Math.random()*10+1);
+        if(chance == 2 || chance == 4 || chance == 6)
+            return med(board);
+        else if(chance == 5 || chance == 9)
+            return easy(board);
+        else
+            return extreme(board);
     }
     private static int[] extreme(int[][] board){
+<<<<<<< HEAD
+        boolean empty = true;
+        for(int i =0 ; i <3 ; i++){
+            for(int j = 0; j < 3 ; j++){
+                if (board[i][j] != 0) {
+                    empty = false;
+                    break;
+                }
+            }
+        }
+        if(empty) return(easy(board));
+        int row, column;
+        row =  column = -1;
+        int bestScore = -1000;
+        for(int i = 0; i < 3; i++){
+            for (int j = 0; j < 3; j++){
+                if(board[i][j] == 0){
+                    board[i][j] = 2;
+                    int score = bestMove(false, board);
+=======
         int row, column;
         row =  column = -1;
         int bestScore = -10;
@@ -57,6 +80,7 @@ public class Brain {
             for (int j = 0; j < 3; j++){
                 if(board[i][j] == 0){
                     int score = bestMove(true, board);
+>>>>>>> ee60ea9a0780710a8fcd47bc24e9509bbc7f56d0
                     board[i][j] = 0;
                     if(score > bestScore){
                         bestScore = score;
@@ -68,6 +92,35 @@ public class Brain {
         }
         return new int[]{row, column};
     }
+<<<<<<< HEAD
+    private static boolean available(int[][] board){
+        for(int i =0 ; i <3 ; i++){
+            for(int j = 0; j < 3 ; j++){
+                if(board[i][j] == 0){
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
+    private static int bestMove(boolean turn, int[][] board){
+
+        if(checkMove(board) == -1) return -10;
+        if(checkMove(board) == 1) return 10;
+        if(!available(board)) return 0;
+
+        if(turn){
+            int bestScore = -1000;
+            for (int row = 0; row < 3; row++) {
+                for (int col = 0; col < 3; col++) {
+                    if (board[row][col] == 0) {
+                        board[row][col] = 2;
+                        int Score = bestMove(false, board);
+                        board[row][col] = 0;
+                        if(Score > bestScore){
+                            bestScore = Score;
+                        }
+=======
     private static int bestMove(boolean turn, int[][] board){
         int score =  checkMove(board);
         if(score == -1 || score == 0 || score == 1) return score;
@@ -79,18 +132,31 @@ public class Brain {
                         board[row][col] = -1;
                         bestScore = bestMove(!turn, board);
                         board[row][col] = 0;
+>>>>>>> ee60ea9a0780710a8fcd47bc24e9509bbc7f56d0
                     }
                 }
             }
             return bestScore;
         } else {
+<<<<<<< HEAD
+            int bestScore = 1000;
+=======
             int bestScore = 100;
+>>>>>>> ee60ea9a0780710a8fcd47bc24e9509bbc7f56d0
             for (int row = 0; row < 3; row++) {
                 for (int col = 0; col < 3; col++) {
                     if (board[row][col] == 0) {
                         board[row][col] = 1;
+<<<<<<< HEAD
+                        int Score = bestMove(true, board);
+                        board[row][col] = 0;
+                        if(Score < bestScore){
+                            bestScore = Score;
+                        }
+=======
                         bestScore = bestMove(turn, board);
                         board[row][col] = 0;
+>>>>>>> ee60ea9a0780710a8fcd47bc24e9509bbc7f56d0
                     }
                 }
             }
@@ -99,6 +165,33 @@ public class Brain {
     }
     private static int checkMove(int[][] board){
         for(int row = 0; row < 3; row++)
+<<<<<<< HEAD
+            if(board[row][0]==board[row][1] && board[row][1]==board[row][2] && board[row][1] != 0) {
+                if (board[row][1] == 1)
+                    return -1;
+                else if(board[row][1] == 2)
+                    return 1;
+            }
+
+        for(int col = 0; col < 3; col++)
+            if(board[0][col]==board[1][col] && board[1][col]==board[2][col] && board[1][col] != 0){
+                if (board[1][col] == 1)
+                    return -1;
+                else if(board[1][col] == 2)
+                    return 1;
+            }
+
+        if(board[0][0]==board[1][1] && board[1][1]==board[2][2] && board[1][1] != 0)
+            if (board[1][1] == 1)
+                return -1;
+            else if(board[1][1] == 2)
+                return 1;
+        if(board[0][2]==board[1][1] && board[1][1]==board[2][0] && board[1][1] != 0)
+            if (board[1][1] == 1)
+                return -1;
+            else if(board[1][1] == 2)
+                return 1;
+=======
             if(board[row][0]==board[row][1] && board[row][1]==board[row][2] && board[row][1] != 0)
                 return (board[row][1] == 1)? -1: 1;
 
@@ -108,13 +201,11 @@ public class Brain {
 
         if(board[0][0]==board[1][1] && board[1][1]==board[2][2] && board[1][1] != 0)
             return (board[1][1] == 1)? -1: 1;
+>>>>>>> ee60ea9a0780710a8fcd47bc24e9509bbc7f56d0
 
         return 0;
     }
     private static int[] practice(int[][] board){
         return new int[]{(int)(Math.random()*3),(int)(Math.random()*3)};
     }
-    
-
 }
-

@@ -1,7 +1,5 @@
 package Tic_Tac_Ultimate;
 
-
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -14,16 +12,12 @@ public class Board {
     static {
         dictionary = new HashMap<>();
         int count = 1;
-        for(int row=0; row<3; row++){
-            dictionary.put(count++, new int[][]{{row,0},{row,1},{row,2}});
-            int col = row;
-            dictionary.put(count++, new int[][]{{0,col},{1,col},{2,col}});
+        for(int i=0; i<3; i++){
+            dictionary.put(count++, new int[][]{{i,0},{i,1},{i,2}});
+            dictionary.put(count++, new int[][]{{0, i},{1, i},{2, i}});
         }
         dictionary.put(count++, new int[][]{{0,0},{1,1},{2,2}});
         dictionary.put(count, new int[][]{{0,2},{1,1},{2,0}});
-        for(int i=1; i<9; i++){
-            System.out.println("Number " +i+ ": " +Arrays.deepToString(dictionary.get(i)));
-        }
     }
     public Board(){
         board = new int[3][3];
@@ -38,7 +32,7 @@ public class Board {
         else
             return -1;
     }
-    public boolean win(){
+    private boolean win(){
         int count = 1;
         for(int i=0;i<3;i++) {
             if (board[i][0]==board[i][1] && board[i][1]==board[i][2] && board[i][2]!=0){
@@ -61,7 +55,7 @@ public class Board {
         }
         return false;
     }
-    public boolean draw(){
+    private boolean draw(){
         for(int i=0;i<3;i++) {
             for(int j=1;j<=3;j++){
                 if (board[i][j-1] == board[i][j%3] && (board[i][j % 3] == 0 || board[i][(j+1)%3] == 0))
