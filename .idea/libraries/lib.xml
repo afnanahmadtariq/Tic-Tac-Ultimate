@@ -2,13 +2,19 @@
   <library name="lib">
     <CLASSES>
       <root url="file://$PATH_TO_FX$" />
+<<<<<<< HEAD
       <root url="file://$PATH_TO_FX$" />
+=======
+>>>>>>> ee60ea9a0780710a8fcd47bc24e9509bbc7f56d0
       <root url="file://$USER_HOME$/Downloads/openjfx-21.0.1_windows-x64_bin-sdk/javafx-sdk-21.0.1/lib" />
     </CLASSES>
     <JAVADOC />
     <SOURCES />
     <jarDirectory url="file://$PATH_TO_FX$" recursive="false" />
+<<<<<<< HEAD
     <jarDirectory url="file://$PATH_TO_FX$" recursive="false" />
+=======
+>>>>>>> ee60ea9a0780710a8fcd47bc24e9509bbc7f56d0
     <jarDirectory url="file://$USER_HOME$/Downloads/openjfx-21.0.1_windows-x64_bin-sdk/javafx-sdk-21.0.1/lib" recursive="false" />
   </library>
 </component>

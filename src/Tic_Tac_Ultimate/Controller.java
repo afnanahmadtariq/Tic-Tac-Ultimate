@@ -5,7 +5,18 @@ import java.util.Arrays;
 public class Controller extends Board{
     private final boolean SINGLE_PLAYER;
     private int player;
+<<<<<<< HEAD
     private final String difficulty;
+=======
+    public String difficulty;
+    
+    Controller(){
+        super();
+        singlePlayer = true;
+        difficulty = "Medium";
+        player = 1;
+    }
+>>>>>>> ee60ea9a0780710a8fcd47bc24e9509bbc7f56d0
     Controller(boolean singlePlayer, String difficulty){
         super();
         this.SINGLE_PLAYER = singlePlayer;
@@ -17,6 +28,15 @@ public class Controller extends Board{
         System.out.println("Player set as: " + player);
         cpuTurn();
     }
+<<<<<<< HEAD
+=======
+    public void setPlayerOptions(boolean singlePlayer){
+        this.singlePlayer = singlePlayer;
+    }
+    public void setDifficulty(String difficulty){
+        this.difficulty = difficulty;
+    }
+>>>>>>> ee60ea9a0780710a8fcd47bc24e9509bbc7f56d0
     public int getPlayer(){
         return this.player;
     }
