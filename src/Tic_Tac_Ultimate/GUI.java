@@ -371,9 +371,6 @@ public class GUI extends Application {
             if(row ==0 || row ==4 || col ==0 || col ==4) {
                 if (listen)
                     box.setFill(original);
-//                else
-//                    box.setFill(Color.DARKGRAY);
-//                flag.set(true);
             }
         });
         box.setOnMouseClicked(mouseEvent -> {
@@ -389,11 +386,10 @@ public class GUI extends Application {
                 clearDraw();
             }
             else if((row ==0 || row ==4 || col ==0 || col ==4) && listen && check!=-1) {
+                listen = false;
                 box.setFill(Color.DARKGRAY);
                 setDraw(row, col);
-//                flag.set(false);
                 showArrows(row, col);
-//                draw(row, col);
             }
             else{
                 blink(box, 1);
@@ -418,9 +414,6 @@ public class GUI extends Application {
             arrowGroup.getChildren().add(arrow(row,col,"right"));
         if(col!=4)
             arrowGroup.getChildren().add(arrow(row,col,"left"));
-        listen = false;
-//        arrowPane.setPrefWidth(root.getHeight()*0.8);
-//        arrowPane.setPrefHeight(root.getHeight()*0.8);
     }
     private static Pane arrow(int row, int col, String imageName){
         double x,y;
@@ -467,7 +460,6 @@ public class GUI extends Application {
             pane.setStyle("-fx-cursor: pointer");
         });
         pane.setOnMouseClicked(MouseEvent->{
-//            listen = false;
             System.out.println("Listen value BEFORE completion of move: " + listen);
             if(imageName.equalsIgnoreCase("up") || imageName.equalsIgnoreCase("down")){
                 slide(row, col, y<0?0:4,col);
