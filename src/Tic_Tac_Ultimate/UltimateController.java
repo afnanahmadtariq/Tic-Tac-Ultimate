@@ -1,11 +1,11 @@
 package Tic_Tac_Ultimate;
 
-public class SuperController extends SuperBoard{
+public class UltimateController extends UltimateBoard {
     private final boolean singlePlayer;
     private int player;
     public String difficulty;
     private int[] superIndex;
-    SuperController(boolean singlePlayer, String difficulty){
+    UltimateController(boolean singlePlayer, String difficulty){
         super();
         this.singlePlayer = singlePlayer;
         this.difficulty = difficulty;
@@ -28,7 +28,7 @@ public class SuperController extends SuperBoard{
     private void cpuTurn(){
         if(player==2 && singlePlayer){
             System.out.println("Super index BEFORE cpu turn_ row:" + this.superIndex[0] + " col: " + this.superIndex[1]);
-            int[][] compute = SuperBrain.compTurn(superIndex,super.superBoard, difficulty);
+            int[][] compute = UltimateBrain.compTurn(superIndex,super.superBoard, difficulty);
             if(!doTurn(compute[0],compute[1]))
                 System.out.println("BARi nhi hui cpu se");
             System.out.println("Super index AFTER cpu turn_ row:" + this.superIndex[0] + " col: " + this.superIndex[1]);

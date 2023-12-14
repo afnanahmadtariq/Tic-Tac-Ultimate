@@ -30,18 +30,18 @@ public class GUI extends Application {
     public static StackPane root;
     public static Color backGround = Color.web("#f2f2f2");
     public static Color midGround = Color.web("#fff");
-    private static Color foreGround = Color.web("#000000");
-    private static Text turn1;
-    private static Text turn2;
-    private static Group grid1;
-    private static Group grid2;
+    public static Color foreGround = Color.web("#000000");
+    public static Text turn1;
+    public static Text turn2;
+    public static Group grid1;
+    public static Group grid2;
     private static BorderPane gamePane;
-    private static Pane boxPane;
-    private static Group arrowGroup;
-    private static double cell;
-    private static Group marks;
-    private static boolean listen;
-    private static int check;
+    public static Pane boxPane;
+    public static Group arrowGroup;
+    public static double cell;
+    public static Group marks;
+    public static boolean listen;
+    public static int check;
 
     static {
         listen = true;
@@ -301,357 +301,46 @@ public class GUI extends Application {
     }
     private static void displayGame() {
         root.getChildren().clear();
-        gamePane = new BorderPane();
-        gamePane.setPadding(new Insets(10));
+//        gamePane = new BorderPane();
+//        gamePane.setPadding(new Insets(10));
+        gamePane = switch(gameType){
+            case 2-> new Ultimate();
+            case 3-> new Quxio();
+            default -> new TicTacToe();
+        };
         root.getChildren().add(gamePane);
 
-        StackPane player1 = playerInfo(1, Color.RED);
-        gamePane.setLeft(player1);
+//        StackPane player1 = playerInfo(1, Color.RED);
+//        gamePane.setLeft(player1);
+//
+//        StackPane player2 = playerInfo(2, Color.BLUE);
+//        gamePane.setRight(player2);
+//
+//        StackPane center = new StackPane();
+//        gamePane.setCenter(center);
 
-        StackPane player2 = playerInfo(2, Color.BLUE);
-        gamePane.setRight(player2);
-
-        StackPane center = new StackPane();
-        gamePane.setCenter(center);
-
-        Rectangle rectangle = makeRectangle(0.95,0.95);
-        Pane board = new Pane();
-        board.maxWidthProperty().bind(root.heightProperty().multiply(0.8));
-        board.maxHeightProperty().bind(root.heightProperty().multiply(0.8));
-        if(cell==0.0 && gameType!=3)
-            Platform.runLater(()->{
-                cell = board.getHeight()/3;
-                System.out.println("Cell size: " + cell);
-            });
-        center.getChildren().addAll(rectangle, board);
-        switch(gameType){
-            case 2-> superTicTacToe(board);
-            case 3-> quxio(board);
-            default -> ticTacToe(board);
-        }
+//        Rectangle rectangle = makeRectangle(0.95,0.95);
+//        Pane board = new Pane();
+//        board.maxWidthProperty().bind(root.heightProperty().multiply(0.8));
+//        board.maxHeightProperty().bind(root.heightProperty().multiply(0.8));
+//        if(cell==0.0 && gameType!=3)
+//            Platform.runLater(()->{
+//                cell = board.getHeight()/3;
+//                System.out.println("Cell size: " + cell);
+//            });
+//        center.getChildren().addAll(rectangle, board);
+//        switch(gameType){
+//            case 2-> superTicTacToe(board);
+//            case 3-> quxio(board);
+//            default -> ticTacToe(board);
+//        }
         Toss();
     }
-    private static void quxio(Pane board){
-        Rectangle backRectangle = makeRectangle(0.8,0.8);
-        backRectangle.setFill(foreGround);
-        boxPane = new Pane();
-        boxPane.setTranslateX(10);
-        boxPane.setTranslateY(10);
-        marks = new Group();
-        arrowGroup = new Group();
-        board.getChildren().addAll(backRectangle, boxPane, arrowGroup);
-        for (int i = 0; i < 5; i++) {
-            for (int j = 0; j < 5; j++) {
-                Rectangle box = makeBox();
-                box.setTranslateX(130 * j);
-                box.setTranslateY(130 * i);
-                box.setId(""+i+j);
-                System.out.println(box.getId());
-                boxPane.getChildren().add(box);
-            }
-        }
-        boxPane.getChildren().add(marks);
-        marks.setId("marks");
-    }
-    private static Rectangle makeBox(){
-        Rectangle box = makeRectangle(0.15,0.15);
-        Color original = (Color) box.getFill();
-//        AtomicBoolean flag = new AtomicBoolean(true);
-        box.setOnMouseEntered(mouseEvent -> {
-            int[] index = getId(box);
-            int row = index[0];
-            int col = index[1];
-            if((row ==0 || row ==4 || col ==0 || col ==4) && listen)
-                box.setFill(Color.YELLOW);
-        });
-        box.setOnMouseExited(mouseEvent -> {
-            int[] index = getId(box);
-            int row = index[0];
-            int col = index[1];
-            if(row ==0 || row ==4 || col ==0 || col ==4) {
-                if (listen)
-                    box.setFill(original);
-            }
-        });
-        box.setOnMouseClicked(mouseEvent -> {
-            int[] index = getId(box);
-            int row = index[0];
-            int col = index[1];
-            System.out.println("Received row: " + row + " and Col: " + col);
-            check = checkDraw(row, col);
-            if(check == 10){
-                listen = true;
-                box.setFill(Color.WHITE);
-                arrowGroup.getChildren().clear();
-                clearDraw();
-            }
-            else if((row ==0 || row ==4 || col ==0 || col ==4) && listen && check!=-1) {
-                listen = false;
-                box.setFill(Color.DARKGRAY);
-                setDraw(row, col);
-                showArrows(row, col);
-//                draw(row, col);
-            }
-            else{
-                blink(box, 1);
-            }
-//            turn(Integer.parseInt(box.getId().substring(0,1)),Integer.parseInt(box.getId().substring(1)));
-            System.out.println("mouse Clicked!");
-        });
-        return box;
-    }
-    private static int[] getId(Node node){
-        String id = node.getId();
-        int row = Integer.parseInt(id.substring(0, 1));
-        int col = Integer.parseInt(id.substring(1));
-        return new int[] {row, col};
-    }
-    public static void showArrows(int row, int col) {
-        if(row!=0)
-            arrowGroup.getChildren().add(arrow(row,col,"down"));
-        if(row!=4)
-            arrowGroup.getChildren().add(arrow(row,col,"up"));
-        if(col!=0)
-            arrowGroup.getChildren().add(arrow(row,col,"right"));
-        if(col!=4)
-            arrowGroup.getChildren().add(arrow(row,col,"left"));
-    }
-    private static Pane arrow(int row, int col, String imageName){
-        double x,y;
-        if(imageName.equals("up") || imageName.equals("down")){
-            x = (130*col)+20;
-            if(imageName.equals("up"))
-                y = 130*5;
-
-            else
-                y = -90;
-        }
-        else {
-            y = (130*row)+20;
-            if(imageName.equals("right"))
-                x = -90;
-            else
-                x = 130*5;
-        }
-        Pane pane = new Pane();
-        pane.setTranslateX(x);
-        pane.setTranslateY(y);
-        Image arrowImage = new Image( "Arrows/" + imageName + ".png");
-        ImageView imageView = new ImageView(arrowImage);
-        imageView.setFitWidth(100);
-        imageView.setFitHeight(100);
-        pane.getChildren().add(imageView);
-        if(imageName.equalsIgnoreCase("up") || imageName.equalsIgnoreCase("down")) {
-            TranslateTransition transition = new TranslateTransition(Duration.seconds(0.5), pane);
-            transition.setFromY(y);
-            transition.setToY(imageName.equals("down")?y-20:y+20);
-            transition.setAutoReverse(true);
-            transition.setCycleCount(Animation.INDEFINITE);
-            transition.play();
-        }
-        else {
-            TranslateTransition transition = new TranslateTransition(Duration.seconds(0.5), pane);
-            transition.setFromX(x);
-            transition.setToX(imageName.equals("right")?x-20:x+20);
-            transition.setAutoReverse(true);
-            transition.setCycleCount(Animation.INDEFINITE);
-            transition.play();
-        }
-        pane.setOnMouseEntered(MouseEvent -> {
-            pane.setStyle("-fx-cursor: pointer");
-        });
-        pane.setOnMouseClicked(MouseEvent->{
-            System.out.println("Listen value BEFORE completion of move: " + listen);
-            if(imageName.equalsIgnoreCase("up") || imageName.equalsIgnoreCase("down")){
-                slide(row, col, y<0?0:4,col);
-//                turn2(row, col, y<0?0:4,col);
-            }
-            else{
-                slide(row, col, row, x<0?0:4);
-//                turn2(row, col, row, x<0?0:4);
-            }
-            clearDraw();
-            arrowGroup.getChildren().clear();
-//            arrowPane.setPrefHeight(0);
-//            arrowPane.setPrefWidth(0);
-            System.out.println("Show GUI mark Done!");
-
-        });
-        return pane;
-    }
-    public static void slide(int row, int col, int rowI, int colI){
-        int length = 0;
-        if(row == rowI){//row ke liye
-            int value = col;
-            if(value<colI) {// left se draw right pe insert
-                boxPane.lookup("#" + row + value).setId("temp");
-                value++;
-                for (; value <= colI; value++) {
-                    Node box = boxPane.lookup("#" + row + value);
-                    translateX(box.getTranslateX(),box.getTranslateX()-130,box, 1);
-                    box.setId("" + row + (value - 1));
-                    length++;
-                }
-                Rectangle rect = (Rectangle) boxPane.lookup("#temp");
-                rect.setId(""+ rowI + colI);
-                double size = rect.getScaleX();
-                scale(0,0, rect,1);
-                TranslateTransition transition = translateX(rect.getTranslateX(), rect.getTranslateX()-65, rect, 1);
-                int finalLength = length;
-                transition.setOnFinished(event->{
-                    rect.setTranslateX(rect.getTranslateX()+(finalLength *130)+65);
-                    rect.setFill(Color.WHITE);
-                    ScaleTransition scaleTransition = scale(size,size, rect,0.5);
-                    scaleTransition.setOnFinished(scaleEvent ->{
-                        if(check==0)mark(rowI, colI);
-                        turn2(row, col, rowI, colI);
-                        listen = true;
-                        System.out.println("Listen value after completion of move: " + listen);
-                    });
-                });
-            }
-            else {// right se draw left pe insert
-                boxPane.lookup("#" + row + value).setId("temp");
-                value--;
-                for (; value >= colI; value--) {
-                    Node box = boxPane.lookup("#" + row + value);
-                    translateX(box.getTranslateX(),box.getTranslateX()+130,box, 1);
-                    box.setId("" + row + (value + 1));
-                    length++;
-                }
-                Rectangle rect = (Rectangle) boxPane.lookup("#temp");
-                rect.setId(""+ rowI + colI);
-                double size = rect.getScaleX();
-                scale(0,0,rect,1);
-                TranslateTransition transition = translateX(rect.getTranslateX(), rect.getTranslateX()+65, rect, 1);
-                int finalLength = length;
-                transition.setOnFinished(event->{
-                    rect.setTranslateX(rect.getTranslateX()-(finalLength *130)-65);
-                    rect.setFill(Color.WHITE);
-                    ScaleTransition scaleTransition = scale(size,size, rect,0.5);
-                    scaleTransition.setOnFinished(scaleEvent ->{
-                        if(check==0)mark(rowI, colI);
-                        turn2(row, col, rowI, colI);
-                        listen = true;
-                        System.out.println("Listen value after completion of move: " + listen);
-                    });
-                });
-            }
-        }
-        else {//col ke liye
-            int value = row;
-            if (value < rowI) {// uphar se draw neche insert
-                boxPane.lookup("#" + value + col).setId("temp");
-                value++;
-                for (; value <= rowI; value++) {
-                    Node box = boxPane.lookup("#" + value + col);
-                    translateY(box.getTranslateY(),box.getTranslateY()-130,box, 1);
-                    box.setId("" + (value - 1) + col);
-                    length++;
-                }
-                Rectangle rect = (Rectangle) boxPane.lookup("#temp");
-                rect.setId(""+ rowI + colI);
-                double size = rect.getScaleX();
-                scale(0,0,rect,1);
-                TranslateTransition transition = translateY(rect.getTranslateY(), rect.getTranslateY()-65, rect, 1);
-                int finalLength = length;
-                transition.setOnFinished(event->{
-                    rect.setTranslateY(rect.getTranslateY()+(finalLength *130)+65);
-                    rect.setFill(Color.WHITE);
-                    ScaleTransition scaleTransition = scale(size,size, rect,0.5);
-                    scaleTransition.setOnFinished(scaleEvent ->{
-                        if(check==0)mark(rowI, colI);
-                        turn2(row, col, rowI, colI);
-                        listen = true;
-                        System.out.println("Listen value after completion of move: " + listen);
-                    });
-                });
-            }
-            else {// neche se draw uphar insert
-                boxPane.lookup("#" + value + col).setId("temp");
-                value--;
-                for (; value >= rowI; value--) {
-                    Node box = boxPane.lookup("#" + value + col);
-                    translateY(box.getTranslateY(),box.getTranslateY()+130,box, 1);
-                    box.setId("" + (value + 1) + col);
-                    length++;
-                }
-                Rectangle rect = (Rectangle) boxPane.lookup("#temp");
-                rect.setId(""+ rowI + colI);
-                double size = rect.getScaleX();
-                scale(0,0,rect,1);
-                TranslateTransition transition = translateY(rect.getTranslateY(), rect.getTranslateY()+65, rect, 1);
-                int finalLength = length;
-                transition.setOnFinished(event->{
-                    rect.setTranslateY(rect.getTranslateY()-(finalLength *130)-65);
-                    rect.setFill(Color.WHITE);
-                    ScaleTransition scaleTransition = scale(size,size, rect,0.5);
-                    scaleTransition.setOnFinished(scaleEvent ->{
-                        if(check==0)mark(rowI, colI);;
-                        turn2(row, col, rowI, colI);
-                        listen = true;
-                        System.out.println("Listen value after completion of move: " + listen);
-                    });
-                });
-            }
-        }
-    }
-    private static void mark(int row, int col) {
+    static void mark(int row, int col) {
         if(getPlayer()==1)
             markX2(row, col, 1);
         else
             markO2(row, col);
-    }
-
-    private static StackPane playerInfo(int player, Color color){
-        Rectangle rectangle = makeRectangle(3.5/9, 0.95);
-
-        Text playerName = new Text("Player " + player);
-        if(singlePlayer && player==2)
-            playerName = new Text("CPU");
-        playerName.setFont(Font.font("Franklin Gothic Heavy", FontWeight.BOLD, 74));
-        playerName.setFill(color);
-        Group symbol = new Group();
-        Text turn = new Text("Turn");
-        turn.setFont(Font.font("Franklin Gothic Heavy", 50));
-        turn.setFill(Color.LIGHTGREY);
-        if(player==1) {
-            turn1 = turn;
-            showX(symbol);
-        }
-        else {
-            turn2 = turn;
-            markO(0, 0, 100, symbol);
-        }
-        VBox info = new VBox(playerName,symbol,turn);
-        info.setAlignment(Pos.TOP_CENTER);
-        info.setSpacing(50);
-        info.setTranslateY(100);
-        if(gameType==2) {
-            Group grid = new Group();
-            if(player==1)
-                grid1 = grid;
-            else
-                grid2 = grid;
-            for (int i = 0; i < 3; i++) {
-                for (int j = 0; j < 3; j++) {
-                    Rectangle box = makeRectangle(.02, .02);
-                    box.setTranslateX(20 * j);
-                    box.setTranslateY(20 * i);
-                    grid.getChildren().add(box);
-                }
-            }
-            Rectangle back = makeRectangle(0.09, 0.09);
-            back.setFill(Color.LIGHTGREY);
-            StackPane turnIndicator = new StackPane(back, grid);
-            turnIndicator.setAlignment(Pos.CENTER);
-            info.getChildren().add(turnIndicator);
-        }
-
-
-        StackPane stackPane = new StackPane();
-        stackPane.getChildren().addAll(rectangle, info);
-        return stackPane;
     }
     public static void Toss(){
         String text = "Select your side for the toss";
@@ -725,67 +414,9 @@ public class GUI extends Application {
             }
         }
     }
-    private static void showX(Group node){
+    static void showX(Group node){
         markLine(0,0,100,100,Color.RED,0,node);
         markLine(100,0,0,100,Color.RED,0.2,node);
-    }
-    private static void ticTacToe(Pane board){
-        Platform.runLater(() -> {
-            board.setOnMouseClicked(event -> {
-                System.out.println("mouse Clicked!!");
-                double x = event.getX();
-                double y = event.getY();
-                int row = (int) (y/cell);
-                int col = (int) (x/cell);
-                if(getPlayer()!=2 || !singlePlayer){
-                    if(!turn(row, col))
-                        reject(board);;
-                }
-            });
-            for (int i = 0; i<4; i++) {
-                Line hLine = makeHLine((double) i/3,5, board);
-                board.getChildren().add(hLine);
-
-                Line vLine = makeVLine((double) i/3,5, board);
-                board.getChildren().add(vLine);
-            }
-            marks = new Group();
-            board.getChildren().add(marks);
-        });
-    }
-    private static void superTicTacToe(Pane board){
-        Platform.runLater(() -> {
-            board.setOnMouseClicked(event -> {
-                System.out.println("mouse Clicked!!");
-                double x = event.getX();
-                double y = event.getY();
-                int j = (int) (x  / (cell / 3)) % 3;
-                int sJ = (int) (x  / cell);
-                int i = (int) (y  / (cell / 3)) % 3;
-                int sI = (int) (y  / cell);
-                if (getPlayer() != 2 || !singlePlayer) {
-                    if(!turn(i, j, sI, sJ))
-                        reject(board);
-                }
-            });
-            for (int i = 0; i < 10; i++) {
-                Line hLine;
-                if (i == 0 || i == 3 || i == 6 || i == 9)
-                    hLine = makeHLine((double) i/9, 8, board);
-                else
-                    hLine = makeHLine((double) i/9, 3, board);
-                board.getChildren().add(hLine);
-
-                Line vLine;
-                if (i == 0 || i == 3 || i == 6 || i == 9)
-                    vLine = makeVLine((double) i/9, 8, board);
-                else
-                    vLine = makeVLine((double) i/9, 3, board);
-                board.getChildren().add(vLine);
-            }
-            marks = new Group();
-            board.getChildren().add(marks);
-        });
     }
     private void displayOptions(){
         root.getChildren().clear();
@@ -955,7 +586,7 @@ public class GUI extends Application {
         double x =  (col*(cell/3))+(superIndex[1]*cell)+((cell/3)*0.5);
         markO(x,y,((cell/3)*0.6),marks);
     }
-    private static void markO(double x, double y, double diameter,Group node){
+    static void markO(double x, double y, double diameter, Group node){
         Circle circle = new Circle(x,y,0);
         circle.setFill(Color.BLUE);
         Circle inner = new Circle(x,y,0);

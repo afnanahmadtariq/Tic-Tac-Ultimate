@@ -1,5 +1,5 @@
 package Tic_Tac_Ultimate;
-public class SuperBrain {
+public class UltimateBrain {
     public static int[][] compTurn(int[] superIndex, Board[][] superBoard, String difficulty) {
         return switch(difficulty){
             case "Easy" -> easy(superIndex, superBoard);

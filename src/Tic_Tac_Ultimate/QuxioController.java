@@ -25,7 +25,7 @@ public class QuxioController  extends QuxioBoard{
         if(player==2 && SINGLE_PLAYER) {
             int[][] index = QuxioBrain.compTurn(super.board, difficulty);
             System.out.println("index of cpu: " + Arrays.deepToString(index));
-            GUI.slide(index[0][0], index[0][1], index[1][0], index[1][1]);
+            Quxio.slide(index[0][0], index[0][1], index[1][0], index[1][1]);
 //            if(!doTurn(index[0], index[1]))
 //                System.out.println("BARi nhi hui cpu se");
         }

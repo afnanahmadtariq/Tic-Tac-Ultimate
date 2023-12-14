@@ -1,10 +1,10 @@
 package Tic_Tac_Ultimate;
 
-public class SuperBoard {
+public class UltimateBoard {
     public Board[][] superBoard;
     public int game;
     public int winValue;
-    public SuperBoard() {
+    public UltimateBoard() {
         superBoard = new Board[3][3];
         for(int i=0; i<3; i++){
             for(int j=0; j<3; j++)
