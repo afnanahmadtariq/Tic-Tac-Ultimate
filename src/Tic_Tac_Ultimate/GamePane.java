@@ -14,12 +14,14 @@ import javafx.scene.text.Font;
 import javafx.scene.text.FontWeight;
 import javafx.scene.text.Text;
 
+import java.io.Serializable;
+
 import static Tic_Tac_Ultimate.GUI.*;
 import static Tic_Tac_Ultimate.GuiUtility.makeRectangle;
 import static Tic_Tac_Ultimate.Runner.gameType;
 import static Tic_Tac_Ultimate.Runner.singlePlayer;
 
-public abstract class GamePane extends BorderPane {
+public abstract class GamePane extends BorderPane implements Serializable {
     public void initialize(){
         setPadding(new Insets(10));
         StackPane player1 = playerInfo(1, Color.RED);

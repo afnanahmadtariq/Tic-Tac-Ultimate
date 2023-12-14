@@ -12,11 +12,13 @@ import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
 import javafx.util.Duration;
 
+import java.io.Serializable;
+
 import static Tic_Tac_Ultimate.GUI.*;
 import static Tic_Tac_Ultimate.GuiUtility.*;
 import static Tic_Tac_Ultimate.Runner.*;
 
-public class Quxio extends GamePane{
+public class Quxio extends GamePane implements Serializable {
     Quxio(){
         super.initialize();
     }

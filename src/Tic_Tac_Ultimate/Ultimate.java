@@ -5,11 +5,13 @@ import javafx.scene.Group;
 import javafx.scene.layout.Pane;
 import javafx.scene.shape.Line;
 
+import java.io.Serializable;
+
 import static Tic_Tac_Ultimate.GUI.*;
 import static Tic_Tac_Ultimate.GuiUtility.*;
 import static Tic_Tac_Ultimate.Runner.*;
 
-public class Ultimate extends GamePane{
+public class Ultimate extends GamePane implements Serializable {
     Ultimate(){
         super.initialize();
     }
