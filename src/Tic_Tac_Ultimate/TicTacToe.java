@@ -11,7 +11,7 @@ import static Tic_Tac_Ultimate.Runner.*;
 
 public class TicTacToe extends GamePane{
     TicTacToe(){
-        makeBoard(super.initialize());
+        super.initialize();
     }
     @Override
     public void makeBoard(Pane board){

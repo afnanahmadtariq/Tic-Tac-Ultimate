@@ -20,7 +20,7 @@ import static Tic_Tac_Ultimate.Runner.gameType;
 import static Tic_Tac_Ultimate.Runner.singlePlayer;
 
 public abstract class GamePane extends BorderPane {
-    public Pane initialize(){
+    public void initialize(){
         setPadding(new Insets(10));
         StackPane player1 = playerInfo(1, Color.RED);
         setLeft(player1);
@@ -40,8 +40,8 @@ public abstract class GamePane extends BorderPane {
                 cell = board.getHeight()/3;
                 System.out.println("Cell size: " + cell);
             });
+        makeBoard(board);
         center.getChildren().addAll(rectangle, board);
-        return board;
     }
     private static StackPane playerInfo(int player, Color color){
         Rectangle rectangle = makeRectangle(3.5/9, 0.95);

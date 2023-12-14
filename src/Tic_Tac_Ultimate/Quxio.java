@@ -18,7 +18,7 @@ import static Tic_Tac_Ultimate.Runner.*;
 
 public class Quxio extends GamePane{
     Quxio(){
-        makeBoard(super.initialize());
+        super.initialize();
     }
     @Override
     public void makeBoard(Pane board){
