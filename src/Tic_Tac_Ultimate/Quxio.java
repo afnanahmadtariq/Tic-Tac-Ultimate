@@ -18,9 +18,10 @@ import static Tic_Tac_Ultimate.Runner.*;
 
 public class Quxio extends GamePane{
     Quxio(){
-        quxio(super.initialize());
+        makeBoard(super.initialize());
     }
-    private static void quxio(Pane board){
+    @Override
+    public void makeBoard(Pane board){
         Rectangle backRectangle = makeRectangle(0.8,0.8);
         backRectangle.setFill(foreGround);
         boxPane = new Pane();
@@ -42,7 +43,7 @@ public class Quxio extends GamePane{
         boxPane.getChildren().add(marks);
         marks.setId("marks");
     }
-    private static Rectangle makeBox(){
+    private Rectangle makeBox(){
         Rectangle box = makeRectangle(0.15,0.15);
         Color original = (Color) box.getFill();
 //        AtomicBoolean flag = new AtomicBoolean(true);
@@ -89,13 +90,13 @@ public class Quxio extends GamePane{
         });
         return box;
     }
-    private static int[] getId(Node node){
+    private int[] getId(Node node){
         String id = node.getId();
         int row = Integer.parseInt(id.substring(0, 1));
         int col = Integer.parseInt(id.substring(1));
         return new int[] {row, col};
     }
-    public static void showArrows(int row, int col) {
+    public void showArrows(int row, int col) {
         if(row!=0)
             arrowGroup.getChildren().add(arrow(row,col,"down"));
         if(row!=4)
@@ -105,7 +106,7 @@ public class Quxio extends GamePane{
         if(col!=4)
             arrowGroup.getChildren().add(arrow(row,col,"left"));
     }
-    private static Pane arrow(int row, int col, String imageName){
+    private Pane arrow(int row, int col, String imageName){
         double x,y;
         if(imageName.equals("up") || imageName.equals("down")){
             x = (130*col)+20;

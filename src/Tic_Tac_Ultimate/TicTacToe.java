@@ -11,9 +11,10 @@ import static Tic_Tac_Ultimate.Runner.*;
 
 public class TicTacToe extends GamePane{
     TicTacToe(){
-        ticTacToe(super.initialize());
+        makeBoard(super.initialize());
     }
-    private static void ticTacToe(Pane board){
+    @Override
+    public void makeBoard(Pane board){
         Platform.runLater(() -> {
             board.setOnMouseClicked(event -> {
                 System.out.println("mouse Clicked!!");

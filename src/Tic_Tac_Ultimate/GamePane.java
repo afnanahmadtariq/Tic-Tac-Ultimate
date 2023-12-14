@@ -93,4 +93,5 @@ public abstract class GamePane extends BorderPane {
         stackPane.getChildren().addAll(rectangle, info);
         return stackPane;
     }
+    abstract void makeBoard(Pane board);
 }
