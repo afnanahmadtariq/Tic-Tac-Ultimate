@@ -1,100 +1,175 @@
 package Tic_Tac_Ultimate;
 
-import javafx.animation.KeyFrame;
-import javafx.animation.KeyValue;
-import javafx.animation.Timeline;
+import javafx.animation.*;
 import javafx.application.Application;
-import javafx.event.ActionEvent;
-import javafx.event.EventHandler;
+import javafx.application.Platform;
+import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Group;
+import javafx.scene.Node;
 import javafx.scene.Scene;
-import javafx.scene.control.Alert;
-import javafx.scene.control.Alert.AlertType;
-import javafx.scene.control.Button;
-import javafx.scene.control.ButtonType;
-import javafx.scene.control.RadioButton;
-import javafx.scene.control.ToggleGroup;
+import javafx.scene.control.*;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
-import javafx.scene.input.MouseEvent;
-import javafx.scene.layout.HBox;
-import javafx.scene.layout.VBox;
+import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.*;
 import javafx.scene.text.Font;
 import javafx.scene.text.FontWeight;
 import javafx.scene.text.Text;
-import javafx.stage.Modality;
 import javafx.stage.Stage;
-import javafx.stage.StageStyle;
-import javafx.stage.WindowEvent;
 import javafx.util.Duration;
 
-import static Tic_Tac_Ultimate.Board.dictionary;
-import static Tic_Tac_Ultimate.Tic_Tac_Ultimate.*;
+import static Tic_Tac_Ultimate.GuiUtility.*;
+import static Tic_Tac_Ultimate.Runner.*;
+import static Tic_Tac_Ultimate.Board.*;
+import static Tic_Tac_Ultimate.QuxioBoard.quxioWinValues;
 
-public class GUI extends Application  {
-    private Scene game ;
-    public static Group root;
+public class GUI extends Application {
+    private static Stage stage;
+    public static StackPane root;
+    public static Color backGround = Color.web("#f2f2f2");
+    public static Color midGround = Color.web("#fff");
+    public static Color foreGround = Color.web("#000000");
+    public static Text turn1;
+    public static Text turn2;
+    public static Group grid1;
+    public static Group grid2;
+    private static BorderPane gamePane;
+    public static Pane boxPane;
+    public static Group arrowGroup;
+    public static double cell;
     public static Group marks;
-    public static int cell = 200;
-    public static boolean singlePlayer;
-    public static String gameDifficulty;
-    private static Color backGround = Color.web("#f2f2f2");
-    private static Color midGround = Color.web("#fff");
-    private ToggleGroup gameToggleGroup = new ToggleGroup();
-    private ToggleGroup playerToggleGroup = new ToggleGroup();
-    private ToggleGroup difficultyToggleGroup = new ToggleGroup();
+    public static boolean listen;
+    public static int check;
 
+    static {
+        listen = true;
+    }
+    public static void initialize(String[] args){
+        launch(args);
+    }
     @Override
-    public void start(Stage stage) throws Exception {
-        displayPlay(stage);
+    public void start(Stage stage){
+        this.stage = stage;
+        Image icon = new Image("U.png");
+        stage.getIcons().add(icon);
+        stage.setTitle("Tic Tac Ultimate");
+        stage.setWidth(1536);
+        stage.setHeight(864);
+        stage.setResizable(false);
+        stage.setFullScreen(false);
+        stage.setX(0);
+        stage.setY(0);
+        root = new StackPane();
+        root.setBackground(new Background(new BackgroundFill(backGround, CornerRadii.EMPTY, Insets.EMPTY)));
+        Scene scene = new Scene(root);
+        stage.setScene(scene);
+        stage.show();
+        displayGame();
     }
-    private void showNavPage(Stage stage) throws Exception{
+    private static void displayStart(){
+        Text ticTac = new Text("Tic tac");
+        Text toe = new Text(" toe");
+        Text ultimate = new Text(" Ultimate ");
+        Rectangle background = new Rectangle();
+        StackPane transitionComplex = new StackPane(toe, background, ultimate);
+        transitionComplex.setAlignment(Pos.CENTER_LEFT);
+        HBox title = new HBox(ticTac,transitionComplex);
+        title.setAlignment(Pos.CENTER);
+        title.setStyle("-fx-background-color: #ffff;");
+        title.setSpacing(10);
+        root.getChildren().add(title);
 
+
+        // Create a Text node
+        ticTac.setFont(Font.font("Franklin Gothic Heavy", FontWeight.BOLD, 102));
+        ticTac.setFill(Color.BLACK);
+
+        toe.setFont(Font.font("Franklin Gothic Heavy", FontWeight.BOLD, 102));
+        toe.setFill(Color.BLACK);
+
+        ultimate.setFont(Font.font("Franklin Gothic Heavy", FontWeight.BOLD, 102));
+        ultimate.setFill(Color.WHITE);
+        ultimate.setTranslateY(-ultimate.getLayoutBounds().getHeight());
+
+        background.setWidth(ultimate.getLayoutBounds().getWidth());
+        background.setHeight(ultimate.getLayoutBounds().getHeight());
+        background.setTranslateY(-ultimate.getLayoutBounds().getHeight());
+        background.setFill(Color.WHITE);
+
+
+        Region empty = new Region();
+        TranslateTransition emptyTransition = new TranslateTransition(Duration.seconds(0.6), empty);
+        emptyTransition.play();
+        emptyTransition.setOnFinished(event -> {
+            System.out.println("Transition completed");
+            rotate(0,90, toe);
+            translateY(0,ultimate.getLayoutBounds().getHeight()/2, toe, 2);
+
+            rotate(-90,0, ultimate);
+            translateY(-ultimate.getLayoutBounds().getHeight()/2,0, ultimate, 2);
+
+            rotate(-90, 0, background);
+            translateY(-ultimate.getLayoutBounds().getHeight()/2,0, background, 2);
+
+            FillTransition color = fill((Color)background.getFill(), Color.RED, 2.5, background, 1, false);
+            color.setOnFinished(event2 -> {
+                System.out.println("Transition2 completed");
+                displayMainMenu();
+            });
+        });
     }
-    private Scene displayMenu(Stage stage) throws Exception{
+    private static void displayMainMenu() {
+        Text ticTac = new Text("Tic tac");
+        Text ultimate = new Text(" Ultimate ");
+        Rectangle background = new Rectangle();
+        StackPane complex = new StackPane(background, ultimate);
 
-        VBox menuPanel = new VBox();
-        Text title = new Text("Tic Tac Ultimate");
-        Font customFont = Font.font("Times New Roman", FontWeight.BOLD, 50);
-        title.setFont(customFont);
+        HBox title = new HBox(ticTac,complex);
+        title.setAlignment(Pos.CENTER);
+        title.setTranslateY(root.getHeight()*0.1);
+        title.setSpacing(10);
 
-        menuPanel.getChildren().add(title);
+        ticTac.setFont(Font.font("Franklin Gothic Heavy", FontWeight.BOLD, 74));
+        ticTac.setFill(Color.BLACK);
+
+        ultimate.setFont(Font.font("Franklin Gothic Heavy", FontWeight.BOLD, 74));
+        ultimate.setFill(Color.WHITE);
+
+        background.setWidth(ultimate.getLayoutBounds().getWidth());
+        background.setHeight(ultimate.getLayoutBounds().getHeight());
+        background.setFill(Color.RED);
+
+        Button start = makeButton("Start");
+        Button options = makeButton("Options");
+        Button exit = makeButton("Exit Game");
+
+        root.getChildren().clear();
+        VBox menuPanel = new VBox(title,start,options,exit);
         menuPanel.setAlignment(Pos.TOP_CENTER);
-        Scene mainMenu = new Scene(menuPanel, 200, 100, midGround);
-
-        Button startButton = new Button("Start");
-        startButton.setMinSize(150,50);
-        startButton.setOnAction(new EventHandler<ActionEvent>() {
-            @Override
-            public void handle(ActionEvent event) {
-                try {
-                    System.out.println("Start button was Pressed!");
-                    displaySelectGame(stage);
-                } catch (Exception e) {
-                    e.printStackTrace();
-                }
-            }
-        });
-
-        Button optionButton = new Button("Options");
-        optionButton.setMinSize(150,50);
-        optionButton.setOnAction(new EventHandler<ActionEvent>() {
-            @Override
-            public void handle(ActionEvent event) {
-                System.out.println("Options button was pressed!");
-                displayPopupMessage("Under Development", "Option Button is under development", AlertType.INFORMATION);
-            }
-        });
-
-        Button exitButton = new Button("Exit Game");
-        exitButton.setMinSize(150,50);
-        exitButton.setOnAction(new EventHandler<ActionEvent>() {
-            @Override
-            public void handle(ActionEvent event) {
-                Alert alert = new Alert(AlertType.CONFIRMATION);
+        menuPanel.setSpacing(25);
+        root.getChildren().add(menuPanel);
+    }
+    private static Button makeButton(String text) {
+        Button button = new Button(text);
+        button.setTranslateY(root.getHeight()*0.25);
+        button.setMinSize(200,80);
+        String style = "-fx-padding: 10 20; " +
+                "-fx-font-family: 'Franklin Gothic';" +
+                "-fx-font-size: 35;" +
+                "-fx-border-radius: 5;";
+        button.setStyle( "-fx-background-color: Black; " + "-fx-text-fill: White; " + style );
+        button.setOnMouseEntered(e -> button.setStyle( "-fx-background-color: Red; " + "-fx-text-fill: White; " + style));
+        button.setOnMouseExited(e -> button.setStyle("-fx-background-color: Black; " + "-fx-text-fill: White; " + style ));
+        button.setOnAction(event -> {
+            System.out.println(text +" button was pressed!");
+            if(text.equals("Start"))
+                displayGameSelection();
+            else if(text.equals("Options"))
+                displayPopupMessage("Under Development", "Option Button is under development");
+            else {
+                Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
                 alert.setTitle("Exit Game");
                 alert.setContentText("Are you sure you want to exit?");
 
@@ -109,16 +184,21 @@ public class GUI extends Application  {
                 });
             }
         });
-        menuPanel.getChildren().add(startButton);
-        menuPanel.getChildren().add(optionButton);
-        menuPanel.getChildren().add(exitButton);
-        return mainMenu;
+        return button;
     }
-    private void displaySelectGame(Stage stage) throws Exception {
+    private static void displayPopupMessage(String title, String message) {
+        Alert alert = new Alert(Alert.AlertType.INFORMATION);
+        alert.setTitle(title);
+        alert.setHeaderText(null); // Setting header text to null means no header
+        alert.setContentText(message);
+        alert.showAndWait(); // Wait for user action (OK button click) before continuing
+    }
+    private static void displayGameSelection() {
+    root.getChildren().clear();
         VBox selectionPanel = new VBox();
         selectionPanel.setAlignment(Pos.CENTER);
         selectionPanel.setSpacing(10);
-        Scene gameSelection = new Scene(selectionPanel, 400, 300);
+        root.getChildren().add(selectionPanel);
 
         HBox gameType = new HBox();
         gameType.setAlignment(Pos.CENTER);
@@ -139,53 +219,57 @@ public class GUI extends Application  {
         gameDiffPanel.setAlignment(Pos.BOTTOM_CENTER);
 
         Button playGame = new Button("Play");
-        playGame.setOnAction(new EventHandler<ActionEvent>() {
-            @Override
-            public void handle(ActionEvent event) {
-                System.out.println("Play Game button was pressed!");
 
-                RadioButton selectedGameType = (RadioButton) gameToggleGroup.getSelectedToggle();
-                RadioButton selectedPlayerOption = (RadioButton) playerToggleGroup.getSelectedToggle();
-                RadioButton selectedDifficulty = (RadioButton) difficultyToggleGroup.getSelectedToggle();
+        ToggleGroup gameToggleGroup = new ToggleGroup();
+        ToggleGroup playerToggleGroup = new ToggleGroup();
+        ToggleGroup difficultyToggleGroup = new ToggleGroup();
+        playGame.setOnAction(event -> {
+            System.out.println("Play Game button was pressed!");
 
-                if(selectedGameType != null && selectedPlayerOption != null && selectedDifficulty != null){
-                    if((selectedGameType.getText().equals("Super Tic Tac Toe") && !selectedDifficulty.getText().equals("Easy"))
-                            || selectedDifficulty.getText().equals("Hard")){
-                        displayPopupMessage("Under Development", "Super Tic Tac Toe\nHard Mode", AlertType.INFORMATION);
-                        if(selectedGameType.getText().equals("Super Tic Tac Toe")){
-                            resetRadioButtons(gameToggleGroup);
-                        }
-                        resetRadioButtons(difficultyToggleGroup);
+            RadioButton selectedGameType = (RadioButton) gameToggleGroup.getSelectedToggle();
+            RadioButton selectedPlayerOption = (RadioButton) playerToggleGroup.getSelectedToggle();
+            RadioButton selectedDifficulty = (RadioButton) difficultyToggleGroup.getSelectedToggle();
+
+            if(selectedGameType != null && selectedPlayerOption != null && selectedDifficulty != null){
+
+                try {
+                    switch (selectedPlayerOption.getText()){
+                        case "Single Player" -> singlePlayer = true;
+                        case "Double Player" -> singlePlayer = false;
                     }
-                    try {
-                        switch (selectedPlayerOption.getText()){
-                            case "Single Player" -> singlePlayer = true;
-                            case "Double Player" -> singlePlayer = false;
+                    if(!singlePlayer)
+                        displayPopupMessage("Irrelevant Difficulty", "No Difficulty is required in case of" +
+                                " Double Player Game\n\nThe game will now Continue");
+                    difficulty = selectedDifficulty.getText();
+                    System.out.println("Selected Game Type: " + selectedGameType.getText());
+                    switch (selectedGameType.getText()) {
+                        case "Tic Tac Toe" -> {
+                            Runner.gameType = 1;
+                            startGame();
+                            displayGame();
+                            System.out.println("Tic Tac Toe was Selected");
+                            System.out.println(selectedPlayerOption.getText() + " and " + selectedDifficulty.getText() + " Game was selected");
                         }
-                        gameDifficulty = selectedDifficulty.getText();
-                        System.out.println("Selected Game Type: " + selectedGameType.getText());
-                        switch (selectedGameType.getText()) {
-                            case "Tic Tac Toe" -> {
-                                setGameOptions();
-                                System.out.println("Tic Tac Toe was Selected");
-                                System.out.println(selectedPlayerOption.getText() + " and " + selectedDifficulty.getText() + " Game was selected");
-                                stage.show();
-                                Scene mainView = game = new Scene(root, backGround);
-                                ticTacToe(root);
-                                stage.setScene(mainView);
-                                Toss();
+                        case "Super Tic Tac Toe" -> {
+                            if(selectedDifficulty.getText().equals("Easy")) {
+                                Runner.gameType = 2;
+                                startGame();
+                                displayGame();
+                                System.out.println("Selected Super Tic Tac Toe");
+                            } else {
+                                displayPopupMessage("Under Development", "Super Tic Tac Toe:\n\tMedium Mode\n\tHard Mode\n\tExtreme Mode");
+                                resetRadioButtons(gameToggleGroup);
+                                resetRadioButtons(difficultyToggleGroup);
                             }
-                            case "Super Tic Tac Toe" -> System.out.println("Selected STTT");
                         }
-
-                    } catch (Exception e) {
-                        e.printStackTrace();
                     }
-                } else
-                    displayPopupMessage("Missing Outputs", "Please Select all fields", AlertType.INFORMATION);
-            }
-        });
 
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+            } else
+                displayPopupMessage("Missing Outputs", "Please Select all fields");
+        });
 
         // Assign toggle groups to radio buttons
         assignToggleGroup(gameType, gameToggleGroup);
@@ -195,345 +279,431 @@ public class GUI extends Application  {
 
         selectionPanel.getChildren().addAll(gameType, playerOptions, gameDiffPanel, playGame);
 
-        stage.setScene(gameSelection);
-        stage.show();
     }
-    private void resetRadioButtons(ToggleGroup toggleGroup) {
+    private static void resetRadioButtons(ToggleGroup toggleGroup) {
         toggleGroup.getToggles().forEach(toggle -> {
             RadioButton radioButton = (RadioButton) toggle;
             radioButton.setSelected(false);
         });
     }
-
-    private void assignToggleGroup(HBox hbox, ToggleGroup toggleGroup) {
+    private static void assignToggleGroup(HBox hbox, ToggleGroup toggleGroup) {
         hbox.getChildren().forEach(node -> {
             if (node instanceof RadioButton) {
                 ((RadioButton) node).setToggleGroup(toggleGroup);
             }
         });
     }
-    public static void displayPopupMessage(String title, String message, AlertType type) {
-        Alert alert = new Alert(type);
-        alert.setTitle(title);
-        alert.setHeaderText(null); // Setting header text to null means no header
-        alert.setContentText(message);
-        alert.showAndWait(); // Wait for user action (OK button click) before continuing
-    }
-    private void displayPlay(Stage stage) throws Exception{
-        Image icon = new Image("U.png");
-        stage.getIcons().add(icon);
-        stage.setTitle("Tic Tac Ultimate");
-        stage.setWidth(1920);
-        stage.setHeight(1080);
-        stage.setResizable(true);
-        stage.setFullScreen(false);
-        stage.setX(0);
-        stage.setY(0);
-        root = new Group();
-        stage.setScene(displayMenu(stage));
-        stage.show();
+    private static void displayGame() {
+        root.getChildren().clear();
+//        gamePane = new BorderPane();
+//        gamePane.setPadding(new Insets(10));
+        gamePane = switch(gameType){
+            case 2-> new Ultimate();
+            case 3-> new Quxio();
+            default -> new TicTacToe();
+        };
+        root.getChildren().add(gamePane);
 
-//        Scene mainView = game =  new Scene(root, backGround);
-//        Rectangle rectangle = new Rectangle();
-//        rectangle.setFill(Color.LIGHTBLUE);
-//        rectangle.setWidth(200);
-//        rectangle.setHeight(200);
+//        StackPane player1 = playerInfo(1, Color.RED);
+//        gamePane.setLeft(player1);
 //
-//        Text text = new Text("Centered Square");
+//        StackPane player2 = playerInfo(2, Color.BLUE);
+//        gamePane.setRight(player2);
 //
-//        root.getChildren().add(rectangle);
-//        root.getChildren().add(text);
-//
-//        setAlignment(Pos.CENTER);
-//        ticTacToe(root);
-//
-//        stage.setScene(mainView);
-//        Toss();
+//        StackPane center = new StackPane();
+//        gamePane.setCenter(center);
+
+//        Rectangle rectangle = makeRectangle(0.95,0.95);
+//        Pane board = new Pane();
+//        board.maxWidthProperty().bind(root.heightProperty().multiply(0.8));
+//        board.maxHeightProperty().bind(root.heightProperty().multiply(0.8));
+//        if(cell==0.0 && gameType!=3)
+//            Platform.runLater(()->{
+//                cell = board.getHeight()/3;
+//                System.out.println("Cell size: " + cell);
+//            });
+//        center.getChildren().addAll(rectangle, board);
+//        switch(gameType){
+//            case 2-> superTicTacToe(board);
+//            case 3-> quxio(board);
+//            default -> ticTacToe(board);
+//        }
+        Toss();
     }
-    private void displayOptions(Stage stage) throws Exception{
-
+    static void mark(int row, int col) {
+        if(getPlayer()==1)
+            markX2(row, col, 1);
+        else
+            markO2(row, col);
     }
-    private void displayRuleBook(Stage stage) throws Exception{
-
+    public static void Toss(){
+        String text = "Select your side for the toss";
+        popUp(text,"Heads","Tails",1);
     }
-    private void displayHelp(Stage stage) throws Exception{
-
+    static void Toss(int choice){
+        if(choice == (int)(Math.random()*2)+1){
+            System.out.println("player = 1");
+            Runner.setPlayer(1);
+            setTurn(1);
+        }
+        else{
+            System.out.println("player = 2");
+            Runner.setPlayer(2);
+            setTurn(2);
+        }
     }
-    private void displayAboutUs(Stage stage) throws Exception{
-
-    }
-    private void displayProfile(Stage stage) throws Exception{
-
-    }
-    private void ticTacToe(Group root) throws Exception{
-
-//        root.set
-//        root.setFillHeight(true);
-//        root.setBackground(new Background(new BackgroundFill(midGround, CornerRadii.EMPTY, Insets.EMPTY)));
-
-//        Line line = new Line();
-//        line.setStartY(0);
-//        line.setEndY(stage.getHeight());
-//        line.setStartX(Math.floor(stage.getWidth()/stage.getHeight()));
-//        line.setEndX(Math.floor(stage.getWidth()/stage.getHeight())+stage.getHeight());
-
-
-        game.setOnMouseClicked(new EventHandler<MouseEvent>() {
-            @Override
-            public void handle(MouseEvent event) {
-                System.out.println("mouse Clicked!!");
-                int x = (int) event.getX();
-                int y = (int) event.getY();
-                int j = (x-500)/cell;
-                int i = (y-100)/cell;
-                if(getPlayer()!=2 || !isSinglePlayer()){
-                    Tic_Tac_Ultimate.turn(i, j);
-                    System.out.println("registered!!...............");
+    public static void updateTurn(){
+        if(turn1.getFill()==Color.GREEN) {
+            turn1.setFill(Color.LIGHTGREY);
+            turn2.setFill(Color.GREEN);
+        }
+        else {
+            turn1.setFill(Color.GREEN);
+            turn2.setFill(Color.LIGHTGREY);
+        }
+        if(gameType==2) {
+            int[] superIndex = getSuperIndex();
+            int number = (superIndex[0] * 3) + superIndex[1];
+            for (int i=0; i<9; i++) {
+                Rectangle active, neglect;
+                if (getPlayer() == 1) {
+                    active = (Rectangle) grid1.getChildren().get(i);
+                    neglect = (Rectangle) grid2.getChildren().get(i);
+                } else {
+                    active = (Rectangle) grid2.getChildren().get(i);
+                    neglect = (Rectangle) grid1.getChildren().get(i);
                 }
+                if (superIndex[0] == -1 || number == i)
+                    active.setFill(Color.GREEN);
+                neglect.setFill(Color.WHITE);
             }
-        });
-        for (int row = 0; row < 4; row++) {
-            int y = (row * cell) + 500;
-            Line line = new Line();
-            line.setStartY(100);
-            line.setEndY(700);
-            line.setStartX(y);
-            line.setEndX(y);
-            line.setStrokeWidth(5);
-            line.setPickOnBounds(false);
-            root.getChildren().add(line);
         }
-        for (int col = 0; col < 4; col++) {
-            int x = (col * cell) + 100;
-            Line line = new Line();
-            line.setStartY(x);
-            line.setEndY(x);
-            line.setStartX(500);
-            line.setEndX(1100);
-            line.setStrokeWidth(5);
-            line.setPickOnBounds(false);
-            root.getChildren().add(line);
-        }
-        marks = new Group();
-        root.getChildren().add(marks);
     }
-    public static void showTurn(int i, int j){
-        Image xIcon = new Image("x.png");
-        Image p1Icon = xIcon;
-        Image oIcon = new Image("o.png");
-        Image p2Icon = oIcon;
+    private static void setTurn(int player){
+        if(player==1)
+            turn1.setFill(Color.GREEN);
+        else
+            turn2.setFill(Color.GREEN);
+        if(gameType==2){
+            for (int i=0; i<9; i++) {
+                Rectangle box;
+                if(player==1)
+                    box = (Rectangle) grid1.getChildren().get(i);
+                else
+                    box = (Rectangle) grid2.getChildren().get(i);
+                box.setFill(Color.GREEN);
+            }
+        }
+    }
+    public static void clearTurn(){
+        turn1.setFill(Color.LIGHTGREY);
+        turn2.setFill(Color.LIGHTGREY);
+        if(gameType==2){
+            for (int i=0; i<9; i++) {
+                Rectangle box;
+                box = (Rectangle) grid1.getChildren().get(i);
+                box.setFill(Color.WHITE);
+                box = (Rectangle) grid2.getChildren().get(i);
+                box.setFill(Color.WHITE);
+            }
+        }
+    }
+    static void showX(Group node){
+        markLine(0,0,100,100,Color.RED,0,node);
+        markLine(100,0,0,100,Color.RED,0.2,node);
+    }
+    private void displayOptions(){
+        root.getChildren().clear();
+
+    }
+    private void displayRuleBook(){
+        root.getChildren().clear();
+
+    }
+    private void displayHelp(){
+        root.getChildren().clear();
+
+    }
+    private void displayAboutUs(){
+        root.getChildren().clear();
+
+    }
+    private void displayProfile(){
+        root.getChildren().clear();
+
+    }
+    public static void showTurn(int row, int col, int[] superIndex){
+        if(getPlayer()==1)
+            markX(row,col,superIndex);
+        else
+            markO(row, col,superIndex);
+    }
+    public static void showTurn(int row, int col){
+        if(getPlayer()==1)
+            markX(row,col);
+        else
+            markO(row, col);
+    }
+    public static void markDraw(int[] superIndex){
+        int x = (int)(superIndex[1]*cell)+4;
+        int y = (int)(superIndex[0]*cell)+4;
+        showMark(x,y,true);
+        showMark(x + ((int) (cell * 0.2) - 4), y + ((int) (cell * 0.2) - 4), false);
+    }
+    private static void showMark(int x, int y,  boolean white){
+        Image dIcon = new Image("D.png");
+        Image darkIcon = new Image("white.png");
 
         Image mark;
-        if(getPlayer()==1)
-            mark = p1Icon;
-        else
-            mark = p2Icon;
+        mark = white? darkIcon : dIcon ;
         System.out.println("Mark set acc to player!");
+        int width, height;
+        width = height = (int)cell-7;
+
         ImageView imageView = new ImageView(mark);
-        imageView.setFitWidth(100);
-        imageView.setFitHeight(100);
-        imageView.setLayoutX((j*cell)+550);
-        imageView.setLayoutY((i*cell)+150);
+        imageView.setFitWidth(width);
+        imageView.setFitHeight(height);
+        imageView.setLayoutX(x);
+        imageView.setLayoutY(y);
         marks.getChildren().add(imageView);
         System.out.println("Marked on grid!");
     }
     public static void markLine(int value){
+        int[][] lineIndex;
+        if(gameType==3) {
+            lineIndex = quxioWinValues.get(value);
+            markUp(0, lineIndex);
+        }
+        else {
+            lineIndex = dictionary.get(value);
+            int startX = (int) ((lineIndex[0][1] * cell) + (int) (cell * 0.5));
+            int startY = (int) ((lineIndex[0][0] * cell) + (int) (cell * 0.5));
+            int endX = (int) ((lineIndex[2][1] * cell) + (int) (cell * 0.5));
+            int endY = (int) ((lineIndex[2][0] * cell) + (int) (cell * 0.5));
+
+            Timeline timeline = markLine(startX, startY, endX, endY, Color.LIGHTGOLDENRODYELLOW, 0, marks);
+            timeline.setOnFinished(end ->  endGame());
+        }
+    }
+    private static void markUp(int num, int[][] lineIndex){
+        int[] index = lineIndex[num];
+        Rectangle box = (Rectangle) boxPane.lookup("#" + index[0] + index[1]);
+        Color color = getPlayer()==1?Color.LIGHTSKYBLUE:Color.HOTPINK;
+        FillTransition transition = fill((Color)box.getFill(), color, 0.2, box, 1, false);
+        num++;
+        int finalNum = num;
+        transition.setOnFinished(event -> {
+            if(finalNum <=4)
+                markUp(finalNum, lineIndex);
+            else{
+                Runner.endGame();
+            }
+        });
+    }
+    public static void markLine(int[] superIndex,int value){
         int[][] lineIndex = dictionary.get(value);
-        int startX = ((lineIndex[0][1]*cell)+(int)(cell*2.8));
-        int startY = ((lineIndex[0][0]*cell)+cell);
-        int endX = ((lineIndex[2][1]*cell)+(int)(cell*3.2));
-        int endY = ((lineIndex[2][0]*cell)+cell);
+        int startX =(int)((superIndex[1]*cell)+(lineIndex[0][1]*(cell/3))+(int)((cell/3)*0.5));
+        int startY =(int)((superIndex[0]*cell)+(lineIndex[0][0]*(cell/3))+(int)((cell/3)*0.5));
+        int endX = (int) ((superIndex[1]*cell)+(lineIndex[2][1]*(cell/3))+(int)((cell/3)*0.5));
+        int endY = (int) ((superIndex[0]*cell)+(lineIndex[2][0]*(cell/3))+(int)((cell/3)*0.5));
 
-        //is index pe line lag gaye gi :)
-        Line line = new Line(startX, startY, endX, endY);
-        line.setStroke(Color.BLACK);
-        line.setStrokeWidth(10);
+        markLine(startX,startY,endX,endY,Color.LIGHTGOLDENRODYELLOW,0,marks);
+
+        int x =(int) (superIndex[1]*cell)+4;
+        int y =(int) (superIndex[0]*cell)+4;
+        showMark(x,y,true);
+        if(getPlayer()==1)
+            markX(superIndex[0],superIndex[1]);
+        else
+            markO(superIndex[0],superIndex[1]);
+    }
+    private static Timeline markLine(int startX, int startY, int endX, int endY, Color color, double delay,Group node){
+        Line line = new Line(startX, startY,startX, startY);
+        line.setStrokeWidth(0);
+        line.setStroke(color);
         line.setStrokeLineCap(StrokeLineCap.ROUND);
-
-        marks.getChildren().add(line);
-
-        // Create a Timeline for the animation
+        line.setMouseTransparent(true);
+        node.getChildren().add(line);
+        double width, time;
+        if(endY-startY<(cell/3)) {
+            width = 10;
+            time = 0.2;
+        }
+        else if(startY-endY<cell) {
+            width = 20;
+            time = 0.3;
+        }
+        else {
+            width = 25;
+            time = 1;
+        }
         Timeline timeline = new Timeline();
-
-        // Define the starting and ending keyframes
-        KeyFrame startFrame = new KeyFrame(Duration.ZERO,
+        KeyFrame startFrame = new KeyFrame(Duration.seconds(delay),
+                new KeyValue(line.strokeWidthProperty(), width),
                 new KeyValue(line.endXProperty(), startX),
                 new KeyValue(line.endYProperty(), startY));
-        KeyFrame endFrame = new KeyFrame(Duration.seconds(0.5),
+        KeyFrame endFrame = new KeyFrame(Duration.seconds(delay+time),
+                new KeyValue(line.strokeWidthProperty(), width),
                 new KeyValue(line.endXProperty(), endX),
                 new KeyValue(line.endYProperty(), endY));
-
-        // Add the keyframes to the timeline
         timeline.getKeyFrames().addAll(startFrame, endFrame);
-
-        // Start the animation
         timeline.play();
+        return timeline;
+    }
+    private static void markX(int row, int col, int[] superIndex){
+        int startY = (int) ((int) (row*(cell/3))+(superIndex[0]*cell)+((cell/3)*0.2));
+        int startX = (int) ((int) (col*(cell/3))+(superIndex[1]*cell)+((cell/3)*0.2));
+        int endY = startY + (int)((cell/3)*0.6);
+        int endX = startX + (int)((cell/3)*0.6);
+        markLine(startX,startY,endX,endY,Color.RED,0,marks);
+        startX = endX;
+        endX = endX - (int)((cell/3)*0.6);
+        markLine(startX,startY,endX,endY,Color.RED,0.2,marks);
+    }
+    private static void markX(int row, int col){
+        int startY = (int)((row*cell)+(cell*0.2));
+        int startX = (int)((col*cell)+(cell*0.2));
+        int endY = startY + (int)(cell*0.6);
+        int endX = startX + (int)(cell*0.6);
+        markLine(startX,startY,endX,endY,Color.RED,0,marks);
+        startX = endX;
+        endX = endX - (int)(cell*0.6);
+        markLine(startX,startY,endX,endY,Color.RED,0.2,marks);
+    }
+    private static void markO(int row, int col){
+        double y = (row*cell)+(cell*0.5);
+        double x = (col*cell)+(cell*0.5);
+        markO(x,y,cell*0.6,marks);
+    }
+    private static void markO(int row, int col, int[] superIndex){
+        double y =  (row*(cell/3))+(superIndex[0]*cell)+((cell/3)*0.5);
+        double x =  (col*(cell/3))+(superIndex[1]*cell)+((cell/3)*0.5);
+        markO(x,y,((cell/3)*0.6),marks);
+    }
+    static void markO(double x, double y, double diameter, Group node){
+        Circle circle = new Circle(x,y,0);
+        circle.setFill(Color.BLUE);
+        Circle inner = new Circle(x,y,0);
+        inner.setFill(Color.WHITE);
+
+
+        Timeline timeline = new Timeline();
+        timeline.setCycleCount(1);
+        KeyValue keyValueRadius = new KeyValue(circle.radiusProperty(), (diameter*0.5));
+        KeyFrame keyFrame = new KeyFrame(Duration.seconds(0.25), keyValueRadius);
+        timeline.getKeyFrames().add(keyFrame);
+        timeline.play();
+
+        Timeline innerTimeLine = new Timeline();
+        innerTimeLine.setCycleCount(1);
+        KeyValue keyValueRadiusInner = new KeyValue(inner.radiusProperty(), (diameter*0.38));
+        KeyFrame keyFrameInner = new KeyFrame(Duration.seconds(0.25), keyValueRadiusInner);
+        innerTimeLine.getKeyFrames().add(keyFrameInner);
+        innerTimeLine.play();
+
+        circle.setMouseTransparent(true);
+        inner.setMouseTransparent(true);
+        node.getChildren().addAll(circle,inner);
+    }
+    private static void markX2(int row, int col, int step){
+        Rectangle box = (Rectangle) boxPane.lookup("#"+row+col);
+//        System.out.println("\nstartX: -------->" + startX.getValue() + "\nstartY: -------->" + startY.getValue() +"\nendX: -------->" + endX.getValue() + "\nendY: -------->" + endY.getValue());
+        double delay = 0;
+        if(step == 2) {
+            delay = 0.2;
+        }
+        else
+            markX2(row, col, 2);
+        Line line = new Line();
+        line.setStrokeWidth(20);
+        line.setStroke(Color.RED);
+        line.setStrokeLineCap(StrokeLineCap.ROUND);
+        line.setMouseTransparent(true);
+        line.scaleXProperty().bind(box.scaleXProperty());
+        line.scaleYProperty().bind(box.scaleYProperty());
+        marks.getChildren().add(line);
+        Timeline timeline = new Timeline();
+        KeyFrame startFrame, endFrame;
+        if(step == 2) {
+            startFrame = new KeyFrame(Duration.seconds(delay),
+                    new KeyValue(line.endXProperty(), box.getLayoutX()+(box.getWidth()*0.8)),
+                    new KeyValue(line.endYProperty(), box.getLayoutY()+(box.getHeight()*0.2)));
+            endFrame = new KeyFrame(Duration.seconds(delay+0.3),
+                    new KeyValue(line.endXProperty(), box.getLayoutX()+(box.getWidth()*0.2)),
+                    new KeyValue(line.endYProperty(), box.getLayoutY()+(box.getHeight()*0.8)));
+        }
+        else {
+            startFrame = new KeyFrame(Duration.seconds(delay),
+                    new KeyValue(line.endXProperty(), box.getLayoutX()+(box.getWidth()*0.2)),
+                    new KeyValue(line.endYProperty(), box.getLayoutY()+(box.getHeight()*0.2)));
+            endFrame = new KeyFrame(Duration.seconds(delay+0.3),
+                    new KeyValue(line.endXProperty(), box.getLayoutX()+(box.getWidth()*0.6)),
+                    new KeyValue(line.endYProperty(), box.getLayoutY()+(box.getHeight()*0.8)));
+        }
+
+        timeline.getKeyFrames().addAll(startFrame, endFrame);
+//        timeline.play();
+//        timeline.setOnFinished(event -> {
+            if(step == 2) {
+                line.startXProperty().bind(box.translateXProperty().add(box.widthProperty().multiply(0.8)));
+                line.endXProperty().bind(box.translateXProperty().add(box.widthProperty().multiply(0.2)));
+            }
+            else {
+                line.startXProperty().bind(box.translateXProperty().add(box.widthProperty().multiply(0.2)));
+                line.endXProperty().bind(box.translateXProperty().add(box.widthProperty().multiply(0.8)));
+            }
+            line.startYProperty().bind(box.translateYProperty().add(box.heightProperty().multiply(0.2)));
+            line.endYProperty().bind(box.translateYProperty().add(box.heightProperty().multiply(0.8)));
+//        });
+    }
+    private static void markO2(int row, int col){
+        Rectangle box = (Rectangle) boxPane.lookup("#"+row+col);
+        Circle circle = new Circle(0);
+        circle.setFill(Color.BLUE);
+        Circle inner = new Circle(0);
+        inner.setFill(Color.WHITE);
+
+
+        Timeline timeline = new Timeline();
+        timeline.setCycleCount(1);
+        KeyValue keyValueRadius = new KeyValue(circle.radiusProperty(), (box.getWidth()*0.4));
+        KeyFrame keyFrame = new KeyFrame(Duration.seconds(0.25), keyValueRadius);
+        timeline.getKeyFrames().add(keyFrame);
+        timeline.play();
+
+        Timeline innerTimeLine = new Timeline();
+        innerTimeLine.setCycleCount(1);
+        KeyValue keyValueRadiusInner = new KeyValue(inner.radiusProperty(), (box.getWidth()*0.3));
+        KeyFrame keyFrameInner = new KeyFrame(Duration.seconds(0.25), keyValueRadiusInner);
+        innerTimeLine.getKeyFrames().add(keyFrameInner);
+        innerTimeLine.play();
+
+//        timeline.setOnFinished(event -> {
+//            circle.radiusProperty().bind(box.widthProperty().multiply(0.4));
+            circle.centerXProperty().bind(box.translateXProperty().add(box.widthProperty().multiply(0.5)));
+            circle.centerYProperty().bind(box.translateYProperty().add(box.heightProperty().multiply(0.5)));
+
+//            inner.radiusProperty().bind(box.widthProperty().multiply(0.3));
+            inner.centerXProperty().bind(box.translateXProperty().add(box.widthProperty().multiply(0.5)));
+            inner.centerYProperty().bind(box.translateYProperty().add(box.heightProperty().multiply(0.5)));
+//        });
+
+        circle.scaleXProperty().bind(box.scaleXProperty());
+        circle.scaleYProperty().bind(box.scaleYProperty());
+        circle.setMouseTransparent(true);
+        inner.scaleXProperty().bind(box.scaleXProperty());
+        inner.scaleYProperty().bind(box.scaleYProperty());
+        inner.fillProperty().bind(box.fillProperty());
+        inner.setMouseTransparent(true);
+        marks.getChildren().addAll(circle,inner);
     }
     public static void clearMarks(){
         marks.getChildren().clear();
     }
-    //    line = new Line();
-//        line.setStroke(Color.BLACK);
-//        line.setVisible(false);
-//
-//    image = new Rectangle();
-//        image.setFill(Color.RED);
-//        image.setWidth(50);
-//        image.setHeight(50);
-//        image.setVisible(false);
-//
-//    getChildren().add(line);
-//    getChildren().add(image);
-//
-//    setAlignment(Pos.CENTER);
-//
-//    setOnMouseEntered(new EventHandler<MouseEvent>() {
-//        @Override
-//        public void handle(MouseEvent event) {
-//            line.setVisible(true);
-//            image.setVisible(true);
-//        }
-//    });
-//
-//    setOnMouseExited(new EventHandler<MouseEvent>() {
-//        @Override
-//        public void handle(MouseEvent event) {
-//            line.setVisible(false);
-//            image.setVisible(false);
-//        }
-//    });
-//
-//    setOnMouseClicked(new EventHandler<MouseEvent>() {
-//        @Override
-//        public void handle(MouseEvent event) {
-//            isVisible = !isVisible;
-//            line.setVisible(isVisible);
-//            image.setVisible(isVisible);
-//        }
-//    });
-    public static void Toss(){
-        String text = "Select your side for the toss";
-        int choice = popUp(text,"Heads","Tails",1);
-        if(choice == (int)(Math.random()*2)){
-            System.out.println("player = 1");
-            Tic_Tac_Ultimate.setPlayer(1);
-        }
-        else{
-            System.out.println("player = 2");
-            Tic_Tac_Ultimate.setPlayer(2);
-        }
+    public static void clearGame(){
+        clearMarks();
+        marks = null;
+        gamePane = null;
+        displayMainMenu();
     }
-
-    private static void shakeStage(Stage stage) {
-        final double originalX = stage.getX();
-        final double originalY = stage.getY();
-        final Timeline[] timeline = new Timeline[1];
-
-        timeline[0] = new Timeline(new KeyFrame(
-                Duration.millis(100),
-                new EventHandler<ActionEvent>() {
-                    int shakeCount = 0;
-                    @Override
-                    public void handle(ActionEvent event) {
-                        // Shake the stage
-                        if (shakeCount++ % 2 == 0) {
-                            stage.setX(originalX + 10);
-                            stage.setY(originalY + 10);
-                        } else {
-                            stage.setX(originalX);
-                            stage.setY(originalY);
-                        }
-                        // Stop shaking after 10 shakes
-                        if (shakeCount > 10) {
-                            stage.setX(originalX);
-                            stage.setY(originalY);
-                            timeline[0].stop();
-                        }
-                    }
-                }
-        ));
-        timeline[0].setCycleCount(Timeline.INDEFINITE);
-        timeline[0].play();
-    }
-
-    //Another method{
-//    private void shakeStage(Stage stage) {
-//        final int shakeDistance = 10;
-//        final int numShakes = 10;
-//        final double shakeDuration = 50; // milliseconds
-//
-//        TranslateTransition tt = new TranslateTransition(Duration.millis(shakeDuration), stage.getScene().getRoot());
-//        tt.setCycleCount(2 * numShakes);
-//        tt.setAutoReverse(true);
-//        tt.setByX(shakeDistance);
-//        tt.setByY(shakeDistance);
-//
-//        tt.playFromStart();
-//    }
-
-    public static int popUp(String text, String button1Text, String button2Text, int design){
-        final int[] choice = {-1};
-        //stage
-        Stage endGame = new Stage(StageStyle.UNDECORATED);
-        endGame.setWidth(500);
-        endGame.setHeight(200);
-        endGame.setResizable(false);
-        endGame.initModality(Modality.APPLICATION_MODAL);
-        endGame.setOnCloseRequest(new EventHandler<WindowEvent>() {
-            @Override
-            public void handle(WindowEvent event) {
-                event.consume();
-                shakeStage(endGame);
-            }
-        });
-
-        //root Node
-        VBox root = new VBox(new Text(text));
-        root.setAlignment(Pos.CENTER);
-        Scene scene = new Scene(root, 200, 100, midGround);
-
-        //Buttons
-        Button button1 = new Button(button1Text);
-        button1.setMinSize(80,20);
-        button1.setOnAction(new EventHandler<ActionEvent>() {
-            @Override
-            public void handle(ActionEvent event) {
-                System.out.println("Button was pressed!");
-                choice[0] = 0;
-                endGame.close();
-            }
-        });
-
-        Button button2 = new Button(button2Text);
-        button2.setMinSize(80,20);
-        button2.setOnAction(new EventHandler<ActionEvent>() {
-            @Override
-            public void handle(ActionEvent event) {
-                System.out.println("Button was pressed!");
-                choice[0] = 1;
-                endGame.close();
-            }
-        });
-
-        HBox buttons = new HBox();
-        buttons.setAlignment(Pos.BASELINE_CENTER);
-        buttons.getChildren().add(button1);
-        buttons.getChildren().add(button2);
-        root.getChildren().add(buttons);
-
-        //Show Stage
-        endGame.setScene(scene);
-        endGame.showAndWait();
-        return choice[0];
-    }
-
-
-
-//    public void invalidated(Observable observable) {
-//        int newValue = (int) observable.getValue();
-//        if (newValue != -1) {
-//            int a=1;
-////            onValueChanged();
-//        }
-//    }
 }
