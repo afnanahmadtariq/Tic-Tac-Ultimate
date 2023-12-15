@@ -1,50 +1,37 @@
 package Tic_Tac_Ultimate;
 
+import java.util.Arrays;
 
 public class Controller extends Board{
-    private Player players[];
-    private boolean singlePlayer;
+    private final boolean SINGLE_PLAYER;
     private int player;
-    public String difficulty;
-
-    Controller(){
-        super();
-        singlePlayer = true;
-        difficulty = "Medium";
-        player = 1;
-    }
+    private final String difficulty;
     Controller(boolean singlePlayer, String difficulty){
         super();
-        this.singlePlayer = singlePlayer;
+        this.SINGLE_PLAYER = singlePlayer;
         this.difficulty = difficulty;
+        player = 1;
     }
     public void setPlayer(int player){
         this.player = player;
         System.out.println("Player set as: " + player);
         cpuTurn();
     }
-    public void setPlayerOptions(boolean singlePlayer){
-        this.singlePlayer = singlePlayer;
-    }
-    public void setDifficulty(String difficulty){
-        this.difficulty = difficulty;
-    }
     public int getPlayer(){
         return this.player;
     }
-    public boolean isSinglePlayer(){
-        return singlePlayer;
-    }
-    public void cpuTurn(){
-        if(player==2 && singlePlayer) {
+    private void cpuTurn(){
+        if(player==2 && SINGLE_PLAYER) {
             int[] index = Brain.compTurn(super.board, difficulty);
-            doTurn(index);
+            System.out.println("index of cpu: " + Arrays.toString(index));
+            if(!doTurn(index))
+                System.out.println("BARi nhi hui cpu se");
         }
     }
-    public void doTurn(int[] index){
+    public boolean doTurn(int[] index){
         if(markTurn(index)){
             System.out.println("registered!!...............");
-            Tic_Tac_Ultimate.showTurn(index);
+            Runner.showTurn(index);
             boolean end = switch(super.check()){
                 case 1 -> end(true);
                 case 0 -> end(false);
@@ -52,10 +39,14 @@ public class Controller extends Board{
             };
             if(!end){
                 player = (player%2)+1;
+                GUI.updateTurn();
                 System.out.println("Player Changed!");
                 cpuTurn();
             }
+            return true;
         }
+        else
+            return false;
     }
     private boolean markTurn(int[] index){
         if(super.board[index[0]][index[1]] != 0)
@@ -71,10 +62,7 @@ public class Controller extends Board{
         else {
             super.game = 0;
         }
-        Tic_Tac_Ultimate.endGame(win, player, super.winValue);
-        //agr event listener game variable pe lga dain to ye func complete
-        //boolean win se win ya draw ka pta chal rha
-        //int player se kon jeeta ye pta lag rha
+        Runner.endGame(win, super.winValue);
         return true;
     }
 }

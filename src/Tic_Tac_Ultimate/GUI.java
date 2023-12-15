@@ -2,11 +2,9 @@ package Tic_Tac_Ultimate;
 
 import javafx.animation.*;
 import javafx.application.Application;
-import javafx.application.Platform;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Group;
-import javafx.scene.Node;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.image.Image;
@@ -51,7 +49,7 @@ public class GUI extends Application {
     }
     @Override
     public void start(Stage stage){
-        this.stage = stage;
+        GUI.stage = stage;
         Image icon = new Image("U.png");
         stage.getIcons().add(icon);
         stage.setTitle("Tic Tac Ultimate");
@@ -244,11 +242,17 @@ public class GUI extends Application {
                     System.out.println("Selected Game Type: " + selectedGameType.getText());
                     switch (selectedGameType.getText()) {
                         case "Tic Tac Toe" -> {
-                            Runner.gameType = 1;
-                            startGame();
-                            displayGame();
-                            System.out.println("Tic Tac Toe was Selected");
-                            System.out.println(selectedPlayerOption.getText() + " and " + selectedDifficulty.getText() + " Game was selected");
+                            if(selectedDifficulty.getText().equals("Easy") || selectedDifficulty.getText().equals("Medium")) {
+                                Runner.gameType = 1;
+                                startGame();
+                                displayGame();
+                                System.out.println("Tic Tac Toe was Selected");
+                                System.out.println(selectedPlayerOption.getText() + " and " + selectedDifficulty.getText() + " Game was selected");
+                            } else {
+                                displayPopupMessage("Under Development", "Tic Tac Toe:\n\tHard Mode\n\tExtreme Mode");
+                                resetRadioButtons(gameToggleGroup);
+                                resetRadioButtons(difficultyToggleGroup);
+                            }
                         }
                         case "Super Tic Tac Toe" -> {
                             if(selectedDifficulty.getText().equals("Easy")) {

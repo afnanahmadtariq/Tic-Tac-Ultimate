@@ -1,7 +1,8 @@
 package Tic_Tac_Ultimate;
+
 public class Brain {
-    public static int[] compTurn(int[][] board, String difficulty){
-        return switch(difficulty){
+    public static int[] compTurn(int[][] board, String difficulty) {
+        return switch (difficulty) {
             case "Easy" -> easy(board);
             case "Medium" -> med(board);
             case "Hard" -> hard(board);
@@ -9,20 +10,11 @@ public class Brain {
             case "Practice" -> practice(board);
             default -> new int[]{(int)(Math.random()*3),(int)(Math.random()*3)};
         };
-
-
     }
-    private static int[] easy(int[][] board){
-        int[] index = new int[]{(int)(Math.random()*3),(int)(Math.random()*3)};
-        while(board[index[0]][index[1]] !=0)
-            index = new int[]{(int)(Math.random()*3),(int)(Math.random()*3)};
-//        try {
-//            // Delay for 1 second (1000 milliseconds)
-//            Thread.sleep(2000);
-//        } catch (InterruptedException e) {
-//            // Handle any exceptions that may occur
-//            e.printStackTrace();
-//        }
+    private static int[] easy(int[][] board) {
+        int[] index = new int[]{(int) (Math.random() * 3), (int) (Math.random() * 3)};
+        while (board[index[0]][index[1]] != 0)
+            index = new int[]{(int) (Math.random() * 3), (int) (Math.random() * 3)};
         return index;
     }
     private static int[] med(int[][] board){
@@ -166,6 +158,4 @@ public class Brain {
     private static int[] practice(int[][] board){
         return new int[]{(int)(Math.random()*3),(int)(Math.random()*3)};
     }
-
-
 }

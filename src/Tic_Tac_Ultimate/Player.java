@@ -3,11 +3,6 @@
  * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
  */
 package Tic_Tac_Ultimate;
-
-/**
- *
- * @author Pc
- */
 public class Player {
     private String name;
     private String symbol;
