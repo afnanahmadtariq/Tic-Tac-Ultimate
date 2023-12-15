@@ -9,12 +9,14 @@ import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
+import javafx.scene.input.KeyCode;
 import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.*;
 import javafx.scene.text.Font;
 import javafx.scene.text.FontWeight;
 import javafx.scene.text.Text;
+import javafx.scene.text.TextAlignment;
 import javafx.stage.Stage;
 import javafx.util.Duration;
 
@@ -25,6 +27,7 @@ import static Tic_Tac_Ultimate.QuxioBoard.quxioWinValues;
 
 public class GUI extends Application {
     private static Stage stage;
+    public static Scene scene;
     public static StackPane root;
     public static Color backGround = Color.web("#f2f2f2");
     public static Color midGround = Color.web("#fff");
@@ -36,10 +39,13 @@ public class GUI extends Application {
     private static BorderPane gamePane;
     public static Pane boxPane;
     public static Group arrowGroup;
-    public static double cell;
     public static Group marks;
-    public static boolean listen;
+    public static String selectedGameType;
+    public static String selectedPlayer;
+    public static String selectedDifficulty;
     public static int check;
+    public static double cell;
+    public static boolean listen;
 
     static {
         listen = true;
@@ -61,10 +67,10 @@ public class GUI extends Application {
         stage.setY(0);
         root = new StackPane();
         root.setBackground(new Background(new BackgroundFill(backGround, CornerRadii.EMPTY, Insets.EMPTY)));
-        Scene scene = new Scene(root);
+        scene = new Scene(root);
         stage.setScene(scene);
         stage.show();
-        displayGame();
+        displayStart();
     }
     private static void displayStart(){
         Text ticTac = new Text("Tic tac");
@@ -191,79 +197,201 @@ public class GUI extends Application {
         alert.setContentText(message);
         alert.showAndWait(); // Wait for user action (OK button click) before continuing
     }
+    private static Button SelectGameButtons(String text){
+        String enterColor = "Red";
+        String exitColor = "Black";
+        Button button = new Button(text);
+//        button.setTranslateY(root.getHeight()*0.1);
+        button.setMinSize(root.getWidth()/6-20,100);
+        String style = "-fx-padding: 10 20; " +
+                "-fx-font-family: 'Franklin Gothic';" +
+                "-fx-font-size: 35;" +
+                "-fx-border-radius: 5;";
+        button.setStyle( "-fx-background-color: Black; " + "-fx-text-fill: White; " + style );
+        button.setOnMouseEntered(e -> button.setStyle( "-fx-background-color: Red; " + "-fx-text-fill: White; " + style));
+        button.setOnMouseExited(e -> button.setStyle("-fx-background-color: Black; " + "-fx-text-fill: White; " + style ));
+
+        return button;
+    }
+    private static void setSelectedType(Button button1, Button button2, Button button3, Button button4){
+        String style = "-fx-padding: 10 20; " +
+                "-fx-font-family: 'Franklin Gothic';" +
+                "-fx-font-size: 35;" +
+                "-fx-border-radius: 5;";
+        button1.setStyle( "-fx-background-color: Green; " + "-fx-text-fill: White; " + style);
+        button2.setStyle( "-fx-background-color: Gray; " + "-fx-text-fill: White; " + style);
+        button3.setStyle( "-fx-background-color: Gray; " + "-fx-text-fill: White; " + style);
+        button4.setStyle( "-fx-background-color: Gray; " + "-fx-text-fill: White; " + style);
+        button1.setOnMouseEntered(e -> button1.setStyle( "-fx-background-color: Green; " + "-fx-text-fill: White; " + style));
+        button1.setOnMouseExited(e -> button1.setStyle( "-fx-background-color: Green; " + "-fx-text-fill: White; " + style));
+        button2.setOnMouseEntered(e -> button2.setStyle( "-fx-background-color: Gray; " + "-fx-text-fill: White; " + style));
+        button2.setOnMouseExited(e -> button2.setStyle( "-fx-background-color: Gray; " + "-fx-text-fill: White; " + style));
+        button3.setOnMouseEntered(e -> button3.setStyle( "-fx-background-color: Gray; " + "-fx-text-fill: White; " + style));
+        button3.setOnMouseExited(e -> button3.setStyle( "-fx-background-color: Gray; " + "-fx-text-fill: White; " + style));
+        button4.setOnMouseEntered(e -> button4.setStyle( "-fx-background-color: Gray; " + "-fx-text-fill: White; " + style));
+        button4.setOnMouseExited(e -> button4.setStyle( "-fx-background-color: Gray; " + "-fx-text-fill: White; " + style));
+    }
+    private static void setSelectedType(Button button1, Button button2, Button button3){
+        String style = "-fx-padding: 10 20; " +
+                "-fx-font-family: 'Franklin Gothic';" +
+                "-fx-font-size: 35;" +
+                "-fx-border-radius: 5;";
+        button1.setStyle( "-fx-background-color: Green; " + "-fx-text-fill: White; " + style);
+        button2.setStyle( "-fx-background-color: Gray; " + "-fx-text-fill: White; " + style);
+        button3.setStyle( "-fx-background-color: Gray; " + "-fx-text-fill: White; " + style);
+        button1.setOnMouseEntered(e -> button1.setStyle( "-fx-background-color: Green; " + "-fx-text-fill: White; " + style));
+        button1.setOnMouseExited(e -> button1.setStyle( "-fx-background-color: Green; " + "-fx-text-fill: White; " + style));
+        button2.setOnMouseEntered(e -> button2.setStyle( "-fx-background-color: Gray; " + "-fx-text-fill: White; " + style));
+        button2.setOnMouseExited(e -> button2.setStyle( "-fx-background-color: Gray; " + "-fx-text-fill: White; " + style));
+        button3.setOnMouseEntered(e -> button3.setStyle( "-fx-background-color: Gray; " + "-fx-text-fill: White; " + style));
+        button3.setOnMouseExited(e -> button3.setStyle( "-fx-background-color: Gray; " + "-fx-text-fill: White; " + style));
+    }
+    private static void setSelectedType(Button button1, Button button2){
+        String style = "-fx-padding: 10 20; " +
+                "-fx-font-family: 'Franklin Gothic';" +
+                "-fx-font-size: 35;" +
+                "-fx-border-radius: 5;";
+        button1.setStyle( "-fx-background-color: Green; " + "-fx-text-fill: White; " + style);
+        button2.setStyle( "-fx-background-color: Gray; " + "-fx-text-fill: White; " + style);
+        button1.setOnMouseEntered(e -> button1.setStyle( "-fx-background-color: Green; " + "-fx-text-fill: White; " + style));
+        button1.setOnMouseExited(e -> button1.setStyle( "-fx-background-color: Green; " + "-fx-text-fill: White; " + style));
+        button2.setOnMouseEntered(e -> button2.setStyle( "-fx-background-color: Gray; " + "-fx-text-fill: White; " + style));
+        button2.setOnMouseExited(e -> button2.setStyle( "-fx-background-color: Gray; " + "-fx-text-fill: White; " + style));
+    }
     private static void displayGameSelection() {
-    root.getChildren().clear();
+        root.getChildren().clear();
         VBox selectionPanel = new VBox();
-        selectionPanel.setAlignment(Pos.CENTER);
+        selectionPanel.setAlignment(Pos.CENTER_LEFT);
         selectionPanel.setSpacing(10);
         root.getChildren().add(selectionPanel);
 
+        Text gameTypeText = new Text("Select Game");
+        gameTypeText.setFont(Font.font("Franklin Gothic Heavy", 30));
+        Text playerOptionText = new Text("Player vs.");
+        playerOptionText.setFont(Font.font("Franklin Gothic Heavy", 30));
+        Text gameDiffText = new Text("Select Difficulty");
+        gameDiffText.setFont(Font.font("Franklin Gothic Heavy", 30));
+
         HBox gameType = new HBox();
-        gameType.setAlignment(Pos.CENTER);
-        gameType.getChildren().addAll(new RadioButton("Tic Tac Toe"), new RadioButton("Super Tic Tac Toe"));
-        gameType.setAlignment(Pos.TOP_CENTER);
+        Button tictactoe = SelectGameButtons("Tic Tac Toe");
+        Button supertictactoe = SelectGameButtons("Super Tic Tac Toe");
+        Button quixo = SelectGameButtons("Quixo");
 
         HBox playerOptions = new HBox();
-        playerOptions.getChildren().addAll(new RadioButton("Single Player"), new RadioButton("Double Player"));
-        playerOptions.setAlignment(Pos.CENTER);
+        Button singleGame = SelectGameButtons("CPU");
+        Button doubleGame = SelectGameButtons("Player");
 
         HBox gameDiffPanel = new HBox();
-        gameDiffPanel.getChildren().addAll(
-                new RadioButton("Easy"),
-                new RadioButton("Medium"),
-                new RadioButton("Hard"),
-                new RadioButton("Extreme")
-        );
-        gameDiffPanel.setAlignment(Pos.BOTTOM_CENTER);
+        Button easyButton = SelectGameButtons("Easy");
+        Button medButton = SelectGameButtons("Medium");
+        Button hardButton = SelectGameButtons("Hard");
+        Button extremeButton = SelectGameButtons("Extreme");
 
-        Button playGame = new Button("Play");
+        tictactoe.setOnAction(event -> {
+            setSelectedType(tictactoe, supertictactoe, quixo);
+            System.out.println(tictactoe.getText() +" button was pressed!");
+            selectedGameType = tictactoe.getText();
+        });
+        supertictactoe.setOnAction(event -> {
+            setSelectedType(supertictactoe, tictactoe, quixo);
+            System.out.println(supertictactoe.getText() +" button was pressed!");
+            selectedGameType = supertictactoe.getText();
+        });
+        quixo.setOnAction(event -> {
+            setSelectedType(quixo, tictactoe, supertictactoe);
+            System.out.println(quixo.getText() +" button was pressed!");
+            selectedGameType = quixo.getText();
+        });
+        singleGame.setOnAction(event -> {
+            setSelectedType(singleGame, doubleGame);
+            System.out.println(singleGame.getText() +" button was pressed!");
+            selectedPlayer = singleGame.getText();
+            easyButton.setDisable(false);
+            medButton.setDisable(false);
+            hardButton.setDisable(false);
+            extremeButton.setDisable(false);
+        });
+        doubleGame.setOnAction(event -> {
+            setSelectedType(doubleGame, singleGame);
+            System.out.println(doubleGame.getText() +" button was pressed!");
+            selectedPlayer = doubleGame.getText();
+            easyButton.setDisable(true);
+            medButton.setDisable(true);
+            hardButton.setDisable(true);
+            extremeButton.setDisable(true);
+        });
+        easyButton.setOnAction(event -> {
+            setSelectedType(easyButton, medButton, hardButton, extremeButton);
+            System.out.println(easyButton.getText() +" button was pressed!");
+            selectedDifficulty = easyButton.getText();
+        });
+        medButton.setOnAction(event -> {
+            setSelectedType(medButton, easyButton, hardButton, extremeButton);
+            System.out.println(medButton.getText() +" button was pressed!");
+            selectedDifficulty = medButton.getText();
+        });
+        hardButton.setOnAction(event -> {
+            setSelectedType(hardButton, easyButton, medButton, extremeButton);
+            System.out.println(hardButton.getText() +" button was pressed!");
+            selectedDifficulty = hardButton.getText();
+        });
+        extremeButton.setOnAction(event -> {
+            setSelectedType(extremeButton, easyButton, medButton, hardButton);
+            System.out.println(extremeButton.getText() +" button was pressed!");
+            selectedDifficulty = extremeButton.getText();
+        });
+        gameType.getChildren().addAll(tictactoe, supertictactoe, quixo);
+        gameType.setSpacing(10);
 
-        ToggleGroup gameToggleGroup = new ToggleGroup();
-        ToggleGroup playerToggleGroup = new ToggleGroup();
-        ToggleGroup difficultyToggleGroup = new ToggleGroup();
+        playerOptions.getChildren().addAll(singleGame, doubleGame);
+        playerOptions.setSpacing(10);
+
+        gameDiffPanel.getChildren().addAll(easyButton, medButton, hardButton, extremeButton);
+        gameDiffPanel.setSpacing(10);
+
+        Button playGame = SelectGameButtons("Play");
+        playGame.setMinSize(200, 80);
         playGame.setOnAction(event -> {
             System.out.println("Play Game button was pressed!");
-
-            RadioButton selectedGameType = (RadioButton) gameToggleGroup.getSelectedToggle();
-            RadioButton selectedPlayerOption = (RadioButton) playerToggleGroup.getSelectedToggle();
-            RadioButton selectedDifficulty = (RadioButton) difficultyToggleGroup.getSelectedToggle();
-
-            if(selectedGameType != null && selectedPlayerOption != null && selectedDifficulty != null){
+            if(selectedGameType != null && selectedPlayer != null && selectedDifficulty != null){
 
                 try {
-                    switch (selectedPlayerOption.getText()){
-                        case "Single Player" -> singlePlayer = true;
-                        case "Double Player" -> singlePlayer = false;
+                    switch (selectedPlayer){
+                        case "CPU" -> singlePlayer = true;
+                        case "Player" -> singlePlayer = false;
                     }
-                    if(!singlePlayer)
-                        displayPopupMessage("Irrelevant Difficulty", "No Difficulty is required in case of" +
-                                " Double Player Game\n\nThe game will now Continue");
-                    difficulty = selectedDifficulty.getText();
-                    System.out.println("Selected Game Type: " + selectedGameType.getText());
-                    switch (selectedGameType.getText()) {
+//                    if(!singlePlayer)
+//                        displayPopupMessage("Irrelevant Difficulty", "No Difficulty is required in case of" +
+//                                " Player vs. Player Game\n\nThe game will now Continue");
+                    difficulty = selectedDifficulty;
+                    System.out.println("Selected Game Type: " + selectedGameType);
+                    switch (selectedGameType) {
                         case "Tic Tac Toe" -> {
-                            if(selectedDifficulty.getText().equals("Easy") || selectedDifficulty.getText().equals("Medium")) {
-                                Runner.gameType = 1;
-                                startGame();
-                                displayGame();
-                                System.out.println("Tic Tac Toe was Selected");
-                                System.out.println(selectedPlayerOption.getText() + " and " + selectedDifficulty.getText() + " Game was selected");
-                            } else {
-                                displayPopupMessage("Under Development", "Tic Tac Toe:\n\tHard Mode\n\tExtreme Mode");
-                                resetRadioButtons(gameToggleGroup);
-                                resetRadioButtons(difficultyToggleGroup);
-                            }
+                            Runner.gameType = 1;
+                            startGame();
+                            displayGame();
+                            System.out.println("Tic Tac Toe was Selected");
+                            System.out.println(selectedPlayer + " and " + selectedDifficulty + " Game was selected");
                         }
                         case "Super Tic Tac Toe" -> {
-                            if(selectedDifficulty.getText().equals("Easy")) {
+                            if(selectedDifficulty.equals("Easy")) {
                                 Runner.gameType = 2;
                                 startGame();
                                 displayGame();
                                 System.out.println("Selected Super Tic Tac Toe");
                             } else {
                                 displayPopupMessage("Under Development", "Super Tic Tac Toe:\n\tMedium Mode\n\tHard Mode\n\tExtreme Mode");
-                                resetRadioButtons(gameToggleGroup);
-                                resetRadioButtons(difficultyToggleGroup);
+                            }
+                        }
+                        case "Quixo" -> {
+                            if(!singlePlayer) {
+                                Runner.gameType = 3;
+                                startGame();
+                                displayGame();
+                                System.out.println("Quixo was Selected");
+                                System.out.println(selectedPlayer + " and " + selectedDifficulty + " Game was selected");
+                            } else {
+                                displayPopupMessage("Under Development", "Quixo:\n\tPlayer vs. CPU");
                             }
                         }
                     }
@@ -274,29 +402,23 @@ public class GUI extends Application {
             } else
                 displayPopupMessage("Missing Outputs", "Please Select all fields");
         });
-
-        // Assign toggle groups to radio buttons
-        assignToggleGroup(gameType, gameToggleGroup);
-        assignToggleGroup(playerOptions, playerToggleGroup);
-        assignToggleGroup(gameDiffPanel, difficultyToggleGroup);
-        playGame.setAlignment(Pos.CENTER);
-
-        selectionPanel.getChildren().addAll(gameType, playerOptions, gameDiffPanel, playGame);
+        selectionPanel.getChildren().addAll(gameTypeText, gameType,
+                playerOptionText, playerOptions, gameDiffText, gameDiffPanel, playGame);
 
     }
-    private static void resetRadioButtons(ToggleGroup toggleGroup) {
-        toggleGroup.getToggles().forEach(toggle -> {
-            RadioButton radioButton = (RadioButton) toggle;
-            radioButton.setSelected(false);
-        });
-    }
-    private static void assignToggleGroup(HBox hbox, ToggleGroup toggleGroup) {
-        hbox.getChildren().forEach(node -> {
-            if (node instanceof RadioButton) {
-                ((RadioButton) node).setToggleGroup(toggleGroup);
-            }
-        });
-    }
+//    private static void resetRadioButtons(ToggleGroup toggleGroup) {
+//        toggleGroup.getToggles().forEach(toggle -> {
+//            RadioButton radioButton = (RadioButton) toggle;
+//            radioButton.setSelected(false);
+//        });
+//    }
+//    private static void assignToggleGroup(HBox hbox, ToggleGroup toggleGroup) {
+//        hbox.getChildren().forEach(node -> {
+//            if (node instanceof RadioButton) {
+//                ((RadioButton) node).setToggleGroup(toggleGroup);
+//            }
+//        });
+//    }
     private static void displayGame() {
         root.getChildren().clear();
 //        gamePane = new BorderPane();
@@ -415,6 +537,54 @@ public class GUI extends Application {
     static void showX(Group node){
         markLine(0,0,100,100,Color.RED,0,node);
         markLine(100,0,0,100,Color.RED,0.2,node);
+    }
+    public static void displayGameMenu(){
+//
+//        Text title = new Text("Game Menu");
+//        title.setFont(Font.font("Franklin Gothic Heavy", FontWeight.BOLD, 74));
+//        title.setFill(Color.BLACK);
+//
+//        Button resume = SelectGameButtons("Resume");
+//        Button options = SelectGameButtons("Options");
+//        Button exit = SelectGameButtons("Exit to Main Menu");
+//
+//
+//        VBox gameMenu = new VBox();
+//        gameMenu.setAlignment(Pos.TOP_CENTER);
+//        gameMenu.setSpacing(20);
+//
+//        BorderPane background = new BorderPane();
+//        background.setCenter(gameMenu);
+//        Rectangle box = makeRectangle(0.5, 0.8);
+//        box.setFill(Color.color(0,0,0,0.8));
+//        box.setVisible(false);
+//        gameMenu.getChildren().addAll(box, title, resume, options, exit);
+//
+//        resume.setOnMouseClicked(event -> {
+//            root.getChildren().remove(background);
+//        });
+//        scene.setOnKeyPressed(event -> {
+//            if(event.getCode() == KeyCode.ESCAPE && allow == 1){
+//                if (box.isVisible()) {
+//                    // Hide the game menu
+//                    box.setVisible(false);
+//                } else if (gameMenu.getChildren().contains(box)) {
+//                    // Show the game menu only when it's in the StackPane
+//                    box.setVisible(true);
+//                }
+//            }
+//        });
+
+        System.out.println("I was in the Game Menu");
+        StackPane menu = new StackPane();
+        Rectangle gameMenu = new Rectangle( stage.getWidth(), stage.getHeight());
+        root.getChildren().add(gameMenu);
+        gameMenu.setFill(Color.rgb(0, 0, 0, 0.6));
+        gameMenu.setOnKeyPressed(event -> {
+            if(event.getCode() == KeyCode.ESCAPE){
+                root.getChildren().remove(menu);
+            }
+        });
     }
     private void displayOptions(){
         root.getChildren().clear();

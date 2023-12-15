@@ -4,6 +4,7 @@ import javafx.application.Platform;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Group;
+import javafx.scene.input.KeyCode;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.StackPane;
@@ -35,6 +36,12 @@ public abstract class GamePane extends BorderPane implements Serializable {
 
         Rectangle rectangle = makeRectangle(0.95,0.95);
         Pane board = new Pane();
+        scene.setOnKeyPressed(event -> {
+            if(event.getCode() == KeyCode.ESCAPE){
+                GUI.displayGameMenu();
+                System.out.println("I escaped");
+            }
+        });
         board.maxWidthProperty().bind(root.heightProperty().multiply(0.8));
         board.maxHeightProperty().bind(root.heightProperty().multiply(0.8));
         if(cell==0.0 && gameType!=3)
