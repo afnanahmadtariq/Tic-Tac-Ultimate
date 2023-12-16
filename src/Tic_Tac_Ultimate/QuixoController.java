@@ -2,12 +2,12 @@ package Tic_Tac_Ultimate;
 
 import java.util.Arrays;
 
-public class QuxioController  extends QuxioBoard{
+public class QuixoController extends QuixoBoard {
     private final boolean SINGLE_PLAYER;
     private int player;
     private final String difficulty;
     private int[] draw = new int[] {-1, -1};
-    QuxioController(boolean singlePlayer, String difficulty){
+    QuixoController(boolean singlePlayer, String difficulty){
         super();
         this.SINGLE_PLAYER = singlePlayer;
         this.difficulty = difficulty;
@@ -23,9 +23,9 @@ public class QuxioController  extends QuxioBoard{
     }
     private void cpuTurn(){
         if(player==2 && SINGLE_PLAYER) {
-            int[][] index = QuxioBrain.compTurn(super.board, difficulty);
+            int[][] index = QuixoBrain.compTurn(super.board, difficulty);
             System.out.println("index of cpu: " + Arrays.deepToString(index));
-            Quxio.slide(index[0][0], index[0][1], index[1][0], index[1][1]);
+            Quixo.slide(index[0][0], index[0][1], index[1][0], index[1][1]);
 //            if(!doTurn(index[0], index[1]))
 //                System.out.println("BARi nhi hui cpu se");
         }
@@ -58,7 +58,6 @@ public class QuxioController  extends QuxioBoard{
             boolean end = switch(value){
                 case 1 -> end(true,1);
                 case 2 -> end(true,2);
-                case 0 -> end(false, 0);
                 default -> false;
             };
             if(!end){

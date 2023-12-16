@@ -18,8 +18,8 @@ import static Tic_Tac_Ultimate.GUI.*;
 import static Tic_Tac_Ultimate.GuiUtility.*;
 import static Tic_Tac_Ultimate.Runner.*;
 
-public class Quxio extends GamePane implements Serializable {
-    Quxio(){
+public class Quixo extends GamePane implements Serializable {
+    Quixo(){
         super.initialize();
     }
     @Override

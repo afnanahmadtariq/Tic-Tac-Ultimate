@@ -21,7 +21,7 @@ import javafx.util.Duration;
 import static Tic_Tac_Ultimate.GuiUtility.*;
 import static Tic_Tac_Ultimate.Runner.*;
 import static Tic_Tac_Ultimate.Board.*;
-import static Tic_Tac_Ultimate.QuxioBoard.quxioWinValues;
+import static Tic_Tac_Ultimate.QuixoBoard.quxioWinValues;
 
 public class GUI extends Application {
     private static Stage stage;
@@ -303,7 +303,7 @@ public class GUI extends Application {
 //        gamePane.setPadding(new Insets(10));
         gamePane = switch(gameType){
             case 2-> new Ultimate();
-            case 3-> new Quxio();
+            case 3-> new Quixo();
             default -> new TicTacToe();
         };
         root.getChildren().add(gamePane);

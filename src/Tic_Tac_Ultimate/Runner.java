@@ -5,7 +5,7 @@ import java.util.Arrays;
 import static Tic_Tac_Ultimate.Board.dictionary;
 
 public class Runner {
-    private static QuxioController quxio;
+    private static QuixoController quxio;
     private static UltimateController superTicTacToe;
     private static Controller ticTacToe;
     public static int gameType = 3;
@@ -18,7 +18,7 @@ public class Runner {
     public static void startGame(){
         switch(gameType){
             case 2-> superTicTacToe = new UltimateController(singlePlayer,difficulty);
-            case 3-> quxio = new QuxioController(singlePlayer,difficulty);
+            case 3-> quxio = new QuixoController(singlePlayer,difficulty);
             default -> ticTacToe = new Controller(singlePlayer,difficulty);
         }
     }
