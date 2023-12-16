@@ -1,15 +1,10 @@
-/*
- * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
- */
 package Tic_Tac_Ultimate;
 public class Player {
     private String name;
-    private String symbol;
+    private String username;
     private int level;
     private int exp;
-    private 
-    
+    private String symbol;
     Player(){
         name = "Unknown";
         symbol = "X";
