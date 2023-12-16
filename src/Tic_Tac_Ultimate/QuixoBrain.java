@@ -1,6 +1,6 @@
 package Tic_Tac_Ultimate;
 
-public class QuxioBrain {
+public class QuixoBrain {
     public static int[][] compTurn(int[][] board, String difficulty) {
         return switch (difficulty) {
             case "Easy" -> easy(board);
@@ -12,17 +12,25 @@ public class QuxioBrain {
         };
     }
     private static int[][] easy(int[][] board) {
-        int[] index = new int[]{(int) (Math.random() * 3), (int) (Math.random() * 3)};
-        while (board[index[0]][index[1]] == 1)
-            index = new int[]{(int) (Math.random() * 3), (int) (Math.random() * 3)};
-        int[] selectKarLoBhai = new int[] {0,4};
-        int basHoGaiVariableNameBnaneSe = (int) (Math.random() * 2);
-        if(index[0]!=0 && index[0]!=4)
-            return new int[][] {index, new int[] {index[0],selectKarLoBhai[basHoGaiVariableNameBnaneSe]}};
-        else if(index[1]!=0 && index[1]!=4)
-            return new int[][] {index, new int[] {selectKarLoBhai[basHoGaiVariableNameBnaneSe], index[1]}};
+        int[] index = new int[]{rand(false), rand(false)};
+        while (board[index[0]][index[1]] == 1) {
+            index = new int[]{rand(false), rand(false)};
+        }
+        int[] insert = new int[] {index[0], index[1]};
+        while(insert[0]==index[0] && insert[1]==index[1]){
+            int randInt = (int)(Math.random()*2);
+            if(randInt==0)
+                insert = new int[] {rand(true), index[1]};
+            else
+                insert = new int[] {index[0], rand(true)};
+        }
+        return new int[][] {index, insert};
+    }
+    private static int rand(boolean end){
+        if(end)
+            return new int[]{0, 4}[(int)(Math.random()*2)];
         else
-            return new int[][] {index, new int[] {index[0], index[1]==4?0:4}};
+            return (int)(Math.random()*5);
     }
     private static int[][] med(int[][] board) {
 //        for (int i = 0; i < 3; i++) {
