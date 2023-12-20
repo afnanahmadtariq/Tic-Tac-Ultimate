@@ -25,6 +25,10 @@ public class QuixoBoard {
             game = -1;
             winValue = 0;
         }
+        public QuixoBoard(int[][] board){
+            this();
+            this.board = board;
+        }
 
         public int check(int player){
             if(win((player%2)+1))

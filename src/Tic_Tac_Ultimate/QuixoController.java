@@ -23,7 +23,7 @@ public class QuixoController extends QuixoBoard {
     }
     private void cpuTurn(){
         if(player==2 && SINGLE_PLAYER) {
-            int[][] index = QuixoBrain.compTurn(super.board, difficulty);
+            int[][] index = QuixoBrain.compTurn(new QuixoBoard(super.board), difficulty);
             System.out.println("index of cpu: " + Arrays.deepToString(index));
             Quixo.slide(index[0][0], index[0][1], index[1][0], index[1][1]);
 //            if(!doTurn(index[0], index[1]))
