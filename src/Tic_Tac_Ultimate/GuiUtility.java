@@ -11,6 +11,8 @@ import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Line;
 import javafx.scene.shape.Rectangle;
+import javafx.scene.text.Font;
+import javafx.scene.text.FontWeight;
 import javafx.scene.text.Text;
 import javafx.scene.transform.Rotate;
 import javafx.stage.Stage;
@@ -94,7 +96,7 @@ final public class GuiUtility {
         StackPane popUp = new StackPane();
         background.setCenter(popUp);
         background.setBackground(new Background(new BackgroundFill( Color.color(0,0,0,0.8), CornerRadii.EMPTY, Insets.EMPTY)));
-        Rectangle box = makeRectangle(0.4,0.2);
+        Rectangle box = makeRectangle(0.5,0.25);
         popUp.getChildren().add(box);
 
 
@@ -103,14 +105,18 @@ final public class GuiUtility {
             shake(popUp);
         });
         root.getChildren().add(background);
-        VBox vBox = new VBox(new Text(text));
+        Text header = new Text(text);
+        header.setFont(Font.font("Franklin Gothic", FontWeight.BOLD, 20));
+        VBox vBox = new VBox(header);
         vBox.setAlignment(Pos.CENTER);
         vBox.setSpacing(25);
         popUp.getChildren().add(vBox);
 
 
         Button button1 = new Button(button1Text);
-        button1.setMinSize(80,20);
+        button1.setTranslateY(0);
+        button1.setMinSize(100,20);
+        button1.setStyle("-fx-font-size: 20");
         button1.setOnAction(event -> {
             System.out.println("Button1 was pressed!");
             root.getChildren().remove(background);
@@ -120,7 +126,9 @@ final public class GuiUtility {
                 endGame(1);
         });
         Button button2 = new Button(button2Text);
-        button2.setMinSize(80,20);
+        button2.setTranslateY(0);
+        button2.setMinSize(100,20);
+        button2.setStyle("-fx-font-size: 20");
         button2.setOnAction(event -> {
             System.out.println("Button2 was pressed!");
             root.getChildren().remove(background);

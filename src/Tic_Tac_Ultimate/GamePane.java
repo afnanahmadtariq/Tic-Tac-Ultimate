@@ -38,7 +38,7 @@ public abstract class GamePane extends BorderPane implements Serializable {
         Pane board = new Pane();
         scene.setOnKeyPressed(event -> {
             if(event.getCode() == KeyCode.ESCAPE){
-                GUI.displayGameMenu();
+                displayGameMenu();
                 System.out.println("I escaped");
             }
         });
