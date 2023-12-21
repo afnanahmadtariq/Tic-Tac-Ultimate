@@ -5,6 +5,7 @@ import javafx.application.Application;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Group;
+import javafx.scene.Node;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.image.Image;
@@ -19,6 +20,8 @@ import javafx.scene.text.Text;
 import javafx.scene.text.TextAlignment;
 import javafx.stage.Stage;
 import javafx.util.Duration;
+
+import java.util.List;
 
 import static Tic_Tac_Ultimate.GuiUtility.*;
 import static Tic_Tac_Ultimate.Runner.*;
@@ -67,6 +70,20 @@ public class GUI extends Application {
         stage.setY(0);
         root = new StackPane();
         root.setBackground(new Background(new BackgroundFill(backGround, CornerRadii.EMPTY, Insets.EMPTY)));
+
+        root.setOnKeyPressed(event->{
+            if(event.getCode()== KeyCode.ESCAPE) {
+                List<Node> roots = root.getChildren();
+                Node node = roots.getLast();
+                if(node == gamePane)
+                    displayGameMenu();
+                else if (!(node instanceof Group)){
+                    System.out.println("I escaped");
+                    root.getChildren().removeLast();
+                }
+            }
+        });
+
         scene = new Scene(root);
         stage.setScene(scene);
         stage.show();
@@ -153,7 +170,8 @@ public class GUI extends Application {
         VBox menuPanel = new VBox(title,start,options,exit);
         menuPanel.setAlignment(Pos.TOP_CENTER);
         menuPanel.setSpacing(25);
-        root.getChildren().add(menuPanel);
+        Group group = new Group(menuPanel);
+        root.getChildren().add(group);
     }
     public static Button makeButton(String text) {
         Button button = new Button(text);
@@ -600,9 +618,9 @@ public class GUI extends Application {
         resume.setOnMouseClicked(event->{
             root.getChildren().remove(background);
         });
-        root.setOnKeyPressed(event->{
-            root.getChildren().remove(background);
-        });
+//        root.setOnKeyPressed(event->{
+//            root.getChildren().remove(background);
+//        });
         option.setOnMouseClicked(event-> {
             displayOptions();
         });
@@ -749,7 +767,6 @@ public class GUI extends Application {
         back.setOnMouseClicked(event->{
             root.getChildren().remove(background);
         });
-
     }
     private static void displayHelp(){
         root.getChildren().clear();

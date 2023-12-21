@@ -77,7 +77,7 @@ public class Brain {
         }
         return new int[]{row, column};
     }
-    private static boolean available(int[][] board){
+    public static boolean available(int[][] board){
         for(int i =0 ; i <3 ; i++){
             for(int j = 0; j < 3 ; j++){
                 if(board[i][j] == 0){
@@ -99,6 +99,10 @@ public class Brain {
                 for (int col = 0; col < 3; col++) {
                     if (board[row][col] == 0) {
                         board[row][col] = 2;
+                        BrainThread t = new BrainThread();
+                        t.turn = false;
+                        t.board = board;
+                        t.start();
                         int Score = bestMove(false, board);
                         board[row][col] = 0;
                         if(Score > bestScore){
@@ -125,7 +129,7 @@ public class Brain {
             return bestScore;
         }
     }
-    private static int checkMove(int[][] board){
+    public static int checkMove(int[][] board){
         for(int row = 0; row < 3; row++)
             if(board[row][0]==board[row][1] && board[row][1]==board[row][2] && board[row][1] != 0) {
                 if (board[row][1] == 1)

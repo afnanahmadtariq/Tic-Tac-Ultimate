@@ -36,12 +36,12 @@ public abstract class GamePane extends BorderPane implements Serializable {
 
         Rectangle rectangle = makeRectangle(0.95,0.95);
         Pane board = new Pane();
-        scene.setOnKeyPressed(event -> {
-            if(event.getCode() == KeyCode.ESCAPE){
-                displayGameMenu();
-                System.out.println("I escaped");
-            }
-        });
+//        setOnKeyPressed(event -> {
+//            if(event.getCode() == KeyCode.ESCAPE){
+//                displayGameMenu();
+//                System.out.println("I escaped");
+//            }
+//        });
         board.maxWidthProperty().bind(root.heightProperty().multiply(0.8));
         board.maxHeightProperty().bind(root.heightProperty().multiply(0.8));
         if(cell==0.0 && gameType!=3)
