@@ -7,13 +7,19 @@ import javafx.geometry.Pos;
 import javafx.scene.Group;
 import javafx.scene.Node;
 import javafx.scene.Scene;
-import javafx.scene.control.*;
+import javafx.scene.control.Alert;
+import javafx.scene.control.Button;
+import javafx.scene.control.ButtonType;
+import javafx.scene.control.TextArea;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.KeyCode;
 import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
-import javafx.scene.shape.*;
+import javafx.scene.shape.Circle;
+import javafx.scene.shape.Line;
+import javafx.scene.shape.Rectangle;
+import javafx.scene.shape.StrokeLineCap;
 import javafx.scene.text.Font;
 import javafx.scene.text.FontWeight;
 import javafx.scene.text.Text;
@@ -23,10 +29,10 @@ import javafx.util.Duration;
 
 import java.util.List;
 
+import static Tic_Tac_Ultimate.Board.dictionary;
 import static Tic_Tac_Ultimate.GuiUtility.*;
-import static Tic_Tac_Ultimate.Runner.*;
-import static Tic_Tac_Ultimate.Board.*;
 import static Tic_Tac_Ultimate.QuxioBoard.quxioWinValues;
+import static Tic_Tac_Ultimate.Runner.*;
 
 public class GUI extends Application {
     private static Stage stage;
@@ -75,6 +81,7 @@ public class GUI extends Application {
             if(event.getCode()== KeyCode.ESCAPE) {
                 List<Node> roots = root.getChildren();
                 Node node = roots.getLast();
+                System.out.println(node);
                 if(node == gamePane)
                     displayGameMenu();
                 else if (!(node instanceof Group)){
@@ -87,7 +94,7 @@ public class GUI extends Application {
         scene = new Scene(root);
         stage.setScene(scene);
         stage.show();
-        displayStart();
+        displayMainMenu();
     }
     private static void displayStart(){
         Text ticTac = new Text("Tic tac");
@@ -142,6 +149,8 @@ public class GUI extends Application {
         });
     }
     private static void displayMainMenu() {
+        root.getChildren().clear();
+
         Text ticTac = new Text("Tic tac");
         Text ultimate = new Text(" Ultimate ");
         Rectangle background = new Rectangle();
@@ -149,7 +158,7 @@ public class GUI extends Application {
 
         HBox title = new HBox(ticTac,complex);
         title.setAlignment(Pos.CENTER);
-        title.setTranslateY(root.getHeight()*0.1);
+        title.setTranslateY(root.getHeight()*0);
         title.setSpacing(10);
 
         ticTac.setFont(Font.font("Franklin Gothic Heavy", FontWeight.BOLD, 74));
@@ -166,21 +175,38 @@ public class GUI extends Application {
         Button options = makeButton("Options");
         Button exit = makeButton("Exit Game");
 
-        root.getChildren().clear();
-        VBox menuPanel = new VBox(title,start,options,exit);
+        HBox helpButtons = new HBox();
+        Button ruleBookButton = roundButton("Rules");
+        Button aboutUsButton = roundButton("About Us");
+        Button helpButton = roundButton("Help");
+        helpButtons.getChildren().addAll(ruleBookButton, aboutUsButton, helpButton);
+        helpButtons.setAlignment(Pos.BASELINE_CENTER);
+        helpButtons.setSpacing(20);
+        helpButtons.setTranslateY(exit.getTranslateY()+100);
+
+        VBox menuPanel = new VBox(title, start, options, exit, helpButtons);
         menuPanel.setAlignment(Pos.TOP_CENTER);
-        menuPanel.setSpacing(25);
+        menuPanel.setSpacing(20);
+//        BorderPane border = new BorderPane();
+//        Image Img = new Image("file:images/background2.png");
+//        border.setBackground(new Background(new BackgroundImage(Img,
+//                BackgroundRepeat.NO_REPEAT,
+//                BackgroundRepeat.NO_REPEAT,
+//                BackgroundPosition.CENTER,
+//                BackgroundSize.DEFAULT)));
+//        border.getChildren().add(menuPanel);
         Group group = new Group(menuPanel);
         root.getChildren().add(group);
     }
     public static Button makeButton(String text) {
         Button button = new Button(text);
-        button.setTranslateY(root.getHeight()*0.25);
+        button.setTranslateY(root.getHeight()*0.1);
         button.setMinSize(200,80);
         String style = "-fx-padding: 10 20; " +
                 "-fx-font-family: 'Franklin Gothic';" +
                 "-fx-font-size: 35;" +
-                "-fx-border-radius: 5;";
+                "-fx-border-radius: 5;" +
+                "-fx-background-radius: 40em;";
         button.setStyle( "-fx-background-color: Black; " + "-fx-text-fill: White; " + style );
         button.setOnMouseEntered(e -> button.setStyle( "-fx-background-color: Red; " + "-fx-text-fill: White; " + style));
         button.setOnMouseExited(e -> button.setStyle("-fx-background-color: Black; " + "-fx-text-fill: White; " + style ));
@@ -189,7 +215,8 @@ public class GUI extends Application {
             if(text.equals("Start"))
                 displayGameSelection();
             else if(text.equals("Options"))
-                displayPopupMessage("Under Development", "Option Button is under development");
+                displayOptions();
+//                displayPopupMessage("Under Development", "Option Button is under development");
             else if(text.equals("Exit Game")){
                 Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
                 alert.setTitle("Exit Game");
@@ -214,20 +241,29 @@ public class GUI extends Application {
         String roundButtonStyle;
         if(!text.equals("<"))
             roundButtonStyle = "-fx-padding: 10 20; " +
-                    "-fx-font-family: 'Franklin Gothic';" +
+                    "-fx-font-family: 'Comic Sans MS';" +
                     "-fx-font-size: 13;" +
-                    "-fx-background-radius: 30em;";
+                    "-fx-background-radius: 40em;";
         else
             roundButtonStyle = "-fx-padding: 10 20; " +
-                    "-fx-font-family: 'Franklin Gothic';" +
+                    "-fx-font-family: 'Comic Sans MS';" +
                     "-fx-font-size: 25;" +
-                    "-fx-background-radius: 30em;";
+                    "-fx-alignment: center;" +
+                    "-fx-background-radius: 40em;";
         button.setStyle( "-fx-background-color: Black; " + "-fx-text-fill: White; " + roundButtonStyle );
         button.setOnMouseEntered(e -> button.setStyle( "-fx-background-color: Red; " + "-fx-text-fill: White; " + roundButtonStyle));
         button.setOnMouseExited(e -> button.setStyle("-fx-background-color: Black; " + "-fx-text-fill: White; " + roundButtonStyle ));
 
         button.setOnAction(event -> {
             System.out.println(text + " button was pressed!");
+            if(text.equals("Rules"))
+                displayRuleBook();
+            else if (text.equals("About Us")) {
+                displayAboutUs();
+            }
+            else if (text.equals("Help")) {
+                displayHelp();
+            }
 
         });
         return button;
@@ -240,8 +276,8 @@ public class GUI extends Application {
         alert.showAndWait(); // Wait for user action (OK button click) before continuing
     }
     private static Button SelectGameButtons(String text){
-        String enterColor = "Red";
-        String exitColor = "Black";
+//        String enterColor = "Red";
+//        String exitColor = "Black";
         Button button = new Button(text);
 //        button.setTranslateY(root.getHeight()*0.1);
         button.setMinSize(root.getWidth()/6-20,100);
@@ -301,11 +337,17 @@ public class GUI extends Application {
         button2.setOnMouseExited(e -> button2.setStyle( "-fx-background-color: Gray; " + "-fx-text-fill: White; " + style));
     }
     private static void displayGameSelection() {
-        root.getChildren().clear();
+        StackPane gameSelection = new StackPane();
+        root.getChildren().add(gameSelection);
+        Rectangle box = new Rectangle();
+        box.setFill(midGround);
+        box.widthProperty().bind(root.widthProperty());
+        box.heightProperty().bind(root.heightProperty());
+
         VBox selectionPanel = new VBox();
         selectionPanel.setAlignment(Pos.CENTER_LEFT);
         selectionPanel.setSpacing(10);
-        root.getChildren().add(selectionPanel);
+        gameSelection.getChildren().addAll(box, selectionPanel);
 
         Text gameTypeText = new Text("Select Game");
         gameTypeText.setFont(Font.font("Franklin Gothic Heavy", 30));
@@ -395,51 +437,53 @@ public class GUI extends Application {
         playGame.setMinSize(200, 80);
         playGame.setOnMouseClicked(event -> {
             System.out.println("Play Game button was pressed!");
-            if(selectedGameType != null && selectedPlayer != null && selectedDifficulty != null){
+            if(selectedGameType != null && selectedPlayer != null){
+                if(selectedPlayer.equals("Player") || (selectedPlayer != null && selectedDifficulty != null)) {
 
-                try {
-                    switch (selectedPlayer){
-                        case "CPU" -> singlePlayer = true;
-                        case "Player" -> singlePlayer = false;
-                    }
-//                    if(!singlePlayer)
-//                        displayPopupMessage("Irrelevant Difficulty", "No Difficulty is required in case of" +
-//                                " Player vs. Player Game\n\nThe game will now Continue");
-                    difficulty = selectedDifficulty;
-                    System.out.println("Selected Game Type: " + selectedGameType);
-                    switch (selectedGameType) {
-                        case "Tic Tac Toe" -> {
-                            Runner.gameType = 1;
-                            startGame();
-                            displayGame();
-                            System.out.println("Tic Tac Toe was Selected");
-                            System.out.println(selectedPlayer + " and " + selectedDifficulty + " Game was selected");
+                    try {
+                        switch (selectedPlayer) {
+                            case "CPU" -> singlePlayer = true;
+                            case "Player" -> singlePlayer = false;
                         }
-                        case "Super Tic Tac Toe" -> {
-                            if(selectedDifficulty.equals("Easy")) {
-                                Runner.gameType = 2;
+                        //                    if(!singlePlayer)
+                        //                        displayPopupMessage("Irrelevant Difficulty", "No Difficulty is required in case of" +
+                        //                                " Player vs. Player Game\n\nThe game will now Continue");
+                        difficulty = selectedDifficulty;
+                        System.out.println("Selected Game Type: " + selectedGameType);
+                        switch (selectedGameType) {
+                            case "Tic Tac Toe" -> {
+                                Runner.gameType = 1;
                                 startGame();
                                 displayGame();
-                                System.out.println("Selected Super Tic Tac Toe");
-                            } else {
-                                displayPopupMessage("Under Development", "Super Tic Tac Toe:\n\tMedium Mode\n\tHard Mode\n\tExtreme Mode");
-                            }
-                        }
-                        case "Quixo" -> {
-                            if(!singlePlayer) {
-                                Runner.gameType = 3;
-                                startGame();
-                                displayGame();
-                                System.out.println("Quixo was Selected");
+                                System.out.println("Tic Tac Toe was Selected");
                                 System.out.println(selectedPlayer + " and " + selectedDifficulty + " Game was selected");
-                            } else {
-                                displayPopupMessage("Under Development", "Quixo:\n\tPlayer vs. CPU");
+                            }
+                            case "Super Tic Tac Toe" -> {
+                                if (selectedPlayer.equals("Player") || selectedDifficulty.equals("Easy")) {
+                                    Runner.gameType = 2;
+                                    startGame();
+                                    displayGame();
+                                    System.out.println("Selected Super Tic Tac Toe");
+                                } else {
+                                    displayPopupMessage("Under Development", "Super Tic Tac Toe:\n\tMedium Mode\n\tHard Mode\n\tExtreme Mode");
+                                }
+                            }
+                            case "Quixo" -> {
+                                if (!singlePlayer) {
+                                    Runner.gameType = 3;
+                                    startGame();
+                                    displayGame();
+                                    System.out.println("Quixo was Selected");
+                                    System.out.println(selectedPlayer + " and " + selectedDifficulty + " Game was selected");
+                                } else {
+                                    displayPopupMessage("Under Development", "Quixo:\n\tPlayer vs. CPU");
+                                }
                             }
                         }
-                    }
 
-                } catch (Exception e) {
-                    e.printStackTrace();
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
                 }
             } else
                 displayPopupMessage("Missing Outputs", "Please Select all fields");
@@ -462,7 +506,7 @@ public class GUI extends Application {
 //        });
 //    }
     private static void displayGame() {
-        root.getChildren().clear();
+        root.getChildren().removeLast();
 //        gamePane = new BorderPane();
 //        gamePane.setPadding(new Insets(10));
         gamePane = switch(gameType){
@@ -602,9 +646,9 @@ public class GUI extends Application {
         exit.setTranslateY(gameMenu.getHeight()*0.25);
 
         Button ruleBook = roundButton("Rules");
-        ruleBook.setOnMouseClicked(event ->{
-            displayRuleBook();
-        });
+//        ruleBook.setOnMouseClicked(event ->{
+//            displayRuleBook();
+//        });
         HBox rules = new HBox(ruleBook);
         rules.setAlignment(Pos.BOTTOM_RIGHT);
         rules.setAlignment(Pos.CENTER);
@@ -633,43 +677,76 @@ public class GUI extends Application {
         StackPane gameMenu = new StackPane();
         background.setCenter(gameMenu);
         background.setBackground(new Background(new BackgroundFill( Color.color(0,0,0,0), CornerRadii.EMPTY, Insets.EMPTY)));
-        Rectangle box = makeRectangle(0.7, 0.9);
+        Rectangle box = new Rectangle();
+        box.setFill(midGround);
+        box.widthProperty().bind(root.widthProperty());
+        box.heightProperty().bind(root.heightProperty());
         gameMenu.getChildren().add(box);
-
         root.getChildren().add(background);
-        Text header = new Text("Options");
-        header.setFont(Font.font("Franklin Gothic Heavy", FontWeight.BOLD, 40));
 
-        Button appearance = makeButton("Appearance");
+        Text header = new Text("Options");
+        Rectangle headerBox = new Rectangle();
+        StackPane title = new StackPane(headerBox, header);
+        header.setFont(Font.font("Comic Sans MS", FontWeight.BOLD, 70));
+        header.setTextAlignment(TextAlignment.CENTER);
+        header.setTranslateY(gameMenu.getHeight()*0);
+
+        Button appearance = makeOptionButton("Appearance");
         appearance.setTranslateY(gameMenu.getHeight()*0.25);
-        Button changeDifficulty = makeButton("Change Difficulty");
+
+        Button changeDifficulty = makeOptionButton("Change Difficulty");
         changeDifficulty.setTranslateY(gameMenu.getHeight()*0.25);
-        Button players = makeButton("Single/Double Player");
+
+        Button players = makeOptionButton("Player Settings");
         players.setTranslateY(gameMenu.getHeight()*0.25);
-        Button back = makeButton("Back");
+
+        Button back = makeOptionButton("Back");
         back.setTranslateY(gameMenu.getHeight()*0.25);
 
-        VBox vBox = new VBox(header, appearance, changeDifficulty, players, back);
-        vBox.setAlignment(Pos.CENTER);
-        vBox.setSpacing(25);
-        gameMenu.getChildren().add(vBox);
+        HBox hBox = new HBox();
+        Rectangle areaBox = new Rectangle();
+        areaBox.setFill(Color.LIGHTGREY);
+        VBox vBox = new VBox( appearance, changeDifficulty, players, back);
+        hBox.getChildren().addAll(vBox, areaBox);
+        areaBox.setWidth(1000);
+        areaBox.setHeight(root.getHeight()-title.getHeight()-100);
 
-//        appearance.setOnMouseClicked(event->{
-//            root.getChildren().remove(background);
-//        });
-//        changeDifficulty.setOnMouseClicked(event-> {
-//            displayOptions();
-//        });
-//        players.setOnMouseClicked(event->{
-//            if (singlePlayer)
-//                singlePlayer = false;
-//            else
-//                singlePlayer = true;
-//        });
-        back.setOnMouseClicked(event->{
-            root.getChildren().remove(background);
+        VBox optionPage = new VBox(title, hBox);
+        optionPage.setAlignment(Pos.CENTER_LEFT);
+        optionPage.setSpacing(25);
+        gameMenu.getChildren().addAll(optionPage);
+
+    }
+    private static Button makeOptionButton(String text){
+        Button button = new Button(text);
+        String style = "-fx-padding: 5 10; " +
+                "-fx-font-family: 'Comic Sans MS';" +
+                "-fx-font-weight: Bold;" +
+                "-fx-font-size: 50;";
+        button.setStyle(style);
+        if(text.equals("Back")) {
+            button.setMinSize(120, 80);
+            button.setStyle("-fx-text-fill: Red; " + style);
+        }
+        else {
+            button.setOnMouseEntered(e -> button.setStyle("-fx-text-fill: Black; -fx-underline: true; " + style));
+            button.setOnMouseExited(e -> button.setStyle("-fx-text-fill: #383838; -fx-underline: false; " + style));
+            button.setMinSize(200, 80);
+        }
+        button.setBackground(new Background(new BackgroundFill(Color.color(0,0,0,0), CornerRadii.EMPTY, Insets.EMPTY)));
+        button.setOnAction(e->{
+            if(text.equals("Appearance"))
+                System.out.println(text + " Here");
+            else if(text.equals("Change Difficulty"))
+                System.out.println(text + " Here");
+            else if(text.equals("Player Settings"))
+                System.out.println(text + " Here");
+            else if(text.equals("Back")) {
+                System.out.println(text + " Here");
+                root.getChildren().removeLast();
+            }
         });
-
+        return button;
     }
     private static void displayRuleBook(){
         BorderPane background = new BorderPane();
@@ -707,13 +784,21 @@ public class GUI extends Application {
         Button supertictactoe = SelectGameButtons("Super Tic Tac Toe");
         Button quixo = SelectGameButtons("Quixo");
 
-        Rectangle rulesArea = makeRectangle(1, 0.6);
+        gameRule.setSpacing(10);
+        gameRule.setAlignment(Pos.CENTER);
+        gameRule.getChildren().addAll(tictactoe, supertictactoe, quixo);
+
+        Rectangle rulesArea = new Rectangle();
+        rulesArea.setFill(Color.WHITE);
+
         TextArea rulesTextArea = new TextArea();
-        rulesTextArea.setMinSize(ruleBook.getWidth(), rulesArea.getHeight());
+        rulesTextArea.setMinSize(root.getWidth(), root.getHeight()-gameRule.getHeight()-hBox1.getHeight());
         rulesTextArea.setEditable(false);
+        rulesTextArea.setBackground(new Background(new BackgroundFill(Color.color(0, 0, 0, 0), CornerRadii.EMPTY, Insets.EMPTY)));
         rulesTextArea.setWrapText(true);
-        rulesTextArea.setStyle("-fx-padding: 10 20; " +
-                "-fx-font-family: 'Franklin Gothic';" +
+        rulesTextArea.autosize();
+        rulesTextArea.setStyle("-fx-padding: 10 30; " +
+                "-fx-font-family: 'Comic Sans MS';" +
                 "-fx-font-size: 25;" +
                 "-fx-border-radius: 5;" +
                 "-fx-font-color: Black");
@@ -722,42 +807,41 @@ public class GUI extends Application {
             setSelectedType(tictactoe, supertictactoe, quixo);
             System.out.println(tictactoe.getText() +" button was pressed!");
             rulesTextArea.setText(
-                    "1. The game is played on a 3x3 grid.\n" +
-                    "2. Two players take turns to mark a square with their symbol (X or O).\n" +
-                    "3. The first player to get three of their symbols in a row (horizontally, vertically, or diagonally) wins the game.\n" +
-                    "4. If all 9 squares are filled and no player has three in a row, the game is a draw.");
+                    "1. The player who wins the Toss will make the first move.\n" +
+                    "2. Each player takes turn to mark their symbol (X or O).\n" +
+                    "3. The first player to get three consecutive symbols in a row, column, or a diagonal wins the game.\n" +
+                    "4. If all 9 squares are filled and no player has won, the game is a draw.");
         });
         supertictactoe.setOnMouseClicked(event -> {
             setSelectedType(supertictactoe, tictactoe, quixo);
             System.out.println(supertictactoe.getText() +" button was pressed!");
             rulesTextArea.setText(
-                    "1. Super Tic Tac Toe is played on a 3x3 grid of smaller Tic Tac Toe boards.\n" +
+                    "1. The player who wins the Toss will make the first move.\n" +
                     "2. Each small 3x3 board represents a local game of Tic Tac Toe.\n" +
                     "3. Players take turns to make a move in any of the small boards.\n" +
                     "4. The board in which a player makes a move determines the next board for the opponent.\n" +
-                    "5. The objective is to win three small boards in a row (horizontally, vertically, or diagonally).\n" +
-                    "6. Winning a small board gives the player the chance to place their symbol in the corresponding position on the larger board.\n" +
-                    "7. The first player to win three small boards in a row or fill the entire larger board wins the game.");
+                    "5. The objective is to win three small boards in a row, column, or a diagonal.\n" +
+                    "6. After a Win on a small board, the other player will make move in the corresponding small board.\n" +
+                    "7. Criterion to determine the winner:\n\ti. The first player to win three small boards in a row, column or a diagonal." +
+                            "\n\t\tOR\n" + "\tii. The player with the most smaller wins, will be the Winner.");
         });
         quixo.setOnMouseClicked(event -> {
             setSelectedType(quixo, tictactoe, supertictactoe);
             System.out.println(quixo.getText() +" button was pressed!");
             rulesTextArea.setText(
-                    "1. Quixo is played on a 5x5 grid of cubes arranged in a square.\n" +
-                    "2. Players take turns to move a cube from the edge of the board into the 5x5 grid.\n" +
-                    "3. The moved cube then shifts the entire row or column of cubes in the chosen direction.\n" +
-                    "4. The objective is to create a line of five cubes with the player's symbol (X or O).\n" +
-                    "5. The line can be horizontal, vertical, or diagonal.\n" +
-                    "6. The first player to create a line of five cubes wins the game.");
+                    "1. The player who wins the Toss will make the first move.\n" +
+                    "2. Players take turns to move a cube from the edge of the board into the same row or column.\n" +
+                    "3. The objective is to create a line of five cubes with the player's symbol (X or O).\n" +
+                    "4. The line can be horizontal, vertical, or diagonal.\n" +
+                    "5. The first player to create a line of five cubes wins the game.\n" +
+                    "6. If both players win on a single move, then the Opponent will be the Winner.");
         });
-
-        gameRule.setSpacing(10);
-        gameRule.setAlignment(Pos.CENTER);
-        gameRule.getChildren().addAll(tictactoe, supertictactoe, quixo);
 
         Pane pane = new Pane(rulesArea, rulesTextArea);
         pane.setMinWidth(root.getWidth());
-        pane.setTranslateX(200);
+        pane.setTranslateX(0);
+        rulesArea.setWidth(root.getWidth());
+        rulesArea.setHeight(root.getHeight()-gameRule.getHeight()-hBox1.getHeight());
 //        pane.setTranslateX(root.getWidth()-box.getWidth()-20);
 
         ruleBookPage.setSpacing(20);
@@ -769,11 +853,37 @@ public class GUI extends Application {
         });
     }
     private static void displayHelp(){
-        root.getChildren().clear();
+        BorderPane background = new BorderPane();
+        StackPane helpPage = new StackPane();
+        background.setCenter(helpPage);
+        background.setBackground(new Background(new BackgroundFill( Color.color(0,0,0,0), CornerRadii.EMPTY, Insets.EMPTY)));
+        Rectangle box = new Rectangle();
+        box.setFill(midGround);
+        box.widthProperty().bind(root.widthProperty());
+        box.heightProperty().bind(root.heightProperty());
+        helpPage.getChildren().add(box);
+        root.getChildren().add(background);
+
+        Text title = new Text("Help");
+        title.setFont(Font.font("Comic Sans MS", FontWeight.BOLD, 70));
+        helpPage.getChildren().add(title);
 
     }
     private static void displayAboutUs(){
-        root.getChildren().clear();
+        BorderPane background = new BorderPane();
+        StackPane aboutUsPage = new StackPane();
+        background.setCenter(aboutUsPage);
+        background.setBackground(new Background(new BackgroundFill( Color.color(0,0,0,0), CornerRadii.EMPTY, Insets.EMPTY)));
+        Rectangle box = new Rectangle();
+        box.setFill(midGround);
+        box.widthProperty().bind(root.widthProperty());
+        box.heightProperty().bind(root.heightProperty());
+        aboutUsPage.getChildren().add(box);
+        root.getChildren().add(background);
+
+        Text title = new Text("About Us");
+        title.setFont(Font.font("Comic Sans MS", FontWeight.BOLD, 70));
+        aboutUsPage.getChildren().add(title);
 
     }
     private static void displayProfile(){

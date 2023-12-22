@@ -99,10 +99,10 @@ public class Brain {
                 for (int col = 0; col < 3; col++) {
                     if (board[row][col] == 0) {
                         board[row][col] = 2;
-                        BrainThread t = new BrainThread();
-                        t.turn = false;
-                        t.board = board;
-                        t.start();
+//                        BrainThread t = new BrainThread();
+//                        t.turn = false;
+//                        t.board = board;
+//                        t.start();
                         int Score = bestMove(false, board);
                         board[row][col] = 0;
                         if(Score > bestScore){
