@@ -6,8 +6,6 @@ import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.net.HttpURLConnection;
 import java.net.URL;
-import java.net.http.HttpResponse;
-import java.util.Arrays;
 
 class Run{
     public static void main(String[] args) throws IOException {
@@ -17,15 +15,16 @@ class Run{
     }
 }
 public class Online {
+    public static String ID;
     private URL url;
     private HttpURLConnection connection;
     private static String secret = "QDslAbCrmnMxuTsuDcyiKPoRC8xQYq52Ar8HaRbqh25-AzFuKoeMrg==";
     private static String link = "https://tic-tac-server.azurewebsites.net/api/TicTacToe";
     Online() throws IOException {
         // Set the server URL
-//        url = new URL(link + "?name=playerName&code=" + secret);
-        link = "http://localhost:61877/api/TicTacToe?";
-        url = new URL(link + "name=playerName");
+        url = new URL(link + "?name=playerName&code=" + secret);
+//        link = "http://localhost:61877/api/TicTacToe?";
+//        url = new URL(link + "name=playerName");
     }
     public void connect(){
         while (true) {
@@ -119,7 +118,12 @@ public class Online {
         outputStream.flush();
         outputStream.close();
     }
-    public void authenticate(String username, String password){}
+    public static void register(String name, String email, String username, String password){
+
+    }
+    public static void authenticate(String username, String password){
+
+    }
     public void saveProfile(){}
     public void deleteProfile() throws IOException {
         // Set the request method

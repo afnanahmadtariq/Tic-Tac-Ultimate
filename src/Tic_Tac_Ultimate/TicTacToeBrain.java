@@ -1,6 +1,6 @@
 package Tic_Tac_Ultimate;
 
-public class Brain {
+public class TicTacToeBrain {
     public static int[] compTurn(int[][] board, String difficulty) {
         return switch (difficulty) {
             case "Easy" -> easy(board);

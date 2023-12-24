@@ -2,12 +2,12 @@ package Tic_Tac_Ultimate;
 
 import java.util.Arrays;
 
-import static Tic_Tac_Ultimate.Board.dictionary;
+import static Tic_Tac_Ultimate.TicTacToeBoard.dictionary;
 
 public class Runner {
     private static QuixoController quxio;
     private static UltimateController superTicTacToe;
-    private static Controller ticTacToe;
+    private static TicTacToeController ticTacToe;
     public static int gameType = 3;
     public static boolean singlePlayer = false;
     public static String difficulty = "Easy";
@@ -19,7 +19,7 @@ public class Runner {
         switch(gameType){
             case 2-> superTicTacToe = new UltimateController(singlePlayer,difficulty);
             case 3-> quxio = new QuixoController(singlePlayer,difficulty);
-            default -> ticTacToe = new Controller(singlePlayer,difficulty);
+            default -> ticTacToe = new TicTacToeController(singlePlayer,difficulty);
         }
     }
     public static void setPlayer(int player){
@@ -110,5 +110,14 @@ public class Runner {
             GUI.markDraw(superIndex);
             System.out.println("place 'D' at index");
         }
+    }
+    public static void sleep(double seconds){
+        try{
+            Thread.sleep((long)seconds*1000);
+        }
+        catch (InterruptedException e) {
+            System.out.println("Sleep Interrupted!");
+        }
+
     }
 }

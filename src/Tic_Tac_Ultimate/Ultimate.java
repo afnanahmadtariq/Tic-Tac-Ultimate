@@ -11,7 +11,7 @@ import static Tic_Tac_Ultimate.GUI.*;
 import static Tic_Tac_Ultimate.GuiUtility.*;
 import static Tic_Tac_Ultimate.Runner.*;
 
-public class Ultimate extends GamePane implements Serializable {
+public class Ultimate extends GamePane {
     Ultimate(){
         super.initialize();
     }

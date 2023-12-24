@@ -2,7 +2,7 @@ package Tic_Tac_Ultimate;
 
 import java.util.Arrays;
 
-public class QuixoController extends QuixoBoard {
+public class QuixoController extends QuixoBoard  implements Cloneable{
     private final boolean SINGLE_PLAYER;
     private int player;
     private final String difficulty;
@@ -13,6 +13,18 @@ public class QuixoController extends QuixoBoard {
         this.difficulty = difficulty;
         player = 1;
     }
+    QuixoController(QuixoController controller){
+        super(controller);
+        this.SINGLE_PLAYER = controller.isSINGLE_PLAYER();
+        this.difficulty = controller.getDifficulty();
+        player = controller.getPlayer();
+    }
+    public boolean isSINGLE_PLAYER() {
+        return SINGLE_PLAYER;
+    }
+    public String getDifficulty() {
+        return difficulty;
+    }
     public void setPlayer(int player){
         this.player = player;
         System.out.println("Player set as: " + player);
@@ -21,9 +33,9 @@ public class QuixoController extends QuixoBoard {
     public int getPlayer(){
         return this.player;
     }
-    private void cpuTurn(){
+    private void cpuTurn() {
         if(player==2 && SINGLE_PLAYER) {
-            int[][] index = QuixoBrain.compTurn(new QuixoBoard(super.board), difficulty);
+            int[][] index = QuixoBrain.compTurn(new QuixoController(this), difficulty);
             System.out.println("index of cpu: " + Arrays.deepToString(index));
             Quixo.slide(index[0][0], index[0][1], index[1][0], index[1][1]);
 //            if(!doTurn(index[0], index[1]))
@@ -51,7 +63,7 @@ public class QuixoController extends QuixoBoard {
     }
     public boolean doTurn(int[] drawIndex, int[] insertIndex){
         if(markTurn(drawIndex,insertIndex)){
-            System.out.println("Board now: \n" + Arrays.deepToString(super.board));
+            System.out.println("TicTacToeBoard now: \n" + Arrays.deepToString(super.board));
             int check = super.check(player);
             int value = check;
             System.out.println("check value: "  + value);
@@ -100,6 +112,13 @@ public class QuixoController extends QuixoBoard {
         }
         super.board[insertIndex[0]][insertIndex[1]] = player;
         return true;
+    }
+    public void undoTurn(int[] drawIndex, int[] insertIndex){
+        markTurn(insertIndex, drawIndex);
+        player = (player%2)+1;
+        GUI.updateTurn();
+        System.out.println("Player Changed!");
+
     }
     private boolean end(boolean win, int winner){
         super.game = winner;
