@@ -25,9 +25,14 @@ public class QuixoBoard {
             game = -1;
             winValue = 0;
         }
-        public QuixoBoard(int[][] board){
-            this();
-            this.board = board;
+        public QuixoBoard(QuixoBoard quixoBoard){
+            for(int i=0; i<5; i++){
+                for(int j=0; j<5; j++){
+                    this.board[i][j] = quixoBoard.board[i][j];
+                }
+            }
+            this.game = quixoBoard.game;
+            this.winValue = quixoBoard.winValue;
         }
 
         public int check(int player){
@@ -97,4 +102,4 @@ public class QuixoBoard {
             }
             return false;
         }
-    }
+}

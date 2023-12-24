@@ -9,6 +9,8 @@ import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
+import javafx.scene.input.KeyCode;
+import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.*;
@@ -16,11 +18,14 @@ import javafx.scene.text.Font;
 import javafx.scene.text.FontWeight;
 import javafx.scene.text.Text;
 import javafx.stage.Stage;
+import javafx.stage.Window;
 import javafx.util.Duration;
+
+import java.util.List;
 
 import static Tic_Tac_Ultimate.GuiUtility.*;
 import static Tic_Tac_Ultimate.Runner.*;
-import static Tic_Tac_Ultimate.Board.*;
+import static Tic_Tac_Ultimate.TicTacToeBoard.*;
 import static Tic_Tac_Ultimate.QuixoBoard.quxioWinValues;
 
 public class GUI extends Application {
@@ -53,18 +58,35 @@ public class GUI extends Application {
         Image icon = new Image("U.png");
         stage.getIcons().add(icon);
         stage.setTitle("Tic Tac Ultimate");
-        stage.setWidth(1536);
-        stage.setHeight(864);
+        stage.setWidth(1280);
+        stage.setHeight(720);
         stage.setResizable(false);
-        stage.setFullScreen(false);
-        stage.setX(0);
-        stage.setY(0);
+        stage.setFullScreen(true);
         root = new StackPane();
         root.setBackground(new Background(new BackgroundFill(backGround, CornerRadii.EMPTY, Insets.EMPTY)));
-        Scene scene = new Scene(root);
-        stage.setScene(scene);
+        root.setOnMouseClicked(e -> {
+            List<Window> windows = Window.getWindows();
+            for(Window window: windows) {
+                if(!(window instanceof LogIn) && !(window instanceof SignUp) && window != stage){
+                    ((Stage) window).close();
+                    System.out.println("Done");
+                    break;
+                }
+            }
+        });
+        root.addEventHandler(KeyEvent.KEY_PRESSED,event->{
+            if(event.getCode()== KeyCode.F11)
+                stage.setFullScreen(!stage.isFullScreen());
+        });
+        Pane profile = new Profile(stage);
+//        root.getChildren().add(profile);
+//        Scene scene = new Scene(root);
+//        stage.setScene(scene);
+        stage.setScene(new Scene(root));
         stage.show();
         displayGame();
+//        new SignUp().showAndWait();
+        root.requestFocus();
     }
     private static void displayStart(){
         Text ticTac = new Text("Tic tac");
@@ -119,25 +141,7 @@ public class GUI extends Application {
         });
     }
     private static void displayMainMenu() {
-        Text ticTac = new Text("Tic tac");
-        Text ultimate = new Text(" Ultimate ");
-        Rectangle background = new Rectangle();
-        StackPane complex = new StackPane(background, ultimate);
-
-        HBox title = new HBox(ticTac,complex);
-        title.setAlignment(Pos.CENTER);
-        title.setTranslateY(root.getHeight()*0.1);
-        title.setSpacing(10);
-
-        ticTac.setFont(Font.font("Franklin Gothic Heavy", FontWeight.BOLD, 74));
-        ticTac.setFill(Color.BLACK);
-
-        ultimate.setFont(Font.font("Franklin Gothic Heavy", FontWeight.BOLD, 74));
-        ultimate.setFill(Color.WHITE);
-
-        background.setWidth(ultimate.getLayoutBounds().getWidth());
-        background.setHeight(ultimate.getLayoutBounds().getHeight());
-        background.setFill(Color.RED);
+        HBox title = getTitle(74, root.getHeight()*0.1);
 
         Button start = makeButton("Start");
         Button options = makeButton("Options");

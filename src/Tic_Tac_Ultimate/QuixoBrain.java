@@ -54,21 +54,25 @@ public class QuixoBrain {
         return easy(board);
     }
     private static int[][] extreme(QuixoBoard board){
+//        QuixoController game = new QuixoController(board.board);
+        int[] draw, insert;
         int row, column;
         row =  column = -1;
-        int bestScore = -1000;
+        int bestScore = 0;
         for(int i = 0; i < 5; i++){
             for (int j = 0; j < 5; j++){
                 if(i==0 || i==4 || j==0 || j==4){
                     if(board.board[i][j] != 1) {
                         int temp = board.board[i][j];
-                        board.board[i][j] = 2;
-                        int score = bestMove(false, board);
-                        board.board[i][j] = temp;
-                        if (score > bestScore) {
-                            bestScore = score;
-                            row = i;
-                            column = j;
+                        if(0!=i){
+
+                            int score = bestMove(false, board);
+                            board.board[i][j] = temp;
+                            if (score > bestScore) {
+                                bestScore = score;
+
+                            }
+
                         }
                     }
                 }
@@ -76,21 +80,23 @@ public class QuixoBrain {
         }
         return new int[][]{{row, column},{}};
     }
-    private static int bestMove(boolean turn, QuixoBoard board){
+    private static int bestMove(boolean userTurn, QuixoBoard board){
+        if(board.check(2) == 1) return -1;
+        if(board.check(2) == 2) return 1;
 
-        if(board.check(2) == 1) return -10;
-        if(board.check(2) == 2) return 10;
-
-        if(turn){
-            int bestScore = -1000;
-            for (int row = 0; row < 3; row++) {
-                for (int col = 0; col < 3; col++) {
-                    if (board.board[row][col] == 0) {
-                        board.board[row][col] = 2;
-                        int Score = bestMove(false, board);
-                        board.board[row][col] = 0;
-                        if(Score > bestScore){
-                            bestScore = Score;
+        if(userTurn){
+            int bestScore = 0;
+            for(int i=0; i<5;i++){
+                for(int j=0; j<5; j++){
+                    if(i==0 || i==4){
+                        if(board.board[i][j] != 1) {
+                            int temp = board.board[i][j];
+                            board.board[i][j] = 2;
+                            int score = bestMove(false, board);
+                            board.board[i][j] = temp;
+                            if (score > bestScore) {
+                                bestScore = score;
+                            }
                         }
                     }
                 }

@@ -2,11 +2,11 @@ package Tic_Tac_Ultimate;
 
 import java.util.Arrays;
 
-public class Controller extends Board{
+public class TicTacToeController extends TicTacToeBoard {
     private final boolean SINGLE_PLAYER;
     private int player;
     private final String difficulty;
-    Controller(boolean singlePlayer, String difficulty){
+    TicTacToeController(boolean singlePlayer, String difficulty){
         super();
         this.SINGLE_PLAYER = singlePlayer;
         this.difficulty = difficulty;
@@ -22,7 +22,7 @@ public class Controller extends Board{
     }
     private void cpuTurn(){
         if(player==2 && SINGLE_PLAYER) {
-            int[] index = Brain.compTurn(super.board, difficulty);
+            int[] index = TicTacToeBrain.compTurn(super.board, difficulty);
             System.out.println("index of cpu: " + Arrays.toString(index));
             if(!doTurn(index))
                 System.out.println("BARi nhi hui cpu se");

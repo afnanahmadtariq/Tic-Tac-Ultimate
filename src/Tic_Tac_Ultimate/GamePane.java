@@ -21,7 +21,7 @@ import static Tic_Tac_Ultimate.GuiUtility.makeRectangle;
 import static Tic_Tac_Ultimate.Runner.gameType;
 import static Tic_Tac_Ultimate.Runner.singlePlayer;
 
-public abstract class GamePane extends BorderPane implements Serializable {
+public abstract class GamePane extends BorderPane {
     public void initialize(){
         setPadding(new Insets(10));
         StackPane player1 = playerInfo(1, Color.RED);

@@ -3,7 +3,7 @@ package Tic_Tac_Ultimate;
 import java.util.HashMap;
 import java.util.Map;
 
-public class Board {
+public class TicTacToeBoard {
     public int[][] board;
     public int game;
     public int winValue;
@@ -19,7 +19,7 @@ public class Board {
         dictionary.put(count++, new int[][]{{0,0},{1,1},{2,2}});
         dictionary.put(count, new int[][]{{0,2},{1,1},{2,0}});
     }
-    public Board(){
+    public TicTacToeBoard(){
         board = new int[3][3];
         game = -1;
         winValue = 0;

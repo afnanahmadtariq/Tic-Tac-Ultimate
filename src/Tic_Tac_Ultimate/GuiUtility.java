@@ -5,21 +5,137 @@ import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
+import javafx.scene.Cursor;
 import javafx.scene.Node;
+import javafx.scene.Scene;
 import javafx.scene.control.Button;
+import javafx.scene.control.TextField;
 import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Line;
 import javafx.scene.shape.Rectangle;
+import javafx.scene.text.Font;
+import javafx.scene.text.FontWeight;
 import javafx.scene.text.Text;
 import javafx.scene.transform.Rotate;
+import javafx.stage.Modality;
 import javafx.stage.Stage;
+import javafx.stage.StageStyle;
 import javafx.util.Duration;
+
+import java.util.concurrent.atomic.AtomicInteger;
 
 import static Tic_Tac_Ultimate.GUI.*;
 import static Tic_Tac_Ultimate.Runner.endGame;
 
 final public class GuiUtility {
+    public static int popUp(String text, String button1Text, String button2Text){
+        AtomicInteger choice = new AtomicInteger();
+        Stage stage = new Stage(StageStyle.UNDECORATED);
+        stage.setWidth(Math.max(text.length() * 10, 200));
+        stage.setHeight(Math.max((stage.getWidth()/16)*9, 150));
+        stage.setResizable(false);
+
+        VBox root = new VBox(new Text(text));
+        root.setBackground(new Background(new BackgroundFill(Color.AZURE, CornerRadii.EMPTY, Insets.EMPTY)));
+        root.setAlignment(Pos.CENTER);
+        root.setSpacing(Math.max((stage.getHeight()/4), 25));
+
+        Button button1 = new Button(button1Text);
+        button1.setPrefSize(75,20);
+        button1.setOnAction(event -> {
+            System.out.println("Button1 was pressed!");
+            choice.set(1);
+            stage.close();
+        });
+        Button button2 = new Button(button2Text);
+        button2.setPrefSize(75,20);
+        button2.setOnAction(event -> {
+            System.out.println("Button2 was pressed!");
+            choice.set(2);
+            stage.close();
+        });
+        HBox buttons = new HBox(button1,button2);
+        buttons.setAlignment(Pos.CENTER);
+        buttons.setSpacing(Math.max((stage.getHeight()/3), 30));
+        root.getChildren().add(buttons);
+
+
+
+        stage.setScene(new Scene(root));
+        stage.showAndWait();
+        return choice.get();
+    }
+//    private static Button getButtons(){
+//        Button button2 = new Button(button2Text);
+//        button2.setPrefSize(70,20);
+//        button2.setOnAction(event -> {
+//            System.out.println("Button2 was pressed!");
+//            choice.set(2);
+//            stage.close();
+//        });
+//        return button2;
+//    }
+    public static HBox getTitle(double fontSize, double tranlateY){
+        Text ticTac = new Text("Tic tac");
+        Text ultimate = new Text(" Ultimate ");
+        Rectangle background = new Rectangle();
+        StackPane complex = new StackPane(background, ultimate);
+
+        HBox title = new HBox(ticTac,complex);
+        title.setAlignment(Pos.CENTER);
+        title.setTranslateY(tranlateY);
+        title.setSpacing(5);
+
+        ticTac.setFont(Font.font("Franklin Gothic Heavy", FontWeight.BOLD, fontSize));
+        ticTac.setFill(Color.BLACK);
+
+        ultimate.setFont(Font.font("Franklin Gothic Heavy", FontWeight.BOLD, fontSize));
+        ultimate.setFill(Color.WHITE);
+
+        background.setWidth(ultimate.getLayoutBounds().getWidth());
+        background.setHeight(ultimate.getLayoutBounds().getHeight());
+        background.setFill(Color.RED);
+
+        return title;
+    }
+    public static Button getButton(String text, double width, double height){
+        Button button = new Button(text);
+        String style = "-fx-font-size: 17.5;" +
+                "-fx-font-weight: bold;" +
+                "-fx-text-fill: rgb(255,255,255);" +
+                "-fx-background-radius: 25;" +
+                "-fx-border-radius: 25;" +
+                "-fx-border-color: rgba(0,0,0,0);";
+        button.setStyle("-fx-background-color:  rgb(197,197,197);" + style);
+        button.setPrefSize(width,height);
+        button.setCursor(Cursor.HAND);
+        button.setOnMouseEntered(e -> button.setStyle( "-fx-background-color: blue; " + style));
+        button.setOnMouseExited(e -> button.setStyle("-fx-background-color: rgb(197,197,197); " + style ));
+        return button;
+    }
+    public static TextField textField(String str, boolean[] modified, int index, Scene scene){
+        TextField textField = new TextField(str);
+        textField.setStyle("-fx-text-fill: #adadad;" +
+                "-fx-background-color: rgb(255,255,255);" +
+                "-fx-background-radius: 25;" +
+                "-fx-border-radius: 25;" +
+                "-fx-border-color: rgba(0,0,0,0);");
+        textField.setPrefSize(300,45);
+        scene.focusOwnerProperty().addListener((observable, oldOwner, newOwner) ->{
+            if(textField.getText().isEmpty() && textField == oldOwner) {
+                textField.setText(str);
+                modified[index] = false;
+            }
+            if(!modified[index] && textField == newOwner)
+                textField.clear();
+        });
+        textField.setOnKeyTyped( e -> {
+            if (!modified[index])
+                modified[index] = true;
+        });
+        return textField;
+    }
     public static TranslateTransition translateY(double startY, double endY, Node node, double sec){
         TranslateTransition transition = new TranslateTransition(Duration.seconds(sec), node);
         transition.setFromY(startY);
