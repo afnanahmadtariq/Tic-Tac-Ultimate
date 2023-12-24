@@ -109,14 +109,33 @@ final public class GuiUtility {
         header.setFont(Font.font("Franklin Gothic", FontWeight.BOLD, 20));
         VBox vBox = new VBox(header);
         vBox.setAlignment(Pos.CENTER);
-        vBox.setSpacing(25);
+        vBox.setSpacing(30);
         popUp.getChildren().add(vBox);
 
-
         Button button1 = new Button(button1Text);
+        String style = "-fx-padding: 10 20; " +
+                "-fx-font-family: 'Franklin Gothic';" +
+                "-fx-font-weight: Bold;" +
+                "-fx-font-size: 25;";
+        if(button1Text.equals("Heads")){
+            button1.setStyle("-fx-text-fill: Orange;" + style);
+            button1.setOnMouseEntered(e-> button1.setStyle("-fx-text-fill: Orange; " +
+                    "-fx-border-radius: 50em; " +
+                    "-fx-border-color: Orange; " +
+                    "-fx-border-width: 4px;" + style));
+            button1.setOnMouseExited(e-> button1.setStyle("-fx-text-fill: Orange; " + style));
+        }
+        else{
+            button1.setStyle("-fx-text-fill: Green;" + style);
+            button1.setOnMouseEntered(e-> button1.setStyle("-fx-text-fill: Green; " +
+                    "-fx-border-radius: 50em; " +
+                    "-fx-border-color: Green; " +
+                    "-fx-border-width: 4px;" + style));
+            button1.setOnMouseExited(e-> button1.setStyle("-fx-text-fill: Green; " + style));
+        }
+        button1.setBackground(new Background(new BackgroundFill(Color.color(0,0,0,0), CornerRadii.EMPTY, Insets.EMPTY)));
         button1.setTranslateY(0);
         button1.setMinSize(100,20);
-        button1.setStyle("-fx-font-size: 20");
         button1.setOnAction(event -> {
             System.out.println("Button1 was pressed!");
             root.getChildren().remove(background);
@@ -125,10 +144,28 @@ final public class GuiUtility {
             else if(method==2)
                 endGame(1);
         });
+
         Button button2 = new Button(button2Text);
+        if(button2Text.equals("Tails")){
+            button2.setStyle("-fx-text-fill: Orange;" + style);
+            button2.setOnMouseEntered(e-> button2.setStyle("-fx-text-fill: Orange; " +
+                    "-fx-border-radius: 50em; " +
+                    "-fx-border-color: Orange; " +
+                    "-fx-border-width: 4px;" + style));
+            button2.setOnMouseExited(e-> button2.setStyle("-fx-text-fill: Orange; " + style));
+        }
+        else{
+            button2.setStyle("-fx-text-fill: Red;" + style);
+            button2.setOnMouseEntered(e-> button2.setStyle("-fx-text-fill: Red; " +
+                    "-fx-border-radius: 50em; " +
+                    "-fx-border-color: Red; " +
+                    "-fx-border-width: 4px;" + style));
+            button2.setOnMouseExited(e-> button2.setStyle("-fx-text-fill: Red; " + style));
+        }
+        button2.setBackground(new Background(new BackgroundFill(Color.color(0,0,0,0), CornerRadii.EMPTY, Insets.EMPTY)));
         button2.setTranslateY(0);
         button2.setMinSize(100,20);
-        button2.setStyle("-fx-font-size: 20");
+//        button2.setStyle("-fx-font-size: 20");
         button2.setOnAction(event -> {
             System.out.println("Button2 was pressed!");
             root.getChildren().remove(background);
@@ -139,7 +176,7 @@ final public class GuiUtility {
         });
         HBox buttons = new HBox(button1,button2);
         buttons.setAlignment(Pos.BASELINE_CENTER);
-        buttons.setSpacing(25);
+        buttons.setSpacing(30);
         vBox.getChildren().add(buttons);
 
     }

@@ -7,7 +7,10 @@ import javafx.geometry.Pos;
 import javafx.scene.Group;
 import javafx.scene.Node;
 import javafx.scene.Scene;
-import javafx.scene.control.*;
+import javafx.scene.control.Alert;
+import javafx.scene.control.Button;
+import javafx.scene.control.ButtonType;
+import javafx.scene.control.TextArea;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.KeyCode;
@@ -91,7 +94,7 @@ public class GUI extends Application {
         scene = new Scene(root);
         stage.setScene(scene);
         stage.show();
-        displayStart();
+        displayMainMenu();
     }
     private static void displayStart(){
         Text ticTac = new Text("Tic tac");
@@ -168,8 +171,8 @@ public class GUI extends Application {
         background.setHeight(ultimate.getLayoutBounds().getHeight());
         background.setFill(Color.RED);
 
-        Button start = makeButton("Start New");
-        Button loadGame = makeButton("Continue");
+        Button start = makeButton("New Game");
+        Button loadGame = makeButton("Load Game");
         Button options = makeButton("Settings");
         Button exit = makeButton("Exit Game");
 
@@ -201,11 +204,11 @@ public class GUI extends Application {
         button.setTranslateY(root.getHeight()*0.1);
         button.setMinSize(200,80);
         String style = "-fx-padding: 10 20; " +
-                "-fx-font-family: 'Comic Sans MS';" +
+                "-fx-font-family: 'Franklin Gothic';" +
                 "-fx-font-weight: Bold;" +
                 "-fx-font-size: 45;" +
                 "-fx-border-radius: 5;";
-        button.setStyle(style);
+        button.setStyle("-fx-text-fill: Black; " + style);
 //        button.setStyle( "-fx-background-color: Black; " + "-fx-text-fill: White; " + style );
         button.setBackground(new Background(new BackgroundFill(Color.color(0,0,0,0), CornerRadii.EMPTY, Insets.EMPTY)));
         button.setOnMouseEntered(e -> {
@@ -219,11 +222,11 @@ public class GUI extends Application {
         button.setOnMouseClicked(event -> {
             System.out.println(text +" button was pressed!");
             switch (text) {
-                case "Start New" -> displayGameSelection();
-                case "Continue" -> System.out.println("Continue Button was Pressed");
+                case "New Game" -> displayGameSelection();
+                case "Load Game" -> System.out.println("Load Game Button was Pressed");
 
 //                displayOptions();
-                case "Settings" -> displaySettings();
+                case "Settings" -> displaySettings("Game Settings");
 
 //                displayPopupMessage("Under Development", "Option Button is under development");
                 case "Exit Game" -> {
@@ -245,7 +248,7 @@ public class GUI extends Application {
         });
         return button;
     }
-    private static void displaySettings(){
+    private static void displaySettings(String button2Text){
 
         BorderPane background = new BorderPane();
         StackPane gameMenu = new StackPane();
@@ -256,24 +259,28 @@ public class GUI extends Application {
         background.setBackground(new Background(new BackgroundFill(Color.color(0, 0, 0, 0), CornerRadii.EMPTY, Insets.EMPTY)));
 
         Rectangle box = new Rectangle();
-        box.setFill(Color.DARKGRAY);
+        box.setFill(Color.WHITE);
         box.widthProperty().bind(root.widthProperty());
         box.heightProperty().bind(root.heightProperty());
         gameMenu.getChildren().add(box);
-
-        Text header = new Text("Settings");
-        header.setFont(Font.font("Comic Sans MS", FontWeight.BOLD, 70));
+        Text header;
+        if(button2Text.equals("Game Settings"))
+            header = new Text("Settings");
+        else
+            header = new Text("Game Options");
+        header.setFont(Font.font("Franklin Gothic", FontWeight.BOLD, 70));
         header.setTextAlignment(TextAlignment.CENTER);
 
         VBox vBox = new VBox();
+        vBox.setTranslateY(100);
         vBox.setSpacing(10); // Set spacing between buttons
 
         Button appearance = makeOptionButton("Appearance");
-        Button changeDifficulty = makeOptionButton("Game Settings");
+        Button button2 = makeOptionButton(button2Text);
         Button players = makeOptionButton("Player Settings");
         Button back = makeOptionButton("Back");
 
-        vBox.getChildren().addAll(appearance, changeDifficulty, players, back);
+        vBox.getChildren().addAll(appearance, button2, players, back);
 
         Rectangle areaBox = new Rectangle();
         areaBox.setFill(Color.LIGHTGREY);
@@ -284,13 +291,20 @@ public class GUI extends Application {
 
         StackPane optionPage = new StackPane();
         optionPage.getChildren().addAll(areaBox, vBox);
-        StackPane.setAlignment(vBox, Pos.BOTTOM_LEFT);
+        StackPane.setAlignment(vBox, Pos.CENTER_LEFT);
         StackPane.setAlignment(areaBox, Pos.BOTTOM_RIGHT);
 
         gameMenu.getChildren().addAll(header, optionPage);
         background.setPadding(new Insets(10));
 
         root.getChildren().add(background);
+        appearance.setOnAction(e->{
+            System.out.println("Appearance Button");
+            appearance.setDisable(true);
+            button2.setDisable(true);
+            players.setDisable(true);
+            displayAppearance(gameMenu, appearance, button2, players);
+        });
 //        appearance.setOnMouseClicked(e->{
 //            System.out.println("Appearance Here");
 //            displayAppearance(areaBox);
@@ -303,12 +317,12 @@ public class GUI extends Application {
         String roundButtonStyle;
         if(!text.equals("<"))
             roundButtonStyle = "-fx-padding: 10 20; " +
-                    "-fx-font-family: 'Comic Sans MS';" +
+                    "-fx-font-family: 'Franklin Gothic';" +
                     "-fx-font-size: 13;" +
                     "-fx-background-radius: 40em;";
         else
             roundButtonStyle = "-fx-padding: 10 20; " +
-                    "-fx-font-family: 'Comic Sans MS';" +
+                    "-fx-font-family: 'Franklin Gothic';" +
                     "-fx-font-size: 25;" +
                     "-fx-alignment: center;" +
                     "-fx-background-radius: 40em;";
@@ -340,60 +354,83 @@ public class GUI extends Application {
         Button button = new Button(text);
 //        button.setTranslateY(root.getHeight()*0.1);
         button.setMinSize(root.getWidth()/6-20,100);
-        String style = "-fx-padding: 10 20; " +
-                "-fx-font-family: 'Comic Sans MS';" +
-                "-fx-font-size: 35;" +
-                "-fx-border-radius: 5;";
-        button.setStyle( "-fx-background-color: Black; " + "-fx-text-fill: White; " + style );
-        button.setOnMouseEntered(e -> button.setStyle( "-fx-background-color: Red; " + "-fx-text-fill: White; " + style));
-        button.setOnMouseExited(e -> button.setStyle("-fx-background-color: Black; " + "-fx-text-fill: White; " + style ));
+        String style;
+        if(!text.equals("Play")){
+            style = "-fx-padding: 10 20; " +
+                    "-fx-font-family: 'Franklin Gothic';" +
+                    "-fx-font-size: 35;" +
+                    "-fx-border-radius: 30em;";
+            button.setStyle("-fx-text-fill: Black;" + style);
+            button.setOnMouseEntered(e -> button.setStyle("-fx-text-fill: Red; " +
+                    "-fx-border-color: Red; " +
+                    "-fx-border-width: 4px;" + style));
+            button.setOnMouseExited(e -> button.setStyle("-fx-text-fill: Black; " + style ));
+        }
+        else{
+            style = "-fx-padding: 10 20; " +
+                    "-fx-font-family: 'Franklin Gothic';" +
+                    "-fx-border-radius: 10em;" +
+                    "-fx-font-size: 35;" +
+                    "-fx-border-width: 4px;";
+            button.setStyle("-fx-text-fill: Black; -fx-border-color: Black; " + style);
+            button.setOnMouseEntered(e -> {
+                button.setStyle("-fx-text-fill: Red; -fx-border-color: Red; -fx-font-weight: Bold;" + style);
+                button.setText(text + " >");
+            });
+            button.setOnMouseExited(e -> {
+                button.setStyle("-fx-text-fill: Black; -fx-border-color: Black; " + style );
+                button.setText(text);
+            });
+        }
+
+        button.setBackground(new Background(new BackgroundFill(Color.color(0,0,0,0), CornerRadii.EMPTY, Insets.EMPTY)));
 
         return button;
     }
     private static void setSelectedType(Button button1, Button button2, Button button3, Button button4){
         String style = "-fx-padding: 10 20; " +
-                "-fx-font-family: 'Comic Sans MS';" +
+                "-fx-font-family: 'Franklin Gothic';" +
                 "-fx-font-size: 35;" +
-                "-fx-border-radius: 5;";
-        button1.setStyle( "-fx-background-color: Green; " + "-fx-text-fill: White; " + style);
-        button2.setStyle( "-fx-background-color: Gray; " + "-fx-text-fill: White; " + style);
-        button3.setStyle( "-fx-background-color: Gray; " + "-fx-text-fill: White; " + style);
-        button4.setStyle( "-fx-background-color: Gray; " + "-fx-text-fill: White; " + style);
-        button1.setOnMouseEntered(e -> button1.setStyle( "-fx-background-color: Green; " + "-fx-text-fill: White; " + style));
-        button1.setOnMouseExited(e -> button1.setStyle( "-fx-background-color: Green; " + "-fx-text-fill: White; " + style));
-        button2.setOnMouseEntered(e -> button2.setStyle( "-fx-background-color: Gray; " + "-fx-text-fill: White; " + style));
-        button2.setOnMouseExited(e -> button2.setStyle( "-fx-background-color: Gray; " + "-fx-text-fill: White; " + style));
-        button3.setOnMouseEntered(e -> button3.setStyle( "-fx-background-color: Gray; " + "-fx-text-fill: White; " + style));
-        button3.setOnMouseExited(e -> button3.setStyle( "-fx-background-color: Gray; " + "-fx-text-fill: White; " + style));
-        button4.setOnMouseEntered(e -> button4.setStyle( "-fx-background-color: Gray; " + "-fx-text-fill: White; " + style));
-        button4.setOnMouseExited(e -> button4.setStyle( "-fx-background-color: Gray; " + "-fx-text-fill: White; " + style));
+                "-fx-border-radius: 50em;";
+        button1.setStyle( "-fx-border-color: Green; " + "-fx-text-fill: Green; -fx-border-width: 4px; -fx-font-weight: Bold;" + style);
+        button2.setStyle( "-fx-border-color: Gray; " + "-fx-text-fill: Gray; -fx-border-width: 0px; " + style);
+        button3.setStyle( "-fx-border-color: Gray; " + "-fx-text-fill: Gray; -fx-border-width: 0px; " + style);
+        button4.setStyle( "-fx-border-color: Gray; " + "-fx-text-fill: Gray; -fx-border-width: 0px; " + style);
+        button1.setOnMouseEntered(e -> button1.setStyle(button1.getStyle()));
+        button1.setOnMouseExited(e -> button1.setStyle(button1.getStyle()));
+        button2.setOnMouseEntered(e -> button2.setStyle(button2.getStyle()));
+        button2.setOnMouseExited(e -> button2.setStyle(button2.getStyle()));
+        button3.setOnMouseEntered(e -> button3.setStyle(button3.getStyle()));
+        button3.setOnMouseExited(e -> button3.setStyle(button3.getStyle()));
+        button4.setOnMouseEntered(e -> button4.setStyle(button4.getStyle()));
+        button4.setOnMouseExited(e -> button4.setStyle(button4.getStyle()));
     }
     private static void setSelectedType(Button button1, Button button2, Button button3){
         String style = "-fx-padding: 10 20; " +
-                "-fx-font-family: 'Comic Sans MS';" +
+                "-fx-font-family: 'Franklin Gothic';" +
                 "-fx-font-size: 35;" +
-                "-fx-border-radius: 5;";
-        button1.setStyle( "-fx-background-color: Green; " + "-fx-text-fill: White; " + style);
-        button2.setStyle( "-fx-background-color: Gray; " + "-fx-text-fill: White; " + style);
-        button3.setStyle( "-fx-background-color: Gray; " + "-fx-text-fill: White; " + style);
-        button1.setOnMouseEntered(e -> button1.setStyle( "-fx-background-color: Green; " + "-fx-text-fill: White; " + style));
-        button1.setOnMouseExited(e -> button1.setStyle( "-fx-background-color: Green; " + "-fx-text-fill: White; " + style));
-        button2.setOnMouseEntered(e -> button2.setStyle( "-fx-background-color: Gray; " + "-fx-text-fill: White; " + style));
-        button2.setOnMouseExited(e -> button2.setStyle( "-fx-background-color: Gray; " + "-fx-text-fill: White; " + style));
-        button3.setOnMouseEntered(e -> button3.setStyle( "-fx-background-color: Gray; " + "-fx-text-fill: White; " + style));
-        button3.setOnMouseExited(e -> button3.setStyle( "-fx-background-color: Gray; " + "-fx-text-fill: White; " + style));
+                "-fx-border-radius: 50em;";
+        button1.setStyle( "-fx-border-color: Green; " + "-fx-text-fill: Green; -fx-border-width: 4px; -fx-font-weight: Bold;" + style);
+        button2.setStyle( "-fx-border-color: Gray; " + "-fx-text-fill: Gray; -fx-border-width: 0px; " + style);
+        button3.setStyle( "-fx-border-color: Gray; " + "-fx-text-fill: Gray; -fx-border-width: 0px; " + style);
+        button1.setOnMouseEntered(e -> button1.setStyle(button1.getStyle()));
+        button1.setOnMouseExited(e -> button1.setStyle(button1.getStyle()));
+        button2.setOnMouseEntered(e -> button2.setStyle(button2.getStyle()));
+        button2.setOnMouseExited(e -> button2.setStyle(button2.getStyle()));
+        button3.setOnMouseEntered(e -> button3.setStyle(button3.getStyle()));
+        button3.setOnMouseExited(e -> button3.setStyle(button3.getStyle()));
     }
     private static void setSelectedType(Button button1, Button button2){
         String style = "-fx-padding: 10 20; " +
-                "-fx-font-family: 'Comic Sans MS';" +
+                "-fx-font-family: 'Franklin Gothic';" +
                 "-fx-font-size: 35;" +
-                "-fx-border-radius: 5;";
-        button1.setStyle( "-fx-background-color: Green; " + "-fx-text-fill: White; " + style);
-        button2.setStyle( "-fx-background-color: Gray; " + "-fx-text-fill: White; " + style);
-        button1.setOnMouseEntered(e -> button1.setStyle( "-fx-background-color: Green; " + "-fx-text-fill: White; " + style));
-        button1.setOnMouseExited(e -> button1.setStyle( "-fx-background-color: Green; " + "-fx-text-fill: White; " + style));
-        button2.setOnMouseEntered(e -> button2.setStyle( "-fx-background-color: Gray; " + "-fx-text-fill: White; " + style));
-        button2.setOnMouseExited(e -> button2.setStyle( "-fx-background-color: Gray; " + "-fx-text-fill: White; " + style));
+                "-fx-border-radius: 30em;";
+        button1.setStyle( "-fx-border-color: Green; " + "-fx-text-fill: Green; -fx-border-width: 4px; -fx-font-weight: Bold;" + style);
+        button2.setStyle( "-fx-border-color: Gray; " + "-fx-text-fill: Gray; -fx-border-width: 0px; " + style);
+        button1.setOnMouseEntered(e -> button1.setStyle(button1.getStyle()));
+        button1.setOnMouseExited(e -> button1.setStyle(button1.getStyle()));
+        button2.setOnMouseEntered(e -> button2.setStyle(button2.getStyle()));
+        button2.setOnMouseExited(e -> button2.setStyle(button2.getStyle()));
     }
     private static void displayGameSelection() {
         StackPane gameSelection = new StackPane();
@@ -409,11 +446,15 @@ public class GUI extends Application {
         gameSelection.getChildren().addAll(box, selectionPanel);
 
         Text gameTypeText = new Text("Select Game");
-        gameTypeText.setFont(Font.font("Comic Sans MS", FontWeight.BOLD, 30));
+        gameTypeText.setFont(Font.font("Franklin Gothic", FontWeight.BOLD, 40));
+//        gameTypeText.setTextAlignment(TextAlignment.CENTER);
+        gameTypeText.setStyle("-fx-underline: true;");
         Text playerOptionText = new Text("Player vs.");
-        playerOptionText.setFont(Font.font("Comic Sans MS", FontWeight.BOLD, 30));
+        playerOptionText.setFont(Font.font("Franklin Gothic", FontWeight.BOLD, 40));
+        playerOptionText.setStyle("-fx-underline: true;");
         Text gameDiffText = new Text("Select Difficulty");
-        gameDiffText.setFont(Font.font("Comic Sans MS", FontWeight.BOLD, 30));
+        gameDiffText.setFont(Font.font("Franklin Gothic", FontWeight.BOLD, 40));
+        gameDiffText.setStyle("-fx-underline: true;");
 
         HBox gameType = new HBox();
         Button tictactoe = SelectGameButtons("Tic Tac Toe");
@@ -484,7 +525,7 @@ public class GUI extends Application {
             selectedDifficulty = extremeButton.getText();
         });
         gameType.getChildren().addAll(tictactoe, supertictactoe, quixo);
-        gameType.setSpacing(10);
+        gameType.setSpacing(20);
 
         playerOptions.getChildren().addAll(singleGame, doubleGame);
         playerOptions.setSpacing(10);
@@ -693,7 +734,8 @@ public class GUI extends Application {
 
         root.getChildren().add(background);
         Text header = new Text("Game Menu");
-        header.setFont(Font.font("Comic Sans MS", FontWeight.BOLD, 40));
+        header.setFont(Font.font("Franklin Gothic", FontWeight.BOLD, 40));
+        header.setStyle("-fx-border-width: 4px;" +header.getStyle());
 
         Button resume = makeButton("Resume");
         resume.setTranslateY(gameMenu.getHeight()*0.25);
@@ -720,85 +762,50 @@ public class GUI extends Application {
         System.out.println("I was Here");
 
         resume.setOnMouseClicked(event-> root.getChildren().remove(background));
-        option.setOnMouseClicked(event-> displayOptions());
+        option.setOnMouseClicked(event-> displaySettings("Game Difficulty"));
         exit.setOnMouseClicked(event-> displayMainMenu());
     }
-    private static void displayOptions(){
-
-        BorderPane background = new BorderPane();
-        StackPane gameMenu = new StackPane();
-        background.setCenter(gameMenu);
-        gameMenu.setAlignment(Pos.TOP_CENTER);
-
-// Setting a transparent background for the entire BorderPane
-        background.setBackground(new Background(new BackgroundFill(Color.color(0, 0, 0, 0), CornerRadii.EMPTY, Insets.EMPTY)));
-
-        Rectangle box = new Rectangle();
-        box.setFill(Color.DARKGRAY);
-        box.widthProperty().bind(root.widthProperty());
-        box.heightProperty().bind(root.heightProperty());
-        gameMenu.getChildren().add(box);
-
-        Text header = new Text("Game Options");
-        header.setFont(Font.font("Comic Sans MS", FontWeight.BOLD, 70));
-        header.setTextAlignment(TextAlignment.CENTER);
-
-        VBox vBox = new VBox();
-        vBox.setSpacing(10); // Set spacing between buttons
-
-        Button appearance = makeOptionButton("Appearance");
-        Button changeDifficulty = makeOptionButton("Change Difficulty");
-        Button players = makeOptionButton("Player Settings");
-        Button back = makeOptionButton("Back");
-
-        vBox.getChildren().addAll(appearance, changeDifficulty, players, back);
-
-        Rectangle areaBox = new Rectangle();
-        areaBox.setFill(Color.LIGHTGREY);
-        areaBox.setArcHeight(50);
-        areaBox.setArcWidth(50);
-        areaBox.setWidth(1000); // Set the width according to your preference
-        areaBox.setHeight(680); // Set the height according to your preference
-
-        StackPane optionPage = new StackPane();
-        optionPage.getChildren().addAll(areaBox, vBox);
-        StackPane.setAlignment(vBox, Pos.BOTTOM_LEFT);
-        StackPane.setAlignment(areaBox, Pos.BOTTOM_RIGHT);
-
-        gameMenu.getChildren().addAll(header, optionPage);
-        background.setPadding(new Insets(10));
-
-        root.getChildren().add(background);
-//        appearance.setOnMouseClicked(e->{
-//            System.out.println("Appearance Here");
-//            displayAppearance(areaBox);
-//        });
-
-    }
-    private static Button makeOptionButton(String text){
+    protected static Button makeOptionButton(String text){
         Button button = new Button(text);
         String style = "-fx-padding: 10 20; " +
-                "-fx-font-family: 'Comic Sans MS';" +
+                "-fx-font-family: 'Franklin Gothic';" +
                 "-fx-font-weight: Bold;" +
-                "-fx-font-size: 50;";
-        button.setStyle(style);
+                "-fx-font-size: 35;";
+        button.setStyle("-fx-text-fill: Black;" + style);
         if(text.equals("Back")) {
             button.setMinSize(120, 80);
-            button.setStyle("-fx-text-fill: Red; " + style);
+            button.setOnMouseEntered(e -> {
+                button.setText("< " + text);
+                button.setStyle("-fx-underline: true; " +
+                        "-fx-text-fill: Red; " +
+                        "-fx-border-radius: 50em; " +
+                        "-fx-border-color: Red; " +
+                        "-fx-border-width: 4px;" + style);
+            });
+            button.setOnMouseExited(e -> {
+                button.setText(text);
+                button.setStyle("-fx-underline: false; -fx-text-fill: Black;" + style);
+            });
         }
         else if(text.equals("<")){
-            button.setOnMouseEntered(e -> button.setStyle("-fx-text-fill: Red; " + style));
-            button.setOnMouseExited(e -> button.setStyle("-fx-text-fill: Black; " + style));
+            button.setOnMouseEntered(e-> button.setStyle("-fx-text-fill: Red; " + style));
+            button.setOnMouseExited(e-> button.setStyle("-fx-text-fill: Black; " + style));
             button.setMinSize(80, 80);
         }
         else {
             button.setOnMouseEntered(e -> {
-                button.setStyle("-fx-text-fill: Black; -fx-underline: true; " + style);
+                button.setStyle("-fx-underline: true; " +
+                        "-fx-text-fill: Red; " +
+                        "-fx-border-radius: 50em; " +
+                        "-fx-border-color: Red; " +
+                        "-fx-border-width: 4px;" + style);
                 button.setText(text + " >");
+//                button.setBorder(Border.stroke(Color.RED));
             });
             button.setOnMouseExited(e -> {
-                button.setStyle("-fx-text-fill: #383838; -fx-underline: false; " + style);
+                button.setStyle("-fx-underline: false; -fx-text-fill: Black;" + style);
                 button.setText(text);
+//                button.setBorder(null);
             });
             button.setMinSize(200, 80);
         }
@@ -815,43 +822,93 @@ public class GUI extends Application {
         });
         return button;
     }
-    private static void displayAppearance(Rectangle areaBox){
+    private static void displayAppearance(StackPane gameMenu, Button button1, Button button2, Button button3){
 
-        BorderPane background = new BorderPane();
+        System.out.println("I was in Appearance");
+        Node box = null;
+        box = gameMenu.getChildren().get(gameMenu.getChildren().size()-2);
+        double boxHeight = box.getBoundsInLocal().getHeight();
+        double boxWidth = box.getBoundsInLocal().getWidth();
+
+//        BorderPane background = new BorderPane();
+//         Rectangle appearanceBox = new Rectangle();
+//         appearanceBox.setFill(Color.WHITE);
+//         appearanceBox.setWidth(boxWidth-50);
+//         appearanceBox.setHeight(boxHeight-50);
+//         appearanceBox.setArcWidth(50);
+//         appearanceBox.setArcHeight(50);
+//         appearanceBox.setTranslateX(box.getTranslateX()+100);
+//         appearanceBox.setTranslateY(box.getTranslateY()+100);
+//         gameMenu.getChildren().add(appearanceBox);
+
         VBox themes = new VBox();
-        themes.setMinSize(areaBox.getWidth(), areaBox.getHeight());
-        themes.setTranslateX(root.getWidth()-areaBox.getWidth());
-        background.setCenter(themes);
-        background.setMaxSize(areaBox.getWidth(), areaBox.getHeight());
-        background.setBackground(new Background(new BackgroundFill( Color.color(0,0,0,0), CornerRadii.EMPTY, Insets.EMPTY)));
+        themes.setMinSize(boxWidth, boxHeight);
+        themes.setTranslateX(box.localToScene(box.getBoundsInLocal()).getMinX());
+//        System.out.println(box.set);
+        themes.setTranslateY(box.localToScene(box.getBoundsInLocal()).getMinY() + 150);
+//        themes.setTranslateX(root.getWidth()-boxWidth);
+//        background.setCenter(themes);
+//        background.setMaxSize(boxWidth, boxHeight);
+//        background.setBackground(new Background(new BackgroundFill( Color.color(0,0,0,0), CornerRadii.EMPTY, Insets.EMPTY)));
         HBox buttons = new HBox();
-        buttons.setMinWidth(areaBox.getWidth());
-        root.getChildren().add(background);
+        buttons.setMinWidth(boxWidth);
+        gameMenu.getChildren().add(themes);
+//        StackPane.setAlignment(themes);
 
-//        HBox header = new HBox();
-//        Button back = makeOptionButton("<", areaBox);
-//        back.setOnMouseEntered(e->back.setStyle("-fx-underline: true; -fx-text-fill: Red; " + back.getStyle()));
-//        back.setOnMouseExited(e-> back.setStyle("-fx-underline: false; -fx-text-fill: #000000; " + back.getStyle()));
-//        back.setOnMouseClicked(e-> root.getChildren().removeLast());
+        HBox header = new HBox();
+        Button back = makeOptionButton("<");
+        back.setOnMouseClicked(e-> {
+            gameMenu.getChildren().removeLast();
+            button1.setDisable(false);
+            button2.setDisable(false);
+            button3.setDisable(false);
+        });
 
         Text title = new Text("Set Appearance");
-        title.setFont(Font.font("Comic Sans MS", FontWeight.BOLD, 50));
-//        header.getChildren().addAll(back, title);
-//        header.setSpacing(50);
-//        title.setStyle("-fx-font-family: 'Comic Sans MS';" +
-//                "-fx-font-size: 70;" +
-//                "-fx-text-fill: Black;");
+        title.setFont(Font.font("Franklin Gothic", FontWeight.BOLD, 50));
+        header.getChildren().addAll(back, title);
+        header.setSpacing(50);
+        title.setStyle("-fx-font-family: 'Franklin Gothic';" +
+                "-fx-font-size: 50;" +
+                "-fx-text-fill: Black;");
 
-        Button defaultTheme = roundButton("Default");
-        Button darkTheme = roundButton("Dark Theme");
-        Button woodenTheme = roundButton("Wooden Theme");
 
-        buttons.getChildren().addAll(defaultTheme, darkTheme, woodenTheme);
-        buttons.setAlignment(Pos.CENTER);
-        buttons.setSpacing(30);
-        themes.getChildren().addAll(title, buttons);
+        Image defThemeImg = new Image("file:images/DefaultTheme.png");
+        Image darkThemeImg = new Image("file:images/DarkTheme.png");
+        Image woodThemeImg = new Image("file:images/WoodenTheme.png");
+        VBox defaultThemeBox = displayThemeButtons("Default Theme", defThemeImg);
+        VBox darkThemeBox = displayThemeButtons("Dark Theme", darkThemeImg);
+        VBox woodThemeBox = displayThemeButtons("Wooden Theme", woodThemeImg);
+//        Button darkTheme = roundButton("Dark Theme");
+//        Button woodenTheme = roundButton("Wooden Theme");
+
+        buttons.getChildren().addAll(defaultThemeBox, darkThemeBox, woodThemeBox);
+//        buttons.setTranslateY(root.getHeight()-boxHeight);
+//        buttons.setTranslateX(box.localToScene(box.getBoundsInLocal()).getMinX() + 200);
+//        buttons.setAlignment(Pos.CENTER);
+        buttons.setSpacing(50);
+        themes.getChildren().addAll(header, buttons);
         themes.setSpacing(50);
-        themes.setAlignment(Pos.CENTER);
+//        StackPane.setAlignment(themes, Pos.CENTER);
+        themes.setAlignment(Pos.TOP_LEFT);
+    }
+    private static VBox displayThemeButtons(String text, Image buttonImg){
+        VBox buttonBox = new VBox();
+        Button button = new Button();
+        button.setMinWidth(116);
+        button.setMinHeight(111);
+        button.setBackground(new Background(new BackgroundImage(buttonImg,
+                BackgroundRepeat.NO_REPEAT,
+                BackgroundRepeat.NO_REPEAT,
+                BackgroundPosition.CENTER,
+                BackgroundSize.DEFAULT)));
+        buttonBox.setSpacing(10);
+        Text title = new Text(text);
+        title.setStyle("-fx-font-family: 'Franklin Gothic';" +
+                "-fx-font-size: 20;" +
+                "-fx-text-alignment: center;");
+        buttonBox.getChildren().addAll(button, title);
+        return buttonBox;
     }
     private static void displayRuleBook(){
         BorderPane background = new BorderPane();
@@ -872,7 +929,7 @@ public class GUI extends Application {
         ruleBook.getChildren().add(ruleBookPage);
 
         HBox hBox1 = new HBox();
-        Button back = roundButton("<");
+        Button back = makeOptionButton("<");
         Text text = new Text("Select Game");
         text.setFont(Font.font("Franklin Gothic Heavy", 40));
         text.setTranslateX(box.getWidth()/2-40);
@@ -903,7 +960,7 @@ public class GUI extends Application {
         rulesTextArea.setWrapText(true);
         rulesTextArea.autosize();
         rulesTextArea.setStyle("-fx-padding: 10 30; " +
-                "-fx-font-family: 'Comic Sans MS';" +
+                "-fx-font-family: 'Franklin Gothic';" +
                 "-fx-font-size: 25;" +
                 "-fx-border-radius: 5;" +
                 "-fx-font-color: Black");
@@ -973,7 +1030,7 @@ public class GUI extends Application {
         root.getChildren().add(background);
 
         Text title = new Text("Help");
-        title.setFont(Font.font("Comic Sans MS", FontWeight.BOLD, 70));
+        title.setFont(Font.font("Franklin Gothic", FontWeight.BOLD, 70));
         helpPage.getChildren().add(title);
 
     }
@@ -990,7 +1047,7 @@ public class GUI extends Application {
         root.getChildren().add(background);
 
         Text title = new Text("About Us");
-        title.setFont(Font.font("Comic Sans MS", FontWeight.BOLD, 70));
+        title.setFont(Font.font("Franklin Gothic", FontWeight.BOLD, 70));
         aboutUsPage.getChildren().add(title);
 
     }
