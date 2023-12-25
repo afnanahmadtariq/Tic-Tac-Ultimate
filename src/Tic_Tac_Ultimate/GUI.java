@@ -29,7 +29,7 @@ import static Tic_Tac_Ultimate.TicTacToeBoard.*;
 import static Tic_Tac_Ultimate.QuixoBoard.quxioWinValues;
 
 public class GUI extends Application {
-    private static Stage stage;
+    public static Stage stage;
     public static StackPane root;
     public static Color backGround = Color.web("#f2f2f2");
     public static Color midGround = Color.web("#fff");
@@ -38,20 +38,19 @@ public class GUI extends Application {
     public static Text turn2;
     public static Group grid1;
     public static Group grid2;
-    private static BorderPane gamePane;
-    public static Pane boxPane;
-    public static Group arrowGroup;
+    private static GamePane gamePane;
     public static double cell;
-    public static Group marks;
-    public static boolean listen;
     public static int check;
 
-    static {
-        listen = true;
-    }
+
     public static void initialize(String[] args){
         launch(args);
     }
+
+    public static void clearMarks() {
+        gamePane.clearMarks();
+    }
+
     @Override
     public void start(Stage stage){
         GUI.stage = stage;
@@ -78,14 +77,12 @@ public class GUI extends Application {
             if(event.getCode()== KeyCode.F11)
                 stage.setFullScreen(!stage.isFullScreen());
         });
-        Pane profile = new Profile(stage);
-//        root.getChildren().add(profile);
 //        Scene scene = new Scene(root);
 //        stage.setScene(scene);
         stage.setScene(new Scene(root));
         stage.show();
-        displayGame();
-//        new SignUp().showAndWait();
+        displaySettings();
+//        new LogIn().showAndWait();
         root.requestFocus();
     }
     private static void displayStart(){
@@ -144,7 +141,7 @@ public class GUI extends Application {
         HBox title = getTitle(74, root.getHeight()*0.1);
 
         Button start = makeButton("Start");
-        Button options = makeButton("Options");
+        Button options = makeButton("Settings");
         Button exit = makeButton("Exit Game");
 
         root.getChildren().clear();
@@ -168,7 +165,7 @@ public class GUI extends Application {
             System.out.println(text +" button was pressed!");
             if(text.equals("Start"))
                 displayGameSelection();
-            else if(text.equals("Options"))
+            else if(text.equals("Settings"))
                 displayPopupMessage("Under Development", "Option Button is under development");
             else {
                 Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
@@ -338,12 +335,6 @@ public class GUI extends Application {
 //        }
         Toss();
     }
-    static void mark(int row, int col) {
-        if(getPlayer()==1)
-            markX2(row, col, 1);
-        else
-            markO2(row, col);
-    }
     public static void Toss(){
         String text = "Select your side for the toss";
         popUp(text,"Heads","Tails",1);
@@ -420,8 +411,8 @@ public class GUI extends Application {
         markLine(0,0,100,100,Color.RED,0,node);
         markLine(100,0,0,100,Color.RED,0.2,node);
     }
-    private void displayOptions(){
-        root.getChildren().clear();
+    private void displaySettings(){
+        root.getChildren().add(new Settings(stage));
 
     }
     private void displayRuleBook(){
@@ -442,15 +433,15 @@ public class GUI extends Application {
     }
     public static void showTurn(int row, int col, int[] superIndex){
         if(getPlayer()==1)
-            markX(row,col,superIndex);
+            gamePane.markX(row,col,superIndex);
         else
-            markO(row, col,superIndex);
+            gamePane.markO(row, col,superIndex);
     }
     public static void showTurn(int row, int col){
         if(getPlayer()==1)
-            markX(row,col);
+            gamePane.markX(row,col);
         else
-            markO(row, col);
+            gamePane.markO(row, col);
     }
     public static void markDraw(int[] superIndex){
         int x = (int)(superIndex[1]*cell)+4;
@@ -473,14 +464,15 @@ public class GUI extends Application {
         imageView.setFitHeight(height);
         imageView.setLayoutX(x);
         imageView.setLayoutY(y);
-        marks.getChildren().add(imageView);
+        gamePane.marks.getChildren().add(imageView);
         System.out.println("Marked on grid!");
     }
     public static void markLine(int value){
         int[][] lineIndex;
         if(gameType==3) {
             lineIndex = quxioWinValues.get(value);
-            markUp(0, lineIndex);
+            Quixo quixo = (Quixo)gamePane;
+            quixo.markUp(0, lineIndex);
         }
         else {
             lineIndex = dictionary.get(value);
@@ -489,24 +481,9 @@ public class GUI extends Application {
             int endX = (int) ((lineIndex[2][1] * cell) + (int) (cell * 0.5));
             int endY = (int) ((lineIndex[2][0] * cell) + (int) (cell * 0.5));
 
-            Timeline timeline = markLine(startX, startY, endX, endY, Color.LIGHTGOLDENRODYELLOW, 0, marks);
+            Timeline timeline = markLine(startX, startY, endX, endY, Color.LIGHTGOLDENRODYELLOW, 0, gamePane.marks);
             timeline.setOnFinished(end ->  endGame());
         }
-    }
-    private static void markUp(int num, int[][] lineIndex){
-        int[] index = lineIndex[num];
-        Rectangle box = (Rectangle) boxPane.lookup("#" + index[0] + index[1]);
-        Color color = getPlayer()==1?Color.LIGHTSKYBLUE:Color.HOTPINK;
-        FillTransition transition = fill((Color)box.getFill(), color, 0.2, box, 1, false);
-        num++;
-        int finalNum = num;
-        transition.setOnFinished(event -> {
-            if(finalNum <=4)
-                markUp(finalNum, lineIndex);
-            else{
-                Runner.endGame();
-            }
-        });
     }
     public static void markLine(int[] superIndex,int value){
         int[][] lineIndex = dictionary.get(value);
@@ -515,17 +492,17 @@ public class GUI extends Application {
         int endX = (int) ((superIndex[1]*cell)+(lineIndex[2][1]*(cell/3))+(int)((cell/3)*0.5));
         int endY = (int) ((superIndex[0]*cell)+(lineIndex[2][0]*(cell/3))+(int)((cell/3)*0.5));
 
-        markLine(startX,startY,endX,endY,Color.LIGHTGOLDENRODYELLOW,0,marks);
+        markLine(startX,startY,endX,endY,Color.LIGHTGOLDENRODYELLOW,0,gamePane.marks);
 
         int x =(int) (superIndex[1]*cell)+4;
         int y =(int) (superIndex[0]*cell)+4;
         showMark(x,y,true);
         if(getPlayer()==1)
-            markX(superIndex[0],superIndex[1]);
+            gamePane.markX(superIndex[0],superIndex[1]);
         else
-            markO(superIndex[0],superIndex[1]);
+            gamePane.markO(superIndex[0],superIndex[1]);
     }
-    private static Timeline markLine(int startX, int startY, int endX, int endY, Color color, double delay,Group node){
+    static Timeline markLine(int startX, int startY, int endX, int endY, Color color, double delay, Group node){
         Line line = new Line(startX, startY,startX, startY);
         line.setStrokeWidth(0);
         line.setStroke(color);
@@ -558,159 +535,14 @@ public class GUI extends Application {
         timeline.play();
         return timeline;
     }
-    private static void markX(int row, int col, int[] superIndex){
-        int startY = (int) ((int) (row*(cell/3))+(superIndex[0]*cell)+((cell/3)*0.2));
-        int startX = (int) ((int) (col*(cell/3))+(superIndex[1]*cell)+((cell/3)*0.2));
-        int endY = startY + (int)((cell/3)*0.6);
-        int endX = startX + (int)((cell/3)*0.6);
-        markLine(startX,startY,endX,endY,Color.RED,0,marks);
-        startX = endX;
-        endX = endX - (int)((cell/3)*0.6);
-        markLine(startX,startY,endX,endY,Color.RED,0.2,marks);
+    public static void slide(int row, int col, int rowI, int colI) {
+        Quixo quixo = (Quixo)gamePane;
+        quixo.slide(row, col, rowI, colI);
     }
-    private static void markX(int row, int col){
-        int startY = (int)((row*cell)+(cell*0.2));
-        int startX = (int)((col*cell)+(cell*0.2));
-        int endY = startY + (int)(cell*0.6);
-        int endX = startX + (int)(cell*0.6);
-        markLine(startX,startY,endX,endY,Color.RED,0,marks);
-        startX = endX;
-        endX = endX - (int)(cell*0.6);
-        markLine(startX,startY,endX,endY,Color.RED,0.2,marks);
-    }
-    private static void markO(int row, int col){
-        double y = (row*cell)+(cell*0.5);
-        double x = (col*cell)+(cell*0.5);
-        markO(x,y,cell*0.6,marks);
-    }
-    private static void markO(int row, int col, int[] superIndex){
-        double y =  (row*(cell/3))+(superIndex[0]*cell)+((cell/3)*0.5);
-        double x =  (col*(cell/3))+(superIndex[1]*cell)+((cell/3)*0.5);
-        markO(x,y,((cell/3)*0.6),marks);
-    }
-    static void markO(double x, double y, double diameter, Group node){
-        Circle circle = new Circle(x,y,0);
-        circle.setFill(Color.BLUE);
-        Circle inner = new Circle(x,y,0);
-        inner.setFill(Color.WHITE);
 
-
-        Timeline timeline = new Timeline();
-        timeline.setCycleCount(1);
-        KeyValue keyValueRadius = new KeyValue(circle.radiusProperty(), (diameter*0.5));
-        KeyFrame keyFrame = new KeyFrame(Duration.seconds(0.25), keyValueRadius);
-        timeline.getKeyFrames().add(keyFrame);
-        timeline.play();
-
-        Timeline innerTimeLine = new Timeline();
-        innerTimeLine.setCycleCount(1);
-        KeyValue keyValueRadiusInner = new KeyValue(inner.radiusProperty(), (diameter*0.38));
-        KeyFrame keyFrameInner = new KeyFrame(Duration.seconds(0.25), keyValueRadiusInner);
-        innerTimeLine.getKeyFrames().add(keyFrameInner);
-        innerTimeLine.play();
-
-        circle.setMouseTransparent(true);
-        inner.setMouseTransparent(true);
-        node.getChildren().addAll(circle,inner);
-    }
-    private static void markX2(int row, int col, int step){
-        Rectangle box = (Rectangle) boxPane.lookup("#"+row+col);
-//        System.out.println("\nstartX: -------->" + startX.getValue() + "\nstartY: -------->" + startY.getValue() +"\nendX: -------->" + endX.getValue() + "\nendY: -------->" + endY.getValue());
-        double delay = 0;
-        if(step == 2) {
-            delay = 0.2;
-        }
-        else
-            markX2(row, col, 2);
-        Line line = new Line();
-        line.setStrokeWidth(20);
-        line.setStroke(Color.RED);
-        line.setStrokeLineCap(StrokeLineCap.ROUND);
-        line.setMouseTransparent(true);
-        line.scaleXProperty().bind(box.scaleXProperty());
-        line.scaleYProperty().bind(box.scaleYProperty());
-        marks.getChildren().add(line);
-        Timeline timeline = new Timeline();
-        KeyFrame startFrame, endFrame;
-        if(step == 2) {
-            startFrame = new KeyFrame(Duration.seconds(delay),
-                    new KeyValue(line.endXProperty(), box.getLayoutX()+(box.getWidth()*0.8)),
-                    new KeyValue(line.endYProperty(), box.getLayoutY()+(box.getHeight()*0.2)));
-            endFrame = new KeyFrame(Duration.seconds(delay+0.3),
-                    new KeyValue(line.endXProperty(), box.getLayoutX()+(box.getWidth()*0.2)),
-                    new KeyValue(line.endYProperty(), box.getLayoutY()+(box.getHeight()*0.8)));
-        }
-        else {
-            startFrame = new KeyFrame(Duration.seconds(delay),
-                    new KeyValue(line.endXProperty(), box.getLayoutX()+(box.getWidth()*0.2)),
-                    new KeyValue(line.endYProperty(), box.getLayoutY()+(box.getHeight()*0.2)));
-            endFrame = new KeyFrame(Duration.seconds(delay+0.3),
-                    new KeyValue(line.endXProperty(), box.getLayoutX()+(box.getWidth()*0.6)),
-                    new KeyValue(line.endYProperty(), box.getLayoutY()+(box.getHeight()*0.8)));
-        }
-
-        timeline.getKeyFrames().addAll(startFrame, endFrame);
-//        timeline.play();
-//        timeline.setOnFinished(event -> {
-            if(step == 2) {
-                line.startXProperty().bind(box.translateXProperty().add(box.widthProperty().multiply(0.8)));
-                line.endXProperty().bind(box.translateXProperty().add(box.widthProperty().multiply(0.2)));
-            }
-            else {
-                line.startXProperty().bind(box.translateXProperty().add(box.widthProperty().multiply(0.2)));
-                line.endXProperty().bind(box.translateXProperty().add(box.widthProperty().multiply(0.8)));
-            }
-            line.startYProperty().bind(box.translateYProperty().add(box.heightProperty().multiply(0.2)));
-            line.endYProperty().bind(box.translateYProperty().add(box.heightProperty().multiply(0.8)));
-//        });
-    }
-    private static void markO2(int row, int col){
-        Rectangle box = (Rectangle) boxPane.lookup("#"+row+col);
-        Circle circle = new Circle(0);
-        circle.setFill(Color.BLUE);
-        Circle inner = new Circle(0);
-        inner.setFill(Color.WHITE);
-
-
-        Timeline timeline = new Timeline();
-        timeline.setCycleCount(1);
-        KeyValue keyValueRadius = new KeyValue(circle.radiusProperty(), (box.getWidth()*0.4));
-        KeyFrame keyFrame = new KeyFrame(Duration.seconds(0.25), keyValueRadius);
-        timeline.getKeyFrames().add(keyFrame);
-        timeline.play();
-
-        Timeline innerTimeLine = new Timeline();
-        innerTimeLine.setCycleCount(1);
-        KeyValue keyValueRadiusInner = new KeyValue(inner.radiusProperty(), (box.getWidth()*0.3));
-        KeyFrame keyFrameInner = new KeyFrame(Duration.seconds(0.25), keyValueRadiusInner);
-        innerTimeLine.getKeyFrames().add(keyFrameInner);
-        innerTimeLine.play();
-
-//        timeline.setOnFinished(event -> {
-//            circle.radiusProperty().bind(box.widthProperty().multiply(0.4));
-            circle.centerXProperty().bind(box.translateXProperty().add(box.widthProperty().multiply(0.5)));
-            circle.centerYProperty().bind(box.translateYProperty().add(box.heightProperty().multiply(0.5)));
-
-//            inner.radiusProperty().bind(box.widthProperty().multiply(0.3));
-            inner.centerXProperty().bind(box.translateXProperty().add(box.widthProperty().multiply(0.5)));
-            inner.centerYProperty().bind(box.translateYProperty().add(box.heightProperty().multiply(0.5)));
-//        });
-
-        circle.scaleXProperty().bind(box.scaleXProperty());
-        circle.scaleYProperty().bind(box.scaleYProperty());
-        circle.setMouseTransparent(true);
-        inner.scaleXProperty().bind(box.scaleXProperty());
-        inner.scaleYProperty().bind(box.scaleYProperty());
-        inner.fillProperty().bind(box.fillProperty());
-        inner.setMouseTransparent(true);
-        marks.getChildren().addAll(circle,inner);
-    }
-    public static void clearMarks(){
-        marks.getChildren().clear();
-    }
     public static void clearGame(){
-        clearMarks();
-        marks = null;
+        gamePane.clearMarks();
+        gamePane.marks = null;
         gamePane = null;
         displayMainMenu();
     }

@@ -63,6 +63,7 @@ final public class GuiUtility {
 
 
         stage.setScene(new Scene(root));
+//        showOpenDialog(stage);
         stage.showAndWait();
         return choice.get();
     }
@@ -212,8 +213,6 @@ final public class GuiUtility {
         background.setBackground(new Background(new BackgroundFill( Color.color(0,0,0,0.8), CornerRadii.EMPTY, Insets.EMPTY)));
         Rectangle box = makeRectangle(0.4,0.2);
         popUp.getChildren().add(box);
-
-
         background.setOnMouseClicked(click -> {
             blink(box, 2);
             shake(popUp);
