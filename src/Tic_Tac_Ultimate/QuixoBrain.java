@@ -1,7 +1,7 @@
 package Tic_Tac_Ultimate;
 
 public class QuixoBrain {
-    public static int[][] compTurn(QuixoBoard board, String difficulty) {
+    public static int[][] compTurn(QuixoController board, String difficulty) {
         return switch (difficulty) {
             case "Easy" -> easy(board.board);
             case "Medium" -> med(board.board);
@@ -53,47 +53,73 @@ public class QuixoBrain {
     private static int[][] hard(int[][] board){
         return easy(board);
     }
-    private static int[][] extreme(QuixoBoard board){
-//        QuixoController game = new QuixoController(board.board);
-        int[] draw, insert;
-        int row, column;
-        row =  column = -1;
+    private static int[][] extreme(QuixoController controller){
+        int[] draw = new int[2], insert = new int[2];
         int bestScore = 0;
         for(int i = 0; i < 5; i++){
             for (int j = 0; j < 5; j++){
                 if(i==0 || i==4 || j==0 || j==4){
-                    if(board.board[i][j] != 1) {
-                        int temp = board.board[i][j];
-                        if(0!=i){
-
-                            int score = bestMove(false, board);
-                            board.board[i][j] = temp;
+                    if(controller.board[i][j] != 1) {
+                        if(i!=0){
+                            controller.markTurn(new int[] {i,j},new int[] {0,j});
+                            int score = bestMove(false, controller);
+                            controller.markTurn(new int[] {0,j},new int[] {i,j});
                             if (score > bestScore) {
                                 bestScore = score;
-
+                                draw = new int[] {i,j};
+                                insert = new int[] {0,j};
                             }
-
+                        }
+                        if(i!=4){
+                            controller.markTurn(new int[] {i,j},new int[] {4,j});
+                            int score = bestMove(false, controller);
+                            controller.markTurn(new int[] {4,j},new int[] {i,j});
+                            if (score > bestScore) {
+                                bestScore = score;
+                                draw = new int[] {i,j};
+                                insert = new int[] {4,j};
+                            }
+                        }
+                        if(j!=0){
+                            controller.markTurn(new int[] {i,j},new int[] {i,0});
+                            int score = bestMove(false, controller);
+                            controller.markTurn(new int[] {i,0},new int[] {i,j});
+                            if (score > bestScore) {
+                                bestScore = score;
+                                draw = new int[] {i,j};
+                                insert = new int[] {i,0};
+                            }
+                        }
+                        if(j!=4){
+                            controller.markTurn(new int[] {i,j},new int[] {i,4});
+                            int score = bestMove(false, controller);
+                            controller.markTurn(new int[] {i,4},new int[] {i,j});
+                            if (score > bestScore) {
+                                bestScore = score;
+                                draw = new int[] {i,j};
+                                insert = new int[] {i,4};
+                            }
                         }
                     }
                 }
             }
         }
-        return new int[][]{{row, column},{}};
+        return new int[][]{draw,insert};
     }
-    private static int bestMove(boolean userTurn, QuixoBoard board){
-        if(board.check(2) == 1) return -1;
-        if(board.check(2) == 2) return 1;
+    private static int bestMove(boolean userTurn, QuixoController controller){
+        if(controller.check(2) == 1) return -1;
+        if(controller.check(2) == 2) return 1;
 
         if(userTurn){
             int bestScore = 0;
             for(int i=0; i<5;i++){
                 for(int j=0; j<5; j++){
                     if(i==0 || i==4){
-                        if(board.board[i][j] != 1) {
-                            int temp = board.board[i][j];
-                            board.board[i][j] = 2;
-                            int score = bestMove(false, board);
-                            board.board[i][j] = temp;
+                        if(controller.board[i][j] != 1) {
+                            int temp = controller.board[i][j];
+                            controller.board[i][j] = 2;
+                            int score = bestMove(false, controller);
+                            controller.board[i][j] = temp;
                             if (score > bestScore) {
                                 bestScore = score;
                             }
@@ -107,10 +133,10 @@ public class QuixoBrain {
             int bestScore = 1000;
             for (int row = 0; row < 3; row++) {
                 for (int col = 0; col < 3; col++) {
-                    if (board.board[row][col] == 0) {
-                        board.board[row][col] = 1;
-                        int Score = bestMove(true, board);
-                        board.board[row][col] = 0;
+                    if (controller.board[row][col] == 0) {
+                        controller.board[row][col] = 1;
+                        int Score = bestMove(true, controller);
+                        controller.board[row][col] = 0;
                         if(Score < bestScore){
                             bestScore = Score;
                         }

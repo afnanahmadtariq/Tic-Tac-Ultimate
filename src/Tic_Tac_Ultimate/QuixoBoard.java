@@ -26,6 +26,7 @@ public class QuixoBoard {
             winValue = 0;
         }
         public QuixoBoard(QuixoBoard quixoBoard){
+            board = new int[5][5];
             for(int i=0; i<5; i++){
                 for(int j=0; j<5; j++){
                     this.board[i][j] = quixoBoard.board[i][j];

@@ -1,15 +1,19 @@
 package Tic_Tac_Ultimate;
 
+import java.util.Stack;
+
 public class UltimateController extends UltimateBoard {
     private final boolean singlePlayer;
     private int player;
     public String difficulty;
-    private int[] superIndex;
+    private int[] uIndex;
+    private Stack<int[][]> stack;
     UltimateController(boolean singlePlayer, String difficulty){
         super();
         this.singlePlayer = singlePlayer;
         this.difficulty = difficulty;
-        superIndex = new int[] {-1, -1};
+        uIndex = new int[] {-1, -1};
+        stack = new Stack<>();
     }
     public void setPlayer(int player){
         this.player = player;
@@ -20,79 +24,87 @@ public class UltimateController extends UltimateBoard {
         return player;
     }
     public int[] getSuperIndex(){
-        return superIndex;
+        return uIndex;
     }
     public boolean isSinglePlayer(){
         return singlePlayer;
     }
     private void cpuTurn(){
         if(player==2 && singlePlayer){
-            System.out.println("Super index BEFORE cpu turn_ row:" + this.superIndex[0] + " col: " + this.superIndex[1]);
-            int[][] compute = UltimateBrain.compTurn(superIndex,super.superTicTacToeBoard, difficulty);
+            System.out.println("Super index BEFORE cpu turn_ row:" + this.uIndex[0] + " col: " + this.uIndex[1]);
+            int[][] compute = UltimateBrain.compTurn(uIndex,uBoard, difficulty);
             if(!doTurn(compute[0],compute[1]))
                 System.out.println("BARi nhi hui cpu se");
-            System.out.println("Super index AFTER cpu turn_ row:" + this.superIndex[0] + " col: " + this.superIndex[1]);
+            System.out.println("Super index AFTER cpu turn_ row:" + this.uIndex[0] + " col: " + this.uIndex[1]);
         }
     }
-    public boolean doTurn(int[] index, int[] superIndex){
-        System.out.println("Super index BEFORE player: " + player +" turn_ row:" + this.superIndex[0] + " col: " + this.superIndex[1]);
-        if(markTurn(index,superIndex)){
+    public boolean doTurn(int[] index, int[] uIndex){
+        System.out.println("Super index BEFORE player: " + player +" turn_ row:" + this.uIndex[0] + " col: " + this.uIndex[1]);
+        if(markTurn(index,uIndex)){
             System.out.println("registered!!...............");
-            Runner.showTurn(index, superIndex);
-            switch(super.check(superIndex)){
-                case 1 -> end(true,superIndex);
-                case 0 -> end(false,superIndex);
+            Runner.showTurn(index, uIndex);
+            switch(check(uIndex)){
+                case 1 -> end(true,uIndex);
+                case 0 -> end(false,uIndex);
             }
-            boolean end = switch(super.check()){
+            boolean end = switch(check()){
                 case 1 -> end(true);
                 case 0 -> end(false);
                 default -> false;
             };
-            if(super.superTicTacToeBoard[index[0]][index[1]].game == -1)
-                this.superIndex = index;
+            if(uBoard[index[0]][index[1]].game == -1)
+                this.uIndex = index;
             else
-                this.superIndex = new int[] {-1, -1};
+                this.uIndex = new int[] {-1, -1};
             if(!end){
                 player = (player%2)+1;
                 GUI.updateTurn();
                 System.out.println("Player Changed!");
                 cpuTurn();
             }
-            System.out.println("Super index FOR player: " + player +" turn_ row:" + this.superIndex[0] + " col: " + this.superIndex[1]);
+            System.out.println("Super index FOR player: " + player +" turn_ row:" + this.uIndex[0] + " col: " + this.uIndex[1]);
             return true;
         }
         else
             return false;
     }
-    private boolean checkSuperIndex(int[] superIndex){
-        if(super.superTicTacToeBoard[superIndex[0]][superIndex[1]].game != -1)
-            return false;
-        else if(this.superIndex[0] == -1 && this.superIndex[1] == -1)
-            return true;
-        else return this.superIndex[0] == superIndex[0] && this.superIndex[1] == superIndex[1];
+    public void undoTurn(){
+        int[] index = stack.peek()[0];
+        int[] uIndex = stack.pop()[1];
+        uBoard[uIndex[0]][uIndex[1]].board[index[0]][index[1]] = 0;
+        player = (player%2)+1;
+        //GUI mai show krna
     }
-    private boolean markTurn(int[] index, int[] superIndex){
-        if(!checkSuperIndex(superIndex))
+    private boolean checkSuperIndex(int[] uIndex){
+        if(uBoard[uIndex[0]][uIndex[1]].game != -1)
             return false;
-        else if(super.superTicTacToeBoard[superIndex[0]][superIndex[1]].board[index[0]][index[1]] != 0)
+        else if(this.uIndex[0] == -1 && this.uIndex[1] == -1)
+            return true;
+        else return this.uIndex[0] == uIndex[0] && this.uIndex[1] == uIndex[1];
+    }
+    private boolean markTurn(int[] index, int[] uIndex){
+        if(!checkSuperIndex(uIndex))
             return false;
-        super.superTicTacToeBoard[superIndex[0]][superIndex[1]].board[index[0]][index[1]] = player;
-        System.out.println("Player: " + player + " did at super index:__ x: "+ superIndex[0] + "y: " + superIndex[1] + "and at index----i: " + index[0] + "  j: " + index[1]);
+        else if(uBoard[uIndex[0]][uIndex[1]].board[index[0]][index[1]] != 0)
+            return false;
+        uBoard[uIndex[0]][uIndex[1]].board[index[0]][index[1]] = player;
+        stack.push(new int[][]{index, uIndex});
+        System.out.println("Player: " + player + " did at super index:__ x: "+ uIndex[0] + "y: " + uIndex[1] + "and at index----i: " + index[0] + "  j: " + index[1]);
         return true;
     }
-    private void end(boolean win, int[] superIndex){
+    private void end(boolean win, int[] uIndex){
         if(win)
-            super.superTicTacToeBoard[superIndex[0]][superIndex[1]].game = player;
+            uBoard[uIndex[0]][uIndex[1]].game = player;
         else
-            super.superTicTacToeBoard[superIndex[0]][superIndex[1]].game = 0;
-        Runner.endGame(superIndex, win, super.winValue);
+            uBoard[uIndex[0]][uIndex[1]].game = 0;
+        Runner.endGame(uIndex, win, winValue);
     }
     private boolean end(boolean win){
         if(win)
-            super.game = player;
+            game = player;
         else
-            super.game = 0;
-        Runner.endGame(win, super.winValue);
+            game = 0;
+        Runner.endGame(win, winValue);
         return true;
     }
 }

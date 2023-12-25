@@ -1,16 +1,19 @@
 package Tic_Tac_Ultimate;
 
 import java.util.Arrays;
+import java.util.Stack;
 
 public class TicTacToeController extends TicTacToeBoard {
     private final boolean SINGLE_PLAYER;
-    private int player;
     private final String difficulty;
+    private int player;
+    private Stack<int[]> stack;
     TicTacToeController(boolean singlePlayer, String difficulty){
         super();
         this.SINGLE_PLAYER = singlePlayer;
         this.difficulty = difficulty;
         player = 1;
+        stack = new Stack<>();
     }
     public void setPlayer(int player){
         this.player = player;
@@ -22,7 +25,7 @@ public class TicTacToeController extends TicTacToeBoard {
     }
     private void cpuTurn(){
         if(player==2 && SINGLE_PLAYER) {
-            int[] index = TicTacToeBrain.compTurn(super.board, difficulty);
+            int[] index = TicTacToeBrain.compTurn(board, difficulty);
             System.out.println("index of cpu: " + Arrays.toString(index));
             if(!doTurn(index))
                 System.out.println("BARi nhi hui cpu se");
@@ -32,7 +35,7 @@ public class TicTacToeController extends TicTacToeBoard {
         if(markTurn(index)){
             System.out.println("registered!!...............");
             Runner.showTurn(index);
-            boolean end = switch(super.check()){
+            boolean end = switch(check()){
                 case 1 -> end(true);
                 case 0 -> end(false);
                 default -> false;
@@ -48,21 +51,28 @@ public class TicTacToeController extends TicTacToeBoard {
         else
             return false;
     }
+    public void undoTurn(){
+        int[] index = stack.pop();
+        board[index[0]][index[1]] = 0;
+        player = (player%2)+1;
+        //GUI mai show krna
+    }
     private boolean markTurn(int[] index){
-        if(super.board[index[0]][index[1]] != 0)
+        if(board[index[0]][index[1]] != 0)
             return false;
-        super.board[index[0]][index[1]] = player;
+        board[index[0]][index[1]] = player;
+        stack.push(index);
         System.out.println("Player: " + player + " marked ---->i: " + index[0] + "  |  j: " + index[1]);
         return true;
     }
     private boolean end(boolean win){
         if(win) {
-            super.game = player;
+            game = player;
         }
         else {
-            super.game = 0;
+            game = 0;
         }
-        Runner.endGame(win, super.winValue);
+        Runner.endGame(win, winValue);
         return true;
     }
 }
