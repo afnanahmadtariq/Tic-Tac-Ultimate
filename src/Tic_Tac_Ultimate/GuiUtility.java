@@ -8,7 +8,9 @@ import javafx.geometry.Pos;
 import javafx.scene.Cursor;
 import javafx.scene.Node;
 import javafx.scene.Scene;
+import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
+import javafx.scene.control.ButtonType;
 import javafx.scene.control.TextField;
 import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
@@ -18,7 +20,6 @@ import javafx.scene.text.Font;
 import javafx.scene.text.FontWeight;
 import javafx.scene.text.Text;
 import javafx.scene.transform.Rotate;
-import javafx.stage.Modality;
 import javafx.stage.Stage;
 import javafx.stage.StageStyle;
 import javafx.util.Duration;
@@ -29,54 +30,6 @@ import static Tic_Tac_Ultimate.GUI.*;
 import static Tic_Tac_Ultimate.Runner.endGame;
 
 final public class GuiUtility {
-    public static int popUp(String text, String button1Text, String button2Text){
-        AtomicInteger choice = new AtomicInteger();
-        Stage stage = new Stage(StageStyle.UNDECORATED);
-        stage.setWidth(Math.max(text.length() * 10, 200));
-        stage.setHeight(Math.max((stage.getWidth()/16)*9, 150));
-        stage.setResizable(false);
-
-        VBox root = new VBox(new Text(text));
-        root.setBackground(new Background(new BackgroundFill(Color.AZURE, CornerRadii.EMPTY, Insets.EMPTY)));
-        root.setAlignment(Pos.CENTER);
-        root.setSpacing(Math.max((stage.getHeight()/4), 25));
-
-        Button button1 = new Button(button1Text);
-        button1.setPrefSize(75,20);
-        button1.setOnAction(event -> {
-            System.out.println("Button1 was pressed!");
-            choice.set(1);
-            stage.close();
-        });
-        Button button2 = new Button(button2Text);
-        button2.setPrefSize(75,20);
-        button2.setOnAction(event -> {
-            System.out.println("Button2 was pressed!");
-            choice.set(2);
-            stage.close();
-        });
-        HBox buttons = new HBox(button1,button2);
-        buttons.setAlignment(Pos.CENTER);
-        buttons.setSpacing(Math.max((stage.getHeight()/3), 30));
-        root.getChildren().add(buttons);
-
-
-
-        stage.setScene(new Scene(root));
-//        showOpenDialog(stage);
-        stage.showAndWait();
-        return choice.get();
-    }
-//    private static Button getButtons(){
-//        Button button2 = new Button(button2Text);
-//        button2.setPrefSize(70,20);
-//        button2.setOnAction(event -> {
-//            System.out.println("Button2 was pressed!");
-//            choice.set(2);
-//            stage.close();
-//        });
-//        return button2;
-//    }
     public static HBox getTitle(double fontSize, double tranlateY){
         Text ticTac = new Text("Tic tac");
         Text ultimate = new Text(" Ultimate ");
@@ -194,7 +147,7 @@ final public class GuiUtility {
         fill.setOnFinished(event -> box.setFill(current));
     }
     public static void blink(Pane pane, int count){
-        pane.setBackground(new Background(new BackgroundFill(Color.PALEGREEN, CornerRadii.EMPTY, Insets.EMPTY)));
+        pane.setBackground(new Background(new BackgroundFill(Color.ORANGE, CornerRadii.EMPTY, Insets.EMPTY)));
         Pane emptyPane = new Pane();
         TranslateTransition empty = new TranslateTransition(Duration.seconds(0.1), emptyPane);
         empty.play();
@@ -211,21 +164,42 @@ final public class GuiUtility {
         StackPane popUp = new StackPane();
         background.setCenter(popUp);
         background.setBackground(new Background(new BackgroundFill( Color.color(0,0,0,0.8), CornerRadii.EMPTY, Insets.EMPTY)));
-        Rectangle box = makeRectangle(0.4,0.2);
+        Rectangle box = makeRectangle(0.5,0.25);
         popUp.getChildren().add(box);
-        background.setOnMouseClicked(click -> {
-            blink(box, 2);
-            shake(popUp);
-        });
+
+        background.setOnMouseClicked(click -> root.getChildren().remove(background));
         root.getChildren().add(background);
-        VBox vBox = new VBox(new Text(text));
+        Text header = new Text(text);
+        header.setFont(Font.font("Franklin Gothic", FontWeight.BOLD, 20));
+        VBox vBox = new VBox(header);
         vBox.setAlignment(Pos.CENTER);
-        vBox.setSpacing(25);
+        vBox.setSpacing(30);
         popUp.getChildren().add(vBox);
 
-
         Button button1 = new Button(button1Text);
-        button1.setMinSize(80,20);
+        String style = "-fx-padding: 10 20; " +
+                "-fx-font-family: 'Franklin Gothic';" +
+                "-fx-font-weight: Bold;" +
+                "-fx-font-size: 25;";
+        if(button1Text.equals("Heads")){
+            button1.setStyle("-fx-text-fill: Orange;" + style);
+            button1.setOnMouseEntered(e-> button1.setStyle("-fx-text-fill: Orange; " +
+                    "-fx-border-radius: 50em; " +
+                    "-fx-border-color: Orange; " +
+                    "-fx-border-width: 4px;" + style));
+            button1.setOnMouseExited(e-> button1.setStyle("-fx-text-fill: Orange; " + style));
+        }
+        else{
+            button1.setStyle("-fx-text-fill: Green;" + style);
+            button1.setOnMouseEntered(e-> button1.setStyle("-fx-text-fill: Green; " +
+                    "-fx-border-radius: 50em; " +
+                    "-fx-border-color: Green; " +
+                    "-fx-border-width: 4px;" + style));
+            button1.setOnMouseExited(e-> button1.setStyle("-fx-text-fill: Green; " + style));
+        }
+        button1.setBackground(new Background(new BackgroundFill(Color.color(0,0,0,0), CornerRadii.EMPTY, Insets.EMPTY)));
+        button1.setTranslateY(0);
+        button1.setMinSize(100,20);
         button1.setOnAction(event -> {
             System.out.println("Button1 was pressed!");
             root.getChildren().remove(background);
@@ -233,9 +207,31 @@ final public class GuiUtility {
                 Toss(1);
             else if(method==2)
                 endGame(1);
+            else if(method==3)
+                stage.close();
         });
+
         Button button2 = new Button(button2Text);
-        button2.setMinSize(80,20);
+        if(button2Text.equals("Tails")){
+            button2.setStyle("-fx-text-fill: Orange;" + style);
+            button2.setOnMouseEntered(e-> button2.setStyle("-fx-text-fill: Orange; " +
+                    "-fx-border-radius: 50em; " +
+                    "-fx-border-color: Orange; " +
+                    "-fx-border-width: 4px;" + style));
+            button2.setOnMouseExited(e-> button2.setStyle("-fx-text-fill: Orange; " + style));
+        }
+        else{
+            button2.setStyle("-fx-text-fill: Red;" + style);
+            button2.setOnMouseEntered(e-> button2.setStyle("-fx-text-fill: Red; " +
+                    "-fx-border-radius: 50em; " +
+                    "-fx-border-color: Red; " +
+                    "-fx-border-width: 4px;" + style));
+            button2.setOnMouseExited(e-> button2.setStyle("-fx-text-fill: Red; " + style));
+        }
+        button2.setBackground(new Background(new BackgroundFill(Color.color(0,0,0,0), CornerRadii.EMPTY, Insets.EMPTY)));
+        button2.setTranslateY(0);
+        button2.setMinSize(100,20);
+//        button2.setStyle("-fx-font-size: 20");
         button2.setOnAction(event -> {
             System.out.println("Button2 was pressed!");
             root.getChildren().remove(background);
@@ -246,7 +242,7 @@ final public class GuiUtility {
         });
         HBox buttons = new HBox(button1,button2);
         buttons.setAlignment(Pos.BASELINE_CENTER);
-        buttons.setSpacing(25);
+        buttons.setSpacing(30);
         vBox.getChildren().add(buttons);
 
     }
