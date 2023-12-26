@@ -161,4 +161,5 @@ public abstract class GamePane extends BorderPane {
     public void clearMarks(){
         marks.getChildren().clear();
     }
+//    abstract void loadGame();
 }

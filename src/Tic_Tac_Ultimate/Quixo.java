@@ -291,7 +291,7 @@ public class Quixo extends GamePane {
             }
         }
     }
-    public void mark(int row, int col) {
+    private void mark(int row, int col) {
         if(getPlayer()==1)
             markX(row, col, 1);
         else
@@ -348,6 +348,7 @@ public class Quixo extends GamePane {
         line.endYProperty().bind(box.translateYProperty().add(box.heightProperty().multiply(0.8)));
 //        });
     }
+    @Override
     public void markO(int row, int col){
         Rectangle box = (Rectangle) boxPane.lookup("#"+row+col);
         Circle circle = new Circle(0);
@@ -404,4 +405,8 @@ public class Quixo extends GamePane {
             }
         });
     }
+//    @Override
+//    public void loadGame(){
+//
+//    }
 }

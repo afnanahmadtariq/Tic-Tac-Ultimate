@@ -1,9 +1,11 @@
 package Tic_Tac_Ultimate;
 
-import java.util.Arrays;
-import java.util.Stack;
+import java.io.Serializable;
+import java.util.*;
 
-public class TicTacToeController extends TicTacToeBoard {
+import static Tic_Tac_Ultimate.Runner.showTurn;
+
+public class TicTacToeController extends TicTacToeBoard implements Serializable {
     private final boolean SINGLE_PLAYER;
     private final String difficulty;
     private int player;
@@ -14,6 +16,14 @@ public class TicTacToeController extends TicTacToeBoard {
         this.difficulty = difficulty;
         player = 1;
         stack = new Stack<>();
+    }
+    TicTacToeController(TicTacToeController controller){
+        super();
+        this.SINGLE_PLAYER = controller.SINGLE_PLAYER;
+        this.difficulty = controller.difficulty;
+        player = controller.getPlayer();
+        stack = controller.stack;
+        loadGame();
     }
     public void setPlayer(int player){
         this.player = player;
@@ -34,7 +44,7 @@ public class TicTacToeController extends TicTacToeBoard {
     public boolean doTurn(int[] index){
         if(markTurn(index)){
             System.out.println("registered!!...............");
-            Runner.showTurn(index);
+            showTurn(index);
             boolean end = switch(check()){
                 case 1 -> end(true);
                 case 0 -> end(false);
@@ -74,5 +84,15 @@ public class TicTacToeController extends TicTacToeBoard {
         }
         Runner.endGame(win, winValue);
         return true;
+    }
+    public void loadGame(){
+        ArrayList<int[]> load = (ArrayList<int[]>) stack.stream().toList();
+        Collections.reverse(load);
+        if(load.size()%2==1)
+            player = (player%2)+1;
+        for(int[] index: load){
+            showTurn(index);
+            player = (player%2)+1;
+        }
     }
 }

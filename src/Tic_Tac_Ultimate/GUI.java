@@ -5,6 +5,7 @@ import javafx.application.Application;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Group;
+import javafx.scene.Node;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.image.Image;
@@ -73,17 +74,27 @@ public class GUI extends Application {
                 }
             }
         });
-        root.addEventHandler(KeyEvent.KEY_PRESSED,event->{
-            if(event.getCode()== KeyCode.F11)
+        root.setOnKeyPressed(event->{
+            if(event.getCode()== KeyCode.ESCAPE) {
+                Node node = root.getChildren().getLast();
+                System.out.println(node);
+//                if(node == gamePane)
+////                    displayGameMenu();
+//                else if (!(node instanceof Group)){
+//                    System.out.println("I escaped");
+//                    root.getChildren().removeLast();
+//                }
+            }
+            else if(event.getCode()== KeyCode.F11)
                 stage.setFullScreen(!stage.isFullScreen());
         });
 //        Scene scene = new Scene(root);
 //        stage.setScene(scene);
         stage.setScene(new Scene(root));
         stage.show();
-        displaySettings();
+        displayMainMenu();
 //        new LogIn().showAndWait();
-        root.requestFocus();
+//        root.requestFocus();
     }
     private static void displayStart(){
         Text ticTac = new Text("Tic tac");
@@ -140,47 +151,53 @@ public class GUI extends Application {
     private static void displayMainMenu() {
         HBox title = getTitle(74, root.getHeight()*0.1);
 
-        Button start = makeButton("Start");
+        Button start = makeButton("New Game");
+        Button loadGame = makeButton("Load Game");
         Button options = makeButton("Settings");
         Button exit = makeButton("Exit Game");
 
         root.getChildren().clear();
-        VBox menuPanel = new VBox(title,start,options,exit);
+        VBox menuPanel = new VBox(title, start, loadGame, options, exit);
         menuPanel.setAlignment(Pos.TOP_CENTER);
         menuPanel.setSpacing(25);
         root.getChildren().add(menuPanel);
     }
     private static Button makeButton(String text) {
         Button button = new Button(text);
-        button.setTranslateY(root.getHeight()*0.25);
+        button.setTranslateY(root.getHeight()*0.2);
         button.setMinSize(200,80);
         String style = "-fx-padding: 10 20; " +
                 "-fx-font-family: 'Franklin Gothic';" +
-                "-fx-font-size: 35;" +
+                "-fx-font-weight: Bold;" +
+                "-fx-font-size: 45;" +
                 "-fx-border-radius: 5;";
-        button.setStyle( "-fx-background-color: Black; " + "-fx-text-fill: White; " + style );
-        button.setOnMouseEntered(e -> button.setStyle( "-fx-background-color: Red; " + "-fx-text-fill: White; " + style));
-        button.setOnMouseExited(e -> button.setStyle("-fx-background-color: Black; " + "-fx-text-fill: White; " + style ));
+        button.setStyle("-fx-text-fill: Black; " + style);
+        button.setBackground(new Background(new BackgroundFill(Color.color(0,0,0,0), CornerRadii.EMPTY, Insets.EMPTY)));
+        button.setOnMouseEntered(e -> {
+            button.setStyle( "-fx-text-fill: Red; " +
+                    "-fx-wrap-text: true;" + style);
+            button.setText("> " + text + " <");
+        });
+        button.setOnMouseExited(e -> {
+            button.setStyle("-fx-text-fill: Black; " + style );
+            button.setText(text);
+        });
         button.setOnAction(event -> {
             System.out.println(text +" button was pressed!");
-            if(text.equals("Start"))
-                displayGameSelection();
-            else if(text.equals("Settings"))
-                displayPopupMessage("Under Development", "Option Button is under development");
-            else {
-                Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
-                alert.setTitle("Exit Game");
-                alert.setContentText("Are you sure you want to exit?");
-
-                ButtonType exitButton = new ButtonType("Exit");
-                ButtonType cancelButton = new ButtonType("Cancel");
-                alert.getButtonTypes().setAll(exitButton, cancelButton);
-
-                alert.showAndWait().ifPresent(response -> {
-                    if (response == exitButton) {
-                        stage.close();
-                    }
-                });
+            switch (text) {
+                case "New Game" -> displayGameSelection();
+                case "Load Game" -> System.out.println("Load Game Button was Pressed");
+//                case "Settings" -> displaySettings("Game Settings");
+                case "Exit Game" -> {
+                    Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
+                    alert.setTitle("Exit Game");
+                    alert.setContentText("Are you sure you want to exit?");
+                    alert.getButtonTypes().setAll(new ButtonType("Exit"), new ButtonType("Cancel"));
+                    alert.showAndWait().ifPresent(response -> {
+                        if (response.getText().equals("Exit"))
+                            stage.close();
+                    });
+                }
             }
         });
         return button;

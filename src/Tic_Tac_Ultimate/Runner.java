@@ -53,8 +53,10 @@ public class Runner {
         return false;
     }
     public static boolean turn(int i, int j,int sI, int sJ){
-        if(i>=0 && j>=0 && i<=2 && j<=2 && sI>=0 && sJ>=0 && sI<=2 && sJ<=2)
-            return superTicTacToe.doTurn(new int[] {i, j}, new int[] {sI, sJ});
+        if(gameType==3)
+            return quxio.doTurn(new int[]{i, j}, new int[]{sI, sJ});
+        else if (i >= 0 && j >= 0 && i <= 2 && j <= 2 && sI >= 0 && sJ >= 0 && sI <= 2 && sJ <= 2)
+            return superTicTacToe.doTurn(new int[]{i, j}, new int[]{sI, sJ});
         return false;
     }
     public static int checkDraw(int row, int col){
