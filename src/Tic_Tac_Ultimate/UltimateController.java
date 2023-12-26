@@ -1,8 +1,9 @@
 package Tic_Tac_Ultimate;
 
+import java.io.Serializable;
 import java.util.Stack;
 
-public class UltimateController extends UltimateBoard {
+public class UltimateController extends UltimateBoard implements Serializable {
     private final boolean singlePlayer;
     private int player;
     public String difficulty;

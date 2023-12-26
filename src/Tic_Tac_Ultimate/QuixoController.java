@@ -1,9 +1,10 @@
 package Tic_Tac_Ultimate;
 
+import java.io.Serializable;
 import java.util.Arrays;
 import java.util.Stack;
 
-public class QuixoController extends QuixoBoard  implements Cloneable{
+public class QuixoController extends QuixoBoard implements Serializable {
     private final boolean SINGLE_PLAYER;
     private int player;
     private final String difficulty;
