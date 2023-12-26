@@ -13,6 +13,10 @@ import javafx.scene.shape.Rectangle;
 import javafx.scene.shape.StrokeLineCap;
 import javafx.util.Duration;
 
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Stack;
+
 import static Tic_Tac_Ultimate.GUI.*;
 import static Tic_Tac_Ultimate.GuiUtility.*;
 import static Tic_Tac_Ultimate.Runner.*;
@@ -21,6 +25,7 @@ public class Quixo extends GamePane {
     private Pane boxPane;
     private static Group arrowGroup;
     private static boolean listen;
+    private static Stack<ArrayList<Node>> stack;
     Quixo(){
         listen = true;
         super.initialize();
@@ -175,6 +180,7 @@ public class Quixo extends GamePane {
         return pane;
     }
     public void slide(int row, int col, int rowI, int colI){
+        ArrayList<Node> list = new ArrayList<>();
         int length = 0;
         if(row == rowI){//row ke liye
             int value = col;
@@ -405,8 +411,8 @@ public class Quixo extends GamePane {
             }
         });
     }
-//    @Override
-//    public void loadGame(){
-//
-//    }
+    @Override
+    public void loadGame(){
+
+    }
 }

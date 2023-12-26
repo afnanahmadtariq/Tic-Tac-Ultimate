@@ -7,6 +7,7 @@ import javafx.application.Platform;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Group;
+import javafx.scene.Node;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.StackPane;
@@ -20,6 +21,8 @@ import javafx.scene.text.Text;
 import javafx.util.Duration;
 
 import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.Stack;
 
 import static Tic_Tac_Ultimate.GUI.*;
 import static Tic_Tac_Ultimate.GuiUtility.makeRectangle;
@@ -27,7 +30,7 @@ import static Tic_Tac_Ultimate.Runner.gameType;
 import static Tic_Tac_Ultimate.Runner.singlePlayer;
 
 public abstract class GamePane extends BorderPane {
-
+    private static Stack<ArrayList<Node>> stack;
     public Group marks;
     public void initialize(){
         setPadding(new Insets(10));
@@ -161,5 +164,5 @@ public abstract class GamePane extends BorderPane {
     public void clearMarks(){
         marks.getChildren().clear();
     }
-//    abstract void loadGame();
+    abstract void loadGame();
 }

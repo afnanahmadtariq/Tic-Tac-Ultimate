@@ -2,10 +2,13 @@ package Tic_Tac_Ultimate;
 
 import javafx.application.Platform;
 import javafx.scene.Group;
+import javafx.scene.Node;
 import javafx.scene.layout.Pane;
 import javafx.scene.shape.Line;
 
 import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.Stack;
 
 import static Tic_Tac_Ultimate.GUI.*;
 import static Tic_Tac_Ultimate.GuiUtility.*;
@@ -39,5 +42,9 @@ public class TicTacToe extends GamePane {
             marks = new Group();
             board.getChildren().add(marks);
         });
+    }
+    @Override
+    public void loadGame(){
+
     }
 }
