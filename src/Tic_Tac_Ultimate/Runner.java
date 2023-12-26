@@ -8,9 +8,9 @@ public class Runner {
     private static QuxioController quxio;
     private static UltimateController superTicTacToe;
     private static Controller ticTacToe;
-    public static int gameType = 3;
-    public static boolean singlePlayer = false;
-    public static String difficulty = "Easy";
+    public static int gameType = 1;
+    public static boolean singlePlayer = true;
+    public static String difficulty = "Extreme";
     public static void main(String[] args) {
         startGame();
         GUI.initialize(args);

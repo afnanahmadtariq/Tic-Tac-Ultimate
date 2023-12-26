@@ -65,7 +65,7 @@ public class Brain {
             for (int j = 0; j < 3; j++){
                 if(board[i][j] == 0){
                     board[i][j] = 2;
-                    int score = bestMove(false, board);
+                    int score = bestMove(false, board, Integer.MIN_VALUE, Integer.MAX_VALUE);
                     board[i][j] = 0;
                     if(score > bestScore){
                         bestScore = score;
@@ -87,41 +87,43 @@ public class Brain {
         }
         return false;
     }
-    private static int bestMove(boolean turn, int[][] board){
-
-        if(checkMove(board) == -1) return -10;
-        if(checkMove(board) == 1) return 10;
-        if(!available(board)) return 0;
-
-        if(turn){
-            int bestScore = -1000;
+    private static int bestMove(boolean maximizingPlayer, int[][] board, int alpha, int beta) {
+        int result = checkMove(board);
+        if (result != 0) {
+            return result;
+        }
+        if (!available(board)) {
+            return 0;
+        }
+        if (maximizingPlayer) {
+            int bestScore = Integer.MIN_VALUE;
             for (int row = 0; row < 3; row++) {
                 for (int col = 0; col < 3; col++) {
                     if (board[row][col] == 0) {
                         board[row][col] = 2;
-//                        BrainThread t = new BrainThread();
-//                        t.turn = false;
-//                        t.board = board;
-//                        t.start();
-                        int Score = bestMove(false, board);
+                        int score = bestMove(false, board, alpha, beta);
                         board[row][col] = 0;
-                        if(Score > bestScore){
-                            bestScore = Score;
+                        bestScore = Math.max(bestScore, score);
+                        alpha = Math.max(alpha, bestScore);
+                        if (beta <= alpha) {
+                            break;
                         }
                     }
                 }
             }
             return bestScore;
         } else {
-            int bestScore = 1000;
+            int bestScore = Integer.MAX_VALUE;
             for (int row = 0; row < 3; row++) {
                 for (int col = 0; col < 3; col++) {
                     if (board[row][col] == 0) {
                         board[row][col] = 1;
-                        int Score = bestMove(true, board);
+                        int score = bestMove(true, board, alpha, beta);
                         board[row][col] = 0;
-                        if(Score < bestScore){
-                            bestScore = Score;
+                        bestScore = Math.min(bestScore, score);
+                        beta = Math.min(beta, bestScore);
+                        if (beta <= alpha) {
+                            break;
                         }
                     }
                 }

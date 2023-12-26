@@ -25,7 +25,7 @@ public class Quxio extends GamePane implements Serializable {
     @Override
     public void makeBoard(Pane board){
         Rectangle backRectangle = makeRectangle(0.8,0.8);
-        backRectangle.setFill(foreGround);
+        backRectangle.fillProperty().bind(foreGround);
         boxPane = new Pane();
         boxPane.setTranslateX(10);
         boxPane.setTranslateY(10);

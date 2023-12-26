@@ -2,6 +2,12 @@ package Tic_Tac_Ultimate;
 
 import javafx.animation.*;
 import javafx.application.Application;
+import javafx.beans.binding.Bindings;
+import javafx.beans.binding.StringBinding;
+import javafx.beans.property.ObjectProperty;
+import javafx.beans.property.SimpleObjectProperty;
+import javafx.beans.property.SimpleStringProperty;
+import javafx.beans.property.StringProperty;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Group;
@@ -16,6 +22,7 @@ import javafx.scene.image.ImageView;
 import javafx.scene.input.KeyCode;
 import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
+import javafx.scene.paint.Paint;
 import javafx.scene.shape.Circle;
 import javafx.scene.shape.Line;
 import javafx.scene.shape.Rectangle;
@@ -38,9 +45,11 @@ public class GUI extends Application {
     private static Stage stage;
     public static Scene scene;
     public static StackPane root;
-    public static Color backGround = Color.web("#f2f2f2");
-    public static Color midGround = Color.web("#fff");
-    public static Color foreGround = Color.web("#000000");
+    public static StringProperty fontColor = new SimpleStringProperty("#000000");
+    public static StringProperty fontHoverColor = new SimpleStringProperty("#000000");
+    public static ObjectProperty<Paint> backGround = new SimpleObjectProperty<>(Color.web("#f2f2f2"));
+    public static ObjectProperty<Paint> midGround = new SimpleObjectProperty<>(Color.web("#666666"));
+    public static ObjectProperty<Paint> foreGround = new SimpleObjectProperty<>(Color.web("#000000"));
     public static Text turn1;
     public static Text turn2;
     public static Group grid1;
@@ -75,7 +84,7 @@ public class GUI extends Application {
         stage.setX(0);
         stage.setY(0);
         root = new StackPane();
-        root.setBackground(new Background(new BackgroundFill(backGround, CornerRadii.EMPTY, Insets.EMPTY)));
+        root.setBackground(new Background(new BackgroundFill(backGround.get(), CornerRadii.EMPTY, Insets.EMPTY)));
 
         root.setOnKeyPressed(event->{
             if(event.getCode()== KeyCode.ESCAPE) {
@@ -94,7 +103,7 @@ public class GUI extends Application {
         scene = new Scene(root);
         stage.setScene(scene);
         stage.show();
-        displayMainMenu();
+        displayGame();
     }
     private static void displayStart(){
         Text ticTac = new Text("Tic tac");
@@ -150,6 +159,7 @@ public class GUI extends Application {
     }
     private static void displayMainMenu() {
         root.getChildren().clear();
+        root.setBackground(new Background(new BackgroundFill(backGround.get(),  CornerRadii.EMPTY, Insets.EMPTY)));
 
         Text ticTac = new Text("Tic tac");
         Text ultimate = new Text(" Ultimate ");
@@ -177,10 +187,10 @@ public class GUI extends Application {
         Button exit = makeButton("Exit Game");
 
         HBox helpButtons = new HBox();
-        Button ruleBookButton = roundButton("Rules");
-        Button aboutUsButton = roundButton("About Us");
+//        Button ruleBookButton = roundButton("Rules");
+//        Button aboutUsButton = roundButton("About Us");
         Button helpButton = roundButton("Help");
-        helpButtons.getChildren().addAll(ruleBookButton, aboutUsButton, helpButton);
+        helpButtons.getChildren().addAll(helpButton);
         helpButtons.setAlignment(Pos.BASELINE_CENTER);
         helpButtons.setSpacing(20);
         helpButtons.setTranslateY(exit.getTranslateY()+100);
@@ -208,17 +218,17 @@ public class GUI extends Application {
                 "-fx-font-weight: Bold;" +
                 "-fx-font-size: 45;" +
                 "-fx-border-radius: 5;";
-        button.setStyle("-fx-text-fill: Black; " + style);
-//        button.setStyle( "-fx-background-color: Black; " + "-fx-text-fill: White; " + style );
+
+        String normalStyle = "-fx-text-fill: " + fontColor.get() + "; " + style;
+
+        button.styleProperty().bind(Bindings.when(button.hoverProperty())
+                .then("-fx-text-fill: red; " + style)
+                .otherwise(normalStyle));
+
+        button.textProperty().bind(Bindings.when(button.hoverProperty())
+                .then("> " + text + " <")
+                .otherwise(text));
         button.setBackground(new Background(new BackgroundFill(Color.color(0,0,0,0), CornerRadii.EMPTY, Insets.EMPTY)));
-        button.setOnMouseEntered(e -> {
-            button.setStyle( "-fx-text-fill: Red; " + style);
-            button.setText("> " + text + " <");
-        });
-        button.setOnMouseExited(e -> {
-            button.setStyle("-fx-text-fill: Black; " + style );
-            button.setText(text);
-        });
         button.setOnMouseClicked(event -> {
             System.out.println(text +" button was pressed!");
             switch (text) {
@@ -226,7 +236,7 @@ public class GUI extends Application {
                 case "Load Game" -> System.out.println("Load Game Button was Pressed");
 
 //                displayOptions();
-                case "Settings" -> displaySettings("Game Settings");
+                case "Settings" -> displaySettings("Profile Settings");
 
 //                displayPopupMessage("Under Development", "Option Button is under development");
                 case "Exit Game" -> {
@@ -259,7 +269,7 @@ public class GUI extends Application {
         background.setBackground(new Background(new BackgroundFill(Color.color(0, 0, 0, 0), CornerRadii.EMPTY, Insets.EMPTY)));
 
         Rectangle box = new Rectangle();
-        box.setFill(Color.WHITE);
+        box.fillProperty().bind(backGround);
         box.widthProperty().bind(root.widthProperty());
         box.heightProperty().bind(root.heightProperty());
         gameMenu.getChildren().add(box);
@@ -283,7 +293,7 @@ public class GUI extends Application {
         vBox.getChildren().addAll(appearance, button2, players, back);
 
         Rectangle areaBox = new Rectangle();
-        areaBox.setFill(Color.LIGHTGREY);
+        areaBox.fillProperty().bind(midGround);
         areaBox.setArcHeight(50);
         areaBox.setArcWidth(50);
         areaBox.setWidth(1000); // Set the width according to your preference
@@ -304,6 +314,13 @@ public class GUI extends Application {
             button2.setDisable(true);
             players.setDisable(true);
             displayAppearance(gameMenu, appearance, button2, players);
+        });
+        button2.setOnAction(e->{
+            System.out.println("Button 2");
+            appearance.setDisable(true);
+            button2.setDisable(true);
+            players.setDisable(true);
+            displayProfile(gameMenu, appearance, button2, players);
         });
 //        appearance.setOnMouseClicked(e->{
 //            System.out.println("Appearance Here");
@@ -326,9 +343,23 @@ public class GUI extends Application {
                     "-fx-font-size: 25;" +
                     "-fx-alignment: center;" +
                     "-fx-background-radius: 40em;";
-        button.setStyle( "-fx-background-color: Black; " + "-fx-text-fill: White; " + roundButtonStyle );
-        button.setOnMouseEntered(e -> button.setStyle( "-fx-background-color: Red; " + "-fx-text-fill: White; " + roundButtonStyle));
-        button.setOnMouseExited(e -> button.setStyle("-fx-background-color: Black; " + "-fx-text-fill: White; " + roundButtonStyle ));
+
+        String normalStyle = "-fx-background-color: " + fontColor.get() + "; -fx-text-fill: White;" + roundButtonStyle;
+
+        button.styleProperty().bind(Bindings.when(button.hoverProperty())
+                .then("-fx-background-color: Red; " + roundButtonStyle)
+                .otherwise(normalStyle));
+
+//        button.styleProperty().bind(
+//                Bindings.createStringBinding(() ->
+//                        "-fx-text-fill: " + fontColor.get() + "; " +
+//                                roundButtonStyle,fontColor));
+//        button.setOnMouseEntered(e -> {
+//            button.styleProperty().bind(
+//                    Bindings.createStringBinding(() ->
+//                            "-fx-text-fill: " + fontColor.get() + "; -fx-background-color: Red; " +
+//                                    roundButtonStyle,fontColor));
+//        });
 
         button.setOnAction(event -> {
             System.out.println(text + " button was pressed!");
@@ -360,11 +391,23 @@ public class GUI extends Application {
                     "-fx-font-family: 'Franklin Gothic';" +
                     "-fx-font-size: 35;" +
                     "-fx-border-radius: 30em;";
-            button.setStyle("-fx-text-fill: Black;" + style);
-            button.setOnMouseEntered(e -> button.setStyle("-fx-text-fill: Red; " +
-                    "-fx-border-color: Red; " +
-                    "-fx-border-width: 4px;" + style));
-            button.setOnMouseExited(e -> button.setStyle("-fx-text-fill: Black; " + style ));
+            button.styleProperty().bind(
+                    Bindings.createStringBinding(() ->
+                            "-fx-text-fill: " + fontColor.get() + "; " +
+                                    style,fontColor));
+            button.setOnMouseEntered(e -> {
+                button.styleProperty().bind(
+                        Bindings.createStringBinding(() ->
+                                "-fx-text-fill: " + fontHoverColor.get() + "; -fx-border-color: Red; " +
+                                        "-fx-border-width: 4px;" +
+                                        style,fontHoverColor));
+            });
+            button.setOnMouseExited(e -> {
+                button.styleProperty().bind(
+                        Bindings.createStringBinding(() ->
+                                "-fx-text-fill: " + fontColor.get() + "; " +
+                                        style,fontColor));
+            });
         }
         else{
             style = "-fx-padding: 10 20; " +
@@ -372,13 +415,19 @@ public class GUI extends Application {
                     "-fx-border-radius: 10em;" +
                     "-fx-font-size: 35;" +
                     "-fx-border-width: 4px;";
-            button.setStyle("-fx-text-fill: Black; -fx-border-color: Black; " + style);
+            button.styleProperty().bind(Bindings.createStringBinding(() ->
+                    "-fx-text-fill: " + fontColor.get() + ";-fx-border-color: " + fontColor.get() + ";" + style,fontColor));
             button.setOnMouseEntered(e -> {
+                button.styleProperty().bind(
+                        Bindings.createStringBinding(() ->
+                                "-fx-text-fill: " + fontHoverColor.get() + "; -fx-border-color: " + fontHoverColor.get() +"; -fx-font-weight: Bold;" +
+                                        style,fontHoverColor));
                 button.setStyle("-fx-text-fill: Red; -fx-border-color: Red; -fx-font-weight: Bold;" + style);
                 button.setText(text + " >");
             });
             button.setOnMouseExited(e -> {
-                button.setStyle("-fx-text-fill: Black; -fx-border-color: Black; " + style );
+                button.styleProperty().bind(Bindings.createStringBinding(() ->
+                        "-fx-text-fill: " + fontColor.get() + ";-fx-border-color: " + fontColor.get() + ";" + style,fontColor));
                 button.setText(text);
             });
         }
@@ -436,7 +485,7 @@ public class GUI extends Application {
         StackPane gameSelection = new StackPane();
         root.getChildren().add(gameSelection);
         Rectangle box = new Rectangle();
-        box.setFill(midGround);
+        box.fillProperty().bind(backGround);
         box.widthProperty().bind(root.widthProperty());
         box.heightProperty().bind(root.heightProperty());
 
@@ -606,7 +655,8 @@ public class GUI extends Application {
 //        });
 //    }
     private static void displayGame() {
-        root.getChildren().removeLast();
+//        if(root.)
+//            root.getChildren().removeLast();
 //        gamePane = new BorderPane();
 //        gamePane.setPadding(new Insets(10));
         gamePane = switch(gameType){
@@ -771,39 +821,60 @@ public class GUI extends Application {
                 "-fx-font-family: 'Franklin Gothic';" +
                 "-fx-font-weight: Bold;" +
                 "-fx-font-size: 35;";
-        button.setStyle("-fx-text-fill: Black;" + style);
+        button.styleProperty().bind(
+                Bindings.createStringBinding(() ->
+                        "-fx-text-fill: " + fontColor.get() + "; " +
+                                style,fontColor));
         if(text.equals("Back")) {
             button.setMinSize(120, 80);
             button.setOnMouseEntered(e -> {
                 button.setText("< " + text);
-                button.setStyle("-fx-underline: true; " +
-                        "-fx-text-fill: Red; " +
-                        "-fx-border-radius: 50em; " +
-                        "-fx-border-color: Red; " +
-                        "-fx-border-width: 4px;" + style);
+                button.styleProperty().bind(
+                        Bindings.createStringBinding(() ->
+                                "-fx-text-fill: " + fontHoverColor.get() + "; -fx-border-radius: 50em; " +
+                                        "-fx-border-color: Red; " +
+                                        "-fx-border-width: 4px;" +
+                                        style,fontHoverColor));
             });
             button.setOnMouseExited(e -> {
                 button.setText(text);
-                button.setStyle("-fx-underline: false; -fx-text-fill: Black;" + style);
+                button.styleProperty().bind(
+                        Bindings.createStringBinding(() ->
+                                "-fx-text-fill: " + fontColor.get() + "; " +
+                                        style,fontColor));
             });
         }
-        else if(text.equals("<")){
-            button.setOnMouseEntered(e-> button.setStyle("-fx-text-fill: Red; " + style));
-            button.setOnMouseExited(e-> button.setStyle("-fx-text-fill: Black; " + style));
+        else if(text.equals("<") || text.equals("Edit Name")){
+            button.setOnMouseEntered(e-> {
+                button.styleProperty().bind(
+                        Bindings.createStringBinding(() ->
+                                "-fx-text-fill: " + fontHoverColor.get() + "; " +
+                                        style,fontHoverColor));
+            });
+            button.setOnMouseExited(e-> {
+                button.styleProperty().bind(
+                        Bindings.createStringBinding(() ->
+                                "-fx-text-fill: " + fontColor.get() + "; " +
+                                        style,fontColor));
+            });
             button.setMinSize(80, 80);
         }
         else {
             button.setOnMouseEntered(e -> {
-                button.setStyle("-fx-underline: true; " +
-                        "-fx-text-fill: Red; " +
-                        "-fx-border-radius: 50em; " +
-                        "-fx-border-color: Red; " +
-                        "-fx-border-width: 4px;" + style);
+                button.styleProperty().bind(
+                        Bindings.createStringBinding(() ->
+                                "-fx-text-fill: " + fontHoverColor.get() + "; -fx-border-radius: 50em; " +
+                                        "-fx-border-color: Red; " +
+                                        "-fx-border-width: 4px;" +
+                                        style,fontHoverColor));
                 button.setText(text + " >");
 //                button.setBorder(Border.stroke(Color.RED));
             });
             button.setOnMouseExited(e -> {
-                button.setStyle("-fx-underline: false; -fx-text-fill: Black;" + style);
+                button.styleProperty().bind(
+                        Bindings.createStringBinding(() ->
+                                "-fx-text-fill: " + fontColor.get() + "; " +
+                                        style,fontColor));
                 button.setText(text);
 //                button.setBorder(null);
             });
@@ -811,6 +882,7 @@ public class GUI extends Application {
         }
         button.setBackground(new Background(new BackgroundFill(Color.color(0,0,0,0), CornerRadii.EMPTY, Insets.EMPTY)));
         button.setOnAction(e->{
+            System.out.println(text + " Button Pressed");
             switch (text) {
                 case "Change Difficulty" -> System.out.println(text + " Button");
                 case "Player Settings" -> System.out.println(text + " Button");
@@ -869,9 +941,11 @@ public class GUI extends Application {
         header.getChildren().addAll(back, title);
         header.setSpacing(50);
         title.setStyle("-fx-font-family: 'Franklin Gothic';" +
-                "-fx-font-size: 50;" +
-                "-fx-text-fill: Black;");
-
+                "-fx-font-size: 50;");
+        title.styleProperty().bind(
+                Bindings.createStringBinding(() ->
+                        "-fx-text-fill: " + fontColor.get() + ";-fx-font-family: 'Franklin Gothic';" +
+                               "-fx-font-size: 50;",fontColor));
 
         Image defThemeImg = new Image("file:images/DefaultTheme.png");
         Image darkThemeImg = new Image("file:images/DarkTheme.png");
@@ -893,6 +967,9 @@ public class GUI extends Application {
         themes.setAlignment(Pos.TOP_LEFT);
     }
     private static VBox displayThemeButtons(String text, Image buttonImg){
+        String style = "-fx-font-family: 'Franklin Gothic';" +
+                "-fx-font-size: 20;" +
+                "-fx-text-alignment: center;";
         VBox buttonBox = new VBox();
         Button button = new Button();
         button.setMinWidth(116);
@@ -904,9 +981,32 @@ public class GUI extends Application {
                 BackgroundSize.DEFAULT)));
         buttonBox.setSpacing(10);
         Text title = new Text(text);
-        title.setStyle("-fx-font-family: 'Franklin Gothic';" +
-                "-fx-font-size: 20;" +
-                "-fx-text-alignment: center;");
+        title.setStyle(style);
+        button.setOnMouseEntered(e->{
+            title.styleProperty().bind(
+                    Bindings.createStringBinding(() ->
+                            "-fx-text-fill: " + fontHoverColor.get() + "; " +
+                                    style,fontHoverColor));
+        });
+        button.setOnMouseExited(e->{
+            title.styleProperty().bind(
+                    Bindings.createStringBinding(() ->
+                            "-fx-text-fill: " + fontColor.get() + "; " +
+                                    style,fontColor));
+        });
+        button.setOnMouseClicked(e->{
+            System.out.println(text + " Button was Pressed!");
+            if(text.equals("Dark Theme")){
+                backGround.set(Color.BLACK);
+                midGround.set(Color.web("#666666"));
+                fontColor.set("#FFFFFF");
+            } else if (text.equals("Default Theme")) {
+                backGround.set(Color.WHITE);
+                midGround.set(Color.LIGHTGREY);
+                fontColor.set("#000000");
+            }
+        });
+
         buttonBox.getChildren().addAll(button, title);
         return buttonBox;
     }
@@ -917,7 +1017,7 @@ public class GUI extends Application {
         background.setBackground(new Background(new BackgroundFill( Color.color(0,0,0,0), CornerRadii.EMPTY, Insets.EMPTY)));
 //        Rectangle  = makeRectangle(1.5, 0.9);
         Rectangle box = new Rectangle();
-        box.setFill(midGround);
+        box.fillProperty().bind(backGround);
         box.widthProperty().bind(root.widthProperty());
         box.heightProperty().bind(root.heightProperty());
         ruleBook.getChildren().add(box);
@@ -951,7 +1051,7 @@ public class GUI extends Application {
         gameRule.getChildren().addAll(tictactoe, supertictactoe, quixo);
 
         Rectangle rulesArea = new Rectangle();
-        rulesArea.setFill(Color.WHITE);
+        rulesArea.fillProperty().bind(backGround);
 
         TextArea rulesTextArea = new TextArea();
         rulesTextArea.setMinSize(root.getWidth(), root.getHeight()-gameRule.getHeight()-hBox1.getHeight());
@@ -959,11 +1059,18 @@ public class GUI extends Application {
         rulesTextArea.setBackground(new Background(new BackgroundFill(Color.color(0, 0, 0, 0), CornerRadii.EMPTY, Insets.EMPTY)));
         rulesTextArea.setWrapText(true);
         rulesTextArea.autosize();
-        rulesTextArea.setStyle("-fx-padding: 10 30; " +
-                "-fx-font-family: 'Franklin Gothic';" +
-                "-fx-font-size: 25;" +
-                "-fx-border-radius: 5;" +
-                "-fx-font-color: Black");
+        rulesTextArea.styleProperty().bind(Bindings.createStringBinding(() ->
+                "-fx-padding: 10 30; " +
+                        "-fx-font-family: 'Franklin Gothic';" +
+                        "-fx-font-size: 25;" +
+                        "-fx-border-radius: 5;" +
+                        "-fx-text-fill: " + fontColor.get() + ";", fontColor));
+        rulesTextArea.styleProperty().bind(
+                Bindings.createStringBinding(() ->
+                        "-fx-text-fill: " + fontColor.get() + ";-fx-padding: 10 30; " +
+                                "-fx-font-family: 'Franklin Gothic';" +
+                                "-fx-font-size: 25;" +
+                                "-fx-border-radius: 5;",fontColor));
 
         tictactoe.setOnMouseClicked(event -> {
             setSelectedType(tictactoe, supertictactoe, quixo);
@@ -986,10 +1093,7 @@ public class GUI extends Application {
                             4. The board in which a player makes a move determines the next board for the opponent.
                             5. The objective is to win three small boards in a row, column, or a diagonal.
                             6. After a Win on a small board, the other player will make move in the corresponding small board.
-                            7. Criterion to determine the winner:
-                            \ti. The first player to win three small boards in a row, column or a diagonal.
-                            \t\tOR
-                            \tii. The player with the most smaller wins, will be the Winner.""");
+                            7. The first player to win three small boards in a row, column or a diagonal.""");
         });
         quixo.setOnMouseClicked(event -> {
             setSelectedType(quixo, tictactoe, supertictactoe);
@@ -1023,7 +1127,7 @@ public class GUI extends Application {
         background.setCenter(helpPage);
         background.setBackground(new Background(new BackgroundFill( Color.color(0,0,0,0), CornerRadii.EMPTY, Insets.EMPTY)));
         Rectangle box = new Rectangle();
-        box.setFill(midGround);
+        box.fillProperty().bind(backGround);
         box.widthProperty().bind(root.widthProperty());
         box.heightProperty().bind(root.heightProperty());
         helpPage.getChildren().add(box);
@@ -1040,7 +1144,7 @@ public class GUI extends Application {
         background.setCenter(aboutUsPage);
         background.setBackground(new Background(new BackgroundFill( Color.color(0,0,0,0), CornerRadii.EMPTY, Insets.EMPTY)));
         Rectangle box = new Rectangle();
-        box.setFill(midGround);
+        box.fillProperty().bind(backGround);
         box.widthProperty().bind(root.widthProperty());
         box.heightProperty().bind(root.heightProperty());
         aboutUsPage.getChildren().add(box);
@@ -1051,9 +1155,78 @@ public class GUI extends Application {
         aboutUsPage.getChildren().add(title);
 
     }
-    private static void displayProfile(){
-        root.getChildren().clear();
+    private static void displayProfile(StackPane gameMenu, Button button1, Button button2, Button button3){
 
+        System.out.println("I was in Profile");
+        Node box = null;
+        box = gameMenu.getChildren().get(gameMenu.getChildren().size()-2);
+        double boxHeight = box.getBoundsInLocal().getHeight();
+        double boxWidth = box.getBoundsInLocal().getWidth();
+
+        VBox themes = new VBox();
+        themes.setMinSize(boxWidth, boxHeight);
+        themes.setTranslateX(box.localToScene(box.getBoundsInLocal()).getMinX());
+        themes.setTranslateY(box.localToScene(box.getBoundsInLocal()).getMinY() + 150);
+//        HBox buttons = new HBox();
+//        buttons.setMinWidth(boxWidth);
+        gameMenu.getChildren().add(themes);
+
+        HBox header = new HBox();
+        Button back = makeOptionButton("<");
+        back.setOnMouseClicked(e-> {
+            gameMenu.getChildren().removeLast();
+            button1.setDisable(false);
+            button2.setDisable(false);
+            button3.setDisable(false);
+        });
+
+        Text title = new Text("Profile");
+        title.setFont(Font.font("Franklin Gothic", FontWeight.BOLD, 50));
+        header.getChildren().addAll(back, title);
+        header.setSpacing(50);
+        title.setStyle("-fx-font-family: 'Franklin Gothic';" +
+                "-fx-font-size: 50;");
+        title.styleProperty().bind(
+                Bindings.createStringBinding(() ->
+                        "-fx-text-fill: " + fontColor.get() + ";-fx-font-family: 'Franklin Gothic';" +
+                                "-fx-font-size: 50;",fontColor));
+
+        HBox profile = new HBox();
+        profile.setMinWidth(boxWidth);
+
+        TextArea profileDescription = new TextArea();
+        profileDescription.setMaxWidth(boxWidth*0.97);
+        profileDescription.setEditable(false);
+        profileDescription.setBackground(new Background(new BackgroundFill(midGround.get(), CornerRadii.EMPTY, Insets.EMPTY)));
+        profileDescription.setWrapText(true);
+
+        StringBinding textAreaStyleBinding = Bindings.createStringBinding(() ->
+                "-fx-control-inner-background: \'" + midGround.get() + "\';", midGround);
+
+        profileDescription.styleProperty().bind(Bindings.createStringBinding(() ->
+                "-fx-padding: 10 30; " +
+                "-fx-font-family: 'Franklin Gothic';" +
+                "-fx-font-size: 30;" +
+                "-fx-line-spacing: 500px;" +
+                textAreaStyleBinding.get() +
+                "-fx-text-fill: " + fontColor.get() + ";", fontColor));
+//        profileDescription.setStyle("-fx-padding: 10 30; " +
+//                "-fx-font-family: 'Franklin Gothic';" +
+//                "-fx-font-size: 25;" +
+//                "-fx-border-radius: 5;" +
+//                "-fx-text-fill: " + fontColor.get() + ";");
+        profileDescription.setText(
+                "Name:\tPlayer Name\n\n" +
+                "Level:\t10\n\n" +
+                "Winnings: 0"
+        );
+
+        Button edit = makeOptionButton("Edit Name");
+        profile.getChildren().addAll(profileDescription, edit);
+
+        themes.getChildren().addAll(header, profile);
+        themes.setSpacing(50);
+        themes.setAlignment(Pos.TOP_LEFT);
     }
     public static void showTurn(int row, int col, int[] superIndex){
         if(getPlayer()==1)

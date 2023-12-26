@@ -66,7 +66,7 @@ final public class GuiUtility {
     }
     public static Rectangle makeRectangle(double widthMultiplier, double heightMultiplier){
         Rectangle rectangle = new Rectangle();
-        rectangle.setFill(midGround);
+        rectangle.fillProperty().bind(midGround);
         rectangle.widthProperty().bind(root.heightProperty().multiply(widthMultiplier));
         rectangle.heightProperty().bind(root.heightProperty().multiply(heightMultiplier));
         rectangle.setArcWidth(50);
