@@ -1,6 +1,6 @@
 package Tic_Tac_Ultimate;
 public class UltimateBrain {
-    public static int[][] compTurn(int[] superIndex, Board[][] superBoard, String difficulty) {
+    public static int[][] compTurn(int[] superIndex, Board[][] superBoard, String difficulty){
         return switch(difficulty){
             case "Easy" -> easy(superIndex, superBoard);
             case "Medium" -> med(superIndex, superBoard);
@@ -61,8 +61,8 @@ public class UltimateBrain {
             }
         }
         if(empty) return(easy(superIndex, superBoard));
-        int row, column;
-        row =  column = -1;
+        int row, column, boardi, boardj;
+        row =  column = boardi = boardj = -1;
         int bestScore = -1000;
         for(int i = 0; i < 3; i++){
             for (int j = 0; j < 3; j++){
@@ -70,21 +70,32 @@ public class UltimateBrain {
                     for (int y = 0; y < 3; y++) {
                         if (superBoard[i][j].board[x][y] == 0) {
                             superBoard[i][j].board[x][y] = 2;
+//                            UltimateBrainThread gameThread = new UltimateBrainThread();
+//                            gameThread.alpha = Integer.MIN_VALUE;
+//                            gameThread.beta = Integer.MAX_VALUE;
+//                            gameThread.superIndex[0] = x;
+//                            gameThread.superIndex[1] = y;
+//                            gameThread.superBoard = superBoard;
+//                            gameThread.start();
+//                            int score = gameThread.getScore();
                             int score = bestMove(false, new int[]{x, y}, superBoard, Integer.MIN_VALUE, Integer.MAX_VALUE);
+                            System.out.println(score);
                             superBoard[i][j].board[x][y] = 0;
                             if (score > bestScore) {
                                 bestScore = score;
-                                row = i;
-                                column = j;
+                                boardi = i;
+                                boardj = j;
+                                row = x;
+                                column = y;
                             }
                         }
                     }
                 }
             }
         }
-        return new int[][]{{(int)(Math.random()*3),(int)(Math.random()*3)},{(int)(Math.random()*3),(int)(Math.random()*3)}};
+        return new int[][]{{row, column},{boardi, boardj}};
     }
-    public static boolean available(Board[][] superBoard){
+    protected static boolean available(Board[][] superBoard){
         for(int i =0 ; i <3 ; i++){
             for(int j = 0; j < 3 ; j++){
                 for (int x =0 ; x <3 ; x++) {
@@ -99,7 +110,7 @@ public class UltimateBrain {
         return false;
     }
     private static int bestMove(boolean maximizingPlayer, int[] superIndex, Board[][] superBoard, int alpha, int beta) {
-        int result = checkMove(board);
+        int result = checkMove(superIndex, superBoard);
         if (result != 0) {
             return result;
         }
@@ -110,73 +121,67 @@ public class UltimateBrain {
             int bestScore = Integer.MIN_VALUE;
             for (int row = 0; row < 3; row++) {
                 for (int col = 0; col < 3; col++) {
-                    for (int x =0 ; x <3 ; x++) {
-                        for (int y = 0; y < 3; y++) {
-                            if (superBoard[superIndex[0]][superIndex[1]].board[row][col] == 0) {
-                                superBoard[row][col].board[x][y] = 2;
-                                int score = bestMove(false, new int[]{x, y}, superBoard, alpha, beta);
-                                superBoard[row][col].board[x][y] = 0;
-                                bestScore = Math.max(bestScore, score);
-                                alpha = Math.max(alpha, bestScore);
-                                if (beta <= alpha) {
-                                    break;
-                                }
-                            }
+                    if (superBoard[superIndex[0]][superIndex[1]].board[row][col] == 0) {
+                        superBoard[superIndex[0]][superIndex[1]].board[row][col] = 2;
+                        int score = bestMove(false, new int[]{row, col}, superBoard, alpha, beta);
+                        superBoard[superIndex[0]][superIndex[1]].board[row][col] = 0;
+                        bestScore = Math.max(bestScore, score);
+                        alpha = Math.max(alpha, bestScore);
+                        if (beta <= alpha) {
+                            break;
                         }
                     }
                 }
             }
+//            System.out.println(bestScore);
             return bestScore;
         } else {
             int bestScore = Integer.MAX_VALUE;
             for (int row = 0; row < 3; row++) {
                 for (int col = 0; col < 3; col++) {
-                    for (int x =0 ; x <3 ; x++) {
-                        for (int y = 0; y < 3; y++) {
-                            if (superBoard[row][col].board[x][y] == 0) {
-                                superBoard[row][col].board[x][y] = 1;
-                                int score = bestMove(true, new int[]{x, y}, superBoard, alpha, beta);
-                                superBoard[row][col].board[x][y] = 0;
-                                bestScore = Math.min(bestScore, score);
-                                beta = Math.min(beta, bestScore);
-                                if (beta <= alpha) {
-                                    break;
-                                }
-                            }
+                    if (superBoard[superIndex[0]][superIndex[1]].board[row][col] == 0) {
+                        superBoard[superIndex[0]][superIndex[1]].board[row][col] = 1;
+                        int score = bestMove(true, new int[]{row, col}, superBoard, alpha, beta);
+                        superBoard[superIndex[0]][superIndex[1]].board[row][col] = 0;
+                        bestScore = Math.min(bestScore, score);
+                        beta = Math.min(beta, bestScore);
+                        if (beta <= alpha) {
+                            break;
                         }
                     }
                 }
             }
+//            System.out.println(bestScore);
             return bestScore;
         }
     }
 
-    private static int checkMove(int[] superIndex, Board[][] superBoard){
+    protected static int checkMove(int[] superIndex, Board[][] superBoard){
         for(int row = 0; row < 3; row++)
-            if(board[row][0]==board[row][1] && board[row][1]==board[row][2] && board[row][1] != 0) {
-                if (board[row][1] == 1)
+            if(superBoard[superIndex[0]][superIndex[1]].board[row][0]==superBoard[superIndex[0]][superIndex[1]].board[row][1] && superBoard[superIndex[0]][superIndex[1]].board[row][1]==superBoard[superIndex[0]][superIndex[1]].board[row][2] && superBoard[superIndex[0]][superIndex[1]].board[row][1] != 0) {
+                if (superBoard[superIndex[0]][superIndex[1]].board[row][1] == 1)
                     return -1;
-                else if(board[row][1] == 2)
+                else if(superBoard[superIndex[0]][superIndex[1]].board[row][1] == 2)
                     return 1;
             }
 
         for(int col = 0; col < 3; col++)
-            if(board[0][col]==board[1][col] && board[1][col]==board[2][col] && board[1][col] != 0){
-                if (board[1][col] == 1)
+            if(superBoard[superIndex[0]][superIndex[1]].board[0][col]==superBoard[superIndex[0]][superIndex[1]].board[1][col] && superBoard[superIndex[0]][superIndex[1]].board[1][col]==superBoard[superIndex[0]][superIndex[1]].board[2][col] && superBoard[superIndex[0]][superIndex[1]].board[1][col] != 0){
+                if (superBoard[superIndex[0]][superIndex[1]].board[1][col] == 1)
                     return -1;
-                else if(board[1][col] == 2)
+                else if(superBoard[superIndex[0]][superIndex[1]].board[1][col] == 2)
                     return 1;
             }
 
-        if(board[0][0]==board[1][1] && board[1][1]==board[2][2] && board[1][1] != 0)
-            if (board[1][1] == 1)
+        if(superBoard[superIndex[0]][superIndex[1]].board[0][0]==superBoard[superIndex[0]][superIndex[1]].board[1][1] && superBoard[superIndex[0]][superIndex[1]].board[1][1]==superBoard[superIndex[0]][superIndex[1]].board[2][2] && superBoard[superIndex[0]][superIndex[1]].board[1][1] != 0)
+            if (superBoard[superIndex[0]][superIndex[1]].board[1][1] == 1)
                 return -1;
-            else if(board[1][1] == 2)
+            else if(superBoard[superIndex[0]][superIndex[1]].board[1][1] == 2)
                 return 1;
-        if(board[0][2]==board[1][1] && board[1][1]==board[2][0] && board[1][1] != 0)
-            if (board[1][1] == 1)
+        if(superBoard[superIndex[0]][superIndex[1]].board[0][2]==superBoard[superIndex[0]][superIndex[1]].board[1][1] && superBoard[superIndex[0]][superIndex[1]].board[1][1]==superBoard[superIndex[0]][superIndex[1]].board[2][0] && superBoard[superIndex[0]][superIndex[1]].board[1][1] != 0)
+            if (superBoard[superIndex[0]][superIndex[1]].board[1][1] == 1)
                 return -1;
-            else if(board[1][1] == 2)
+            else if(superBoard[superIndex[0]][superIndex[1]].board[1][1] == 2)
                 return 1;
 
         return 0;

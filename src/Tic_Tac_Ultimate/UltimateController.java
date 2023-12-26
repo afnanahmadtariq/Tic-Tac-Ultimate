@@ -35,7 +35,7 @@ public class UltimateController extends UltimateBoard {
         }
     }
     public boolean doTurn(int[] index, int[] superIndex){
-        System.out.println("Super index BEFORE player: " + player +" turn_ row:" + this.superIndex[0] + " col: " + this.superIndex[1]);
+        System.out.println("Super index BEFORE player: " + player + " turn_ row:" + this.superIndex[0] + " col: " + this.superIndex[1]);
         if(markTurn(index,superIndex)){
             System.out.println("registered!!...............");
             Runner.showTurn(index, superIndex);

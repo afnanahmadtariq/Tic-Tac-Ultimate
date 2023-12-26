@@ -9,6 +9,7 @@ import javafx.scene.Node;
 import javafx.scene.control.Button;
 import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
+import javafx.scene.paint.Paint;
 import javafx.scene.shape.Line;
 import javafx.scene.shape.Rectangle;
 import javafx.scene.text.Font;
@@ -66,7 +67,7 @@ final public class GuiUtility {
     }
     public static Rectangle makeRectangle(double widthMultiplier, double heightMultiplier){
         Rectangle rectangle = new Rectangle();
-        rectangle.fillProperty().bind(midGround);
+        rectangle.setFill(midGround.get());
         rectangle.widthProperty().bind(root.heightProperty().multiply(widthMultiplier));
         rectangle.heightProperty().bind(root.heightProperty().multiply(heightMultiplier));
         rectangle.setArcWidth(50);
@@ -74,9 +75,17 @@ final public class GuiUtility {
         return rectangle;
     }
     public static void blink(Rectangle box, int type){
-        Color current = (Color) box.getFill();
-        FillTransition fill = fill(current, Color.RED, (0.08*type), box, 3, true);
-        fill.setOnFinished(event -> box.setFill(current));
+        Paint paint = midGround.get();
+        Color color = (Color) midGround.get();
+//        if (paint instanceof Color) {
+//            Color color = (Color) paint;
+//            System.out.println("Color: " + color);
+//        } else {
+//            System.out.println("Paint is not a Color");
+//        }
+
+        FillTransition fill = fill(color, Color.RED, (0.08*type), box, 3, true);
+        fill.setOnFinished(event -> box.fillProperty().bind(midGround));
     }
     public static void blink(Pane pane, int count){
         pane.setBackground(new Background(new BackgroundFill(Color.PALEGREEN, CornerRadii.EMPTY, Insets.EMPTY)));
@@ -86,7 +95,8 @@ final public class GuiUtility {
         count--;
         int finalCount = count;
         empty.setOnFinished(end -> {
-            pane.setBackground(new Background(new BackgroundFill(Color.WHITE, CornerRadii.EMPTY, Insets.EMPTY)));
+            System.out.println(midGround.get());
+            pane.setBackground(new Background(new BackgroundFill(midGround.get(), CornerRadii.EMPTY, Insets.EMPTY)));
             if(finalCount >=0)
                 blink(pane, finalCount);
         });

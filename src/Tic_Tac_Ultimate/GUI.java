@@ -45,11 +45,12 @@ public class GUI extends Application {
     private static Stage stage;
     public static Scene scene;
     public static StackPane root;
-    public static StringProperty fontColor = new SimpleStringProperty("#000000");
-    public static StringProperty fontHoverColor = new SimpleStringProperty("#000000");
-    public static ObjectProperty<Paint> backGround = new SimpleObjectProperty<>(Color.web("#f2f2f2"));
-    public static ObjectProperty<Paint> midGround = new SimpleObjectProperty<>(Color.web("#666666"));
-    public static ObjectProperty<Paint> foreGround = new SimpleObjectProperty<>(Color.web("#000000"));
+    public static StringProperty fontColor = new SimpleStringProperty("#FFFFFF");
+//    public static ObjectProperty<Paint> FontColor = new SimpleObjectProperty<>(Color.BLACK);
+    public static ObjectProperty<Paint> backGround = new SimpleObjectProperty<>(Color.web("#cc9966"));
+    public static ObjectProperty<Paint> greenColor = new SimpleObjectProperty<>(Color.GREEN);
+    public static ObjectProperty<Paint> midGround = new SimpleObjectProperty<>(Color.web("#996633"));
+    public static ObjectProperty<Paint> foreGround = new SimpleObjectProperty<>(Color.web("#663300"));
     public static Text turn1;
     public static Text turn2;
     public static Group grid1;
@@ -103,7 +104,7 @@ public class GUI extends Application {
         scene = new Scene(root);
         stage.setScene(scene);
         stage.show();
-        displayGame();
+        displayMainMenu();
     }
     private static void displayStart(){
         Text ticTac = new Text("Tic tac");
@@ -172,7 +173,8 @@ public class GUI extends Application {
         title.setSpacing(10);
 
         ticTac.setFont(Font.font("Franklin Gothic Heavy", FontWeight.BOLD, 74));
-        ticTac.setFill(Color.BLACK);
+        System.out.println(foreGround.get());
+        ticTac.fillProperty().bind(foreGround);
 
         ultimate.setFont(Font.font("Franklin Gothic Heavy", FontWeight.BOLD, 74));
         ultimate.setFill(Color.WHITE);
@@ -187,10 +189,10 @@ public class GUI extends Application {
         Button exit = makeButton("Exit Game");
 
         HBox helpButtons = new HBox();
-//        Button ruleBookButton = roundButton("Rules");
+        Button ruleBookButton = roundButton("Rules");
 //        Button aboutUsButton = roundButton("About Us");
-        Button helpButton = roundButton("Help");
-        helpButtons.getChildren().addAll(helpButton);
+//        Button helpButton = roundButton("Help");
+        helpButtons.getChildren().addAll(ruleBookButton);
         helpButtons.setAlignment(Pos.BASELINE_CENTER);
         helpButtons.setSpacing(20);
         helpButtons.setTranslateY(exit.getTranslateY()+100);
@@ -260,6 +262,10 @@ public class GUI extends Application {
     }
     private static void displaySettings(String button2Text){
 
+        if(root.getChildren().getLast() instanceof Group) {
+            root.getChildren().removeLast();
+        }
+
         BorderPane background = new BorderPane();
         StackPane gameMenu = new StackPane();
         background.setCenter(gameMenu);
@@ -274,7 +280,7 @@ public class GUI extends Application {
         box.heightProperty().bind(root.heightProperty());
         gameMenu.getChildren().add(box);
         Text header;
-        if(button2Text.equals("Game Settings"))
+        if(button2Text.equals("Profile Settings"))
             header = new Text("Settings");
         else
             header = new Text("Game Options");
@@ -289,6 +295,8 @@ public class GUI extends Application {
         Button button2 = makeOptionButton(button2Text);
         Button players = makeOptionButton("Player Settings");
         Button back = makeOptionButton("Back");
+
+
 
         vBox.getChildren().addAll(appearance, button2, players, back);
 
@@ -317,10 +325,21 @@ public class GUI extends Application {
         });
         button2.setOnAction(e->{
             System.out.println("Button 2");
-            appearance.setDisable(true);
-            button2.setDisable(true);
-            players.setDisable(true);
-            displayProfile(gameMenu, appearance, button2, players);
+            if(button2Text.equals("Profile Settings")) {
+                appearance.setDisable(true);
+                button2.setDisable(true);
+                players.setDisable(true);
+                displayProfile(gameMenu, appearance, button2, players);
+            }
+        });
+        players.setOnAction(e->{
+            System.out.println(players.getText() + " Button Pressed");
+        });
+        back.setOnAction(e->{
+            if(button2Text.equals("Profile Settings"))
+                displayMainMenu();
+            else
+                root.getChildren().removeLast();
         });
 //        appearance.setOnMouseClicked(e->{
 //            System.out.println("Appearance Here");
@@ -338,13 +357,14 @@ public class GUI extends Application {
                     "-fx-font-size: 13;" +
                     "-fx-background-radius: 40em;";
         else
-            roundButtonStyle = "-fx-padding: 10 20; " +
+            roundButtonStyle = "-fx-padding: 20 20; " +
                     "-fx-font-family: 'Franklin Gothic';" +
                     "-fx-font-size: 25;" +
                     "-fx-alignment: center;" +
                     "-fx-background-radius: 40em;";
 
-        String normalStyle = "-fx-background-color: " + fontColor.get() + "; -fx-text-fill: White;" + roundButtonStyle;
+        System.out.println(backGround.get());
+        String normalStyle = "-fx-background-color: " + fontColor.get() + "; -fx-text-fill: " +  backGround.toString() +";" + roundButtonStyle;
 
         button.styleProperty().bind(Bindings.when(button.hoverProperty())
                 .then("-fx-background-color: Red; " + roundButtonStyle)
@@ -391,23 +411,29 @@ public class GUI extends Application {
                     "-fx-font-family: 'Franklin Gothic';" +
                     "-fx-font-size: 35;" +
                     "-fx-border-radius: 30em;";
-            button.styleProperty().bind(
-                    Bindings.createStringBinding(() ->
-                            "-fx-text-fill: " + fontColor.get() + "; " +
-                                    style,fontColor));
-            button.setOnMouseEntered(e -> {
-                button.styleProperty().bind(
-                        Bindings.createStringBinding(() ->
-                                "-fx-text-fill: " + fontHoverColor.get() + "; -fx-border-color: Red; " +
-                                        "-fx-border-width: 4px;" +
-                                        style,fontHoverColor));
-            });
-            button.setOnMouseExited(e -> {
-                button.styleProperty().bind(
-                        Bindings.createStringBinding(() ->
-                                "-fx-text-fill: " + fontColor.get() + "; " +
-                                        style,fontColor));
-            });
+            String normalStyle = "-fx-text-fill: " + fontColor.get() + "; " + style;
+
+            button.styleProperty().bind(Bindings.when(button.hoverProperty())
+                    .then("-fx-text-fill: Red; -fx-border-color: Red; -fx-border-width: 4px;" + style)
+                    .otherwise(normalStyle));
+
+//            button.styleProperty().bind(
+//                    Bindings.createStringBinding(() ->
+//                            "-fx-text-fill: " + fontColor.get() + "; " +
+//                                    style,fontColor));
+//            button.setOnMouseEntered(e -> {
+//                button.styleProperty().bind(
+//                        Bindings.createStringBinding(() ->
+//                                "-fx-text-fill: " + fontHoverColor.get() + "; -fx-border-color: Red; " +
+//                                        "-fx-border-width: 4px;" +
+//                                        style,fontHoverColor));
+//            });
+//            button.setOnMouseExited(e -> {
+//                button.styleProperty().bind(
+//                        Bindings.createStringBinding(() ->
+//                                "-fx-text-fill: " + fontColor.get() + "; " +
+//                                        style,fontColor));
+//            });
         }
         else{
             style = "-fx-padding: 10 20; " +
@@ -415,21 +441,18 @@ public class GUI extends Application {
                     "-fx-border-radius: 10em;" +
                     "-fx-font-size: 35;" +
                     "-fx-border-width: 4px;";
-            button.styleProperty().bind(Bindings.createStringBinding(() ->
-                    "-fx-text-fill: " + fontColor.get() + ";-fx-border-color: " + fontColor.get() + ";" + style,fontColor));
-            button.setOnMouseEntered(e -> {
-                button.styleProperty().bind(
-                        Bindings.createStringBinding(() ->
-                                "-fx-text-fill: " + fontHoverColor.get() + "; -fx-border-color: " + fontHoverColor.get() +"; -fx-font-weight: Bold;" +
-                                        style,fontHoverColor));
-                button.setStyle("-fx-text-fill: Red; -fx-border-color: Red; -fx-font-weight: Bold;" + style);
-                button.setText(text + " >");
-            });
-            button.setOnMouseExited(e -> {
-                button.styleProperty().bind(Bindings.createStringBinding(() ->
-                        "-fx-text-fill: " + fontColor.get() + ";-fx-border-color: " + fontColor.get() + ";" + style,fontColor));
-                button.setText(text);
-            });
+
+            String normalStyle = "-fx-text-fill: " + fontColor.get() + "; -fx-border-color: " + fontColor.get() + "; " + style;
+
+            button.styleProperty().bind(Bindings.when(button.hoverProperty())
+                    .then("-fx-text-fill: Red; -fx-border-color: Red; -fx-font-weight: Bold; " + style)
+                    .otherwise(normalStyle));
+
+            button.textProperty().bind(Bindings.when(button.hoverProperty())
+                    .then(text + " >")
+                    .otherwise(text));
+
+//
         }
 
         button.setBackground(new Background(new BackgroundFill(Color.color(0,0,0,0), CornerRadii.EMPTY, Insets.EMPTY)));
@@ -441,45 +464,88 @@ public class GUI extends Application {
                 "-fx-font-family: 'Franklin Gothic';" +
                 "-fx-font-size: 35;" +
                 "-fx-border-radius: 50em;";
-        button1.setStyle( "-fx-border-color: Green; " + "-fx-text-fill: Green; -fx-border-width: 4px; -fx-font-weight: Bold;" + style);
-        button2.setStyle( "-fx-border-color: Gray; " + "-fx-text-fill: Gray; -fx-border-width: 0px; " + style);
-        button3.setStyle( "-fx-border-color: Gray; " + "-fx-text-fill: Gray; -fx-border-width: 0px; " + style);
-        button4.setStyle( "-fx-border-color: Gray; " + "-fx-text-fill: Gray; -fx-border-width: 0px; " + style);
-        button1.setOnMouseEntered(e -> button1.setStyle(button1.getStyle()));
-        button1.setOnMouseExited(e -> button1.setStyle(button1.getStyle()));
-        button2.setOnMouseEntered(e -> button2.setStyle(button2.getStyle()));
-        button2.setOnMouseExited(e -> button2.setStyle(button2.getStyle()));
-        button3.setOnMouseEntered(e -> button3.setStyle(button3.getStyle()));
-        button3.setOnMouseExited(e -> button3.setStyle(button3.getStyle()));
-        button4.setOnMouseEntered(e -> button4.setStyle(button4.getStyle()));
-        button4.setOnMouseExited(e -> button4.setStyle(button4.getStyle()));
+
+        String selectedStyle = "-fx-text-fill: Green; -fx-border-color: Green; -fx-border-width: 4px; -fx-font-weight: Bold; " + style;
+        String deSelectedStyle = "-fx-text-fill: Gray; -fx-border-color: Gray; -fx-border-width: 0px; " + style;
+
+        button1.styleProperty().bind(Bindings.createStringBinding(() ->selectedStyle));
+        button2.styleProperty().bind(Bindings.createStringBinding(() ->deSelectedStyle));
+        button3.styleProperty().bind(Bindings.createStringBinding(() ->deSelectedStyle));
+        button4.styleProperty().bind(Bindings.createStringBinding(() ->deSelectedStyle));
+
+        button1.styleProperty().bind(Bindings.when(button1.hoverProperty())
+                .then(selectedStyle)
+                .otherwise(selectedStyle));
+        button2.styleProperty().bind(Bindings.when(button2.hoverProperty())
+                .then(deSelectedStyle)
+                .otherwise(deSelectedStyle));
+        button3.styleProperty().bind(Bindings.when(button3.hoverProperty())
+                .then(deSelectedStyle)
+                .otherwise(deSelectedStyle));
+        button4.styleProperty().bind(Bindings.when(button4.hoverProperty())
+                .then(deSelectedStyle)
+                .otherwise(deSelectedStyle));
+
     }
     private static void setSelectedType(Button button1, Button button2, Button button3){
         String style = "-fx-padding: 10 20; " +
                 "-fx-font-family: 'Franklin Gothic';" +
                 "-fx-font-size: 35;" +
                 "-fx-border-radius: 50em;";
-        button1.setStyle( "-fx-border-color: Green; " + "-fx-text-fill: Green; -fx-border-width: 4px; -fx-font-weight: Bold;" + style);
-        button2.setStyle( "-fx-border-color: Gray; " + "-fx-text-fill: Gray; -fx-border-width: 0px; " + style);
-        button3.setStyle( "-fx-border-color: Gray; " + "-fx-text-fill: Gray; -fx-border-width: 0px; " + style);
-        button1.setOnMouseEntered(e -> button1.setStyle(button1.getStyle()));
-        button1.setOnMouseExited(e -> button1.setStyle(button1.getStyle()));
-        button2.setOnMouseEntered(e -> button2.setStyle(button2.getStyle()));
-        button2.setOnMouseExited(e -> button2.setStyle(button2.getStyle()));
-        button3.setOnMouseEntered(e -> button3.setStyle(button3.getStyle()));
-        button3.setOnMouseExited(e -> button3.setStyle(button3.getStyle()));
+
+        String selectedStyle = "-fx-text-fill: Green; -fx-border-color: Green; -fx-border-width: 4px; -fx-font-weight: Bold; " + style;
+        String deSelectedStyle = "-fx-text-fill: Gray; -fx-border-color: Gray; -fx-border-width: 0px; " + style;
+
+        button1.styleProperty().bind(Bindings.createStringBinding(() ->selectedStyle));
+        button2.styleProperty().bind(Bindings.createStringBinding(() ->deSelectedStyle));
+        button3.styleProperty().bind(Bindings.createStringBinding(() ->deSelectedStyle));
+
+        button1.styleProperty().bind(Bindings.when(button1.hoverProperty())
+                .then(selectedStyle)
+                .otherwise(selectedStyle));
+        button2.styleProperty().bind(Bindings.when(button2.hoverProperty())
+                .then(deSelectedStyle)
+                .otherwise(deSelectedStyle));
+        button3.styleProperty().bind(Bindings.when(button3.hoverProperty())
+                .then(deSelectedStyle)
+                .otherwise(deSelectedStyle));
+//
+//
+//        button1.setStyle( "-fx-border-color: Green; " + "-fx-text-fill: Green; -fx-border-width: 4px; -fx-font-weight: Bold;" + style);
+//        button2.setStyle( "-fx-border-color: Gray; " + "-fx-text-fill: Gray; -fx-border-width: 0px; " + style);
+//        button3.setStyle( "-fx-border-color: Gray; " + "-fx-text-fill: Gray; -fx-border-width: 0px; " + style);
+//        button1.setOnMouseEntered(e -> button1.setStyle(button1.getStyle()));
+//        button1.setOnMouseExited(e -> button1.setStyle(button1.getStyle()));
+//        button2.setOnMouseEntered(e -> button2.setStyle(button2.getStyle()));
+//        button2.setOnMouseExited(e -> button2.setStyle(button2.getStyle()));
+//        button3.setOnMouseEntered(e -> button3.setStyle(button3.getStyle()));
+//        button3.setOnMouseExited(e -> button3.setStyle(button3.getStyle()));
     }
     private static void setSelectedType(Button button1, Button button2){
         String style = "-fx-padding: 10 20; " +
                 "-fx-font-family: 'Franklin Gothic';" +
                 "-fx-font-size: 35;" +
                 "-fx-border-radius: 30em;";
-        button1.setStyle( "-fx-border-color: Green; " + "-fx-text-fill: Green; -fx-border-width: 4px; -fx-font-weight: Bold;" + style);
-        button2.setStyle( "-fx-border-color: Gray; " + "-fx-text-fill: Gray; -fx-border-width: 0px; " + style);
-        button1.setOnMouseEntered(e -> button1.setStyle(button1.getStyle()));
-        button1.setOnMouseExited(e -> button1.setStyle(button1.getStyle()));
-        button2.setOnMouseEntered(e -> button2.setStyle(button2.getStyle()));
-        button2.setOnMouseExited(e -> button2.setStyle(button2.getStyle()));
+
+        String selectedStyle = "-fx-text-fill: Green; -fx-border-color: Green; -fx-border-width: 4px; -fx-font-weight: Bold; " + style;
+        String deSelectedStyle = "-fx-text-fill: Gray; -fx-border-color: Gray; -fx-border-width: 0px; " + style;
+
+        button1.styleProperty().bind(Bindings.createStringBinding(() ->selectedStyle));
+        button2.styleProperty().bind(Bindings.createStringBinding(() ->deSelectedStyle));
+
+        button1.styleProperty().bind(Bindings.when(button1.hoverProperty())
+                .then(selectedStyle)
+                .otherwise(selectedStyle));
+        button2.styleProperty().bind(Bindings.when(button2.hoverProperty())
+                .then(deSelectedStyle)
+                .otherwise(deSelectedStyle));
+
+//        button1.setStyle( "-fx-border-color: Green; " + "-fx-text-fill: Green; -fx-border-width: 4px; -fx-font-weight: Bold;" + style);
+//        button2.setStyle( "-fx-border-color: Gray; " + "-fx-text-fill: Gray; -fx-border-width: 0px; " + style);
+//        button1.setOnMouseEntered(e -> button1.setStyle(button1.getStyle()));
+//        button1.setOnMouseExited(e -> button1.setStyle(button1.getStyle()));
+//        button2.setOnMouseEntered(e -> button2.setStyle(button2.getStyle()));
+//        button2.setOnMouseExited(e -> button2.setStyle(button2.getStyle()));
     }
     private static void displayGameSelection() {
         StackPane gameSelection = new StackPane();
@@ -736,8 +802,8 @@ public class GUI extends Application {
                     neglect = (Rectangle) grid1.getChildren().get(i);
                 }
                 if (superIndex[0] == -1 || number == i)
-                    active.setFill(Color.GREEN);
-                neglect.setFill(Color.WHITE);
+                    active.fillProperty().bind(greenColor);
+                neglect.fillProperty().bind(midGround);
             }
         }
     }
@@ -753,7 +819,7 @@ public class GUI extends Application {
                     box = (Rectangle) grid1.getChildren().get(i);
                 else
                     box = (Rectangle) grid2.getChildren().get(i);
-                box.setFill(Color.GREEN);
+                box.fillProperty().bind(greenColor);
             }
         }
     }
@@ -821,20 +887,21 @@ public class GUI extends Application {
                 "-fx-font-family: 'Franklin Gothic';" +
                 "-fx-font-weight: Bold;" +
                 "-fx-font-size: 35;";
+
+//        System.out.println("FontColor: " + fontColor.get());
+
         button.styleProperty().bind(
                 Bindings.createStringBinding(() ->
                         "-fx-text-fill: " + fontColor.get() + "; " +
-                                style,fontColor));
+                                style ,fontColor));
         if(text.equals("Back")) {
             button.setMinSize(120, 80);
             button.setOnMouseEntered(e -> {
                 button.setText("< " + text);
                 button.styleProperty().bind(
                         Bindings.createStringBinding(() ->
-                                "-fx-text-fill: " + fontHoverColor.get() + "; -fx-border-radius: 50em; " +
-                                        "-fx-border-color: Red; " +
-                                        "-fx-border-width: 4px;" +
-                                        style,fontHoverColor));
+                                "-fx-text-fill: Red; -fx-border-radius: 50em; " +
+                                        "-fx-border-color: Red; -fx-border-width: 4px;" + style));
             });
             button.setOnMouseExited(e -> {
                 button.setText(text);
@@ -848,8 +915,7 @@ public class GUI extends Application {
             button.setOnMouseEntered(e-> {
                 button.styleProperty().bind(
                         Bindings.createStringBinding(() ->
-                                "-fx-text-fill: " + fontHoverColor.get() + "; " +
-                                        style,fontHoverColor));
+                                "-fx-text-fill: Red; " + style));
             });
             button.setOnMouseExited(e-> {
                 button.styleProperty().bind(
@@ -863,12 +929,11 @@ public class GUI extends Application {
             button.setOnMouseEntered(e -> {
                 button.styleProperty().bind(
                         Bindings.createStringBinding(() ->
-                                "-fx-text-fill: " + fontHoverColor.get() + "; -fx-border-radius: 50em; " +
+                                "-fx-text-fill: Red; -fx-border-radius: 50em; " +
                                         "-fx-border-color: Red; " +
                                         "-fx-border-width: 4px;" +
-                                        style,fontHoverColor));
+                                        style));
                 button.setText(text + " >");
-//                button.setBorder(Border.stroke(Color.RED));
             });
             button.setOnMouseExited(e -> {
                 button.styleProperty().bind(
@@ -876,22 +941,11 @@ public class GUI extends Application {
                                 "-fx-text-fill: " + fontColor.get() + "; " +
                                         style,fontColor));
                 button.setText(text);
-//                button.setBorder(null);
             });
             button.setMinSize(200, 80);
         }
         button.setBackground(new Background(new BackgroundFill(Color.color(0,0,0,0), CornerRadii.EMPTY, Insets.EMPTY)));
-        button.setOnAction(e->{
-            System.out.println(text + " Button Pressed");
-            switch (text) {
-                case "Change Difficulty" -> System.out.println(text + " Button");
-                case "Player Settings" -> System.out.println(text + " Button");
-                case "Back" -> {
-                    System.out.println(text + " Button");
-                    root.getChildren().removeLast();
-                }
-            }
-        });
+
         return button;
     }
     private static void displayAppearance(StackPane gameMenu, Button button1, Button button2, Button button3){
@@ -940,12 +994,11 @@ public class GUI extends Application {
         title.setFont(Font.font("Franklin Gothic", FontWeight.BOLD, 50));
         header.getChildren().addAll(back, title);
         header.setSpacing(50);
-        title.setStyle("-fx-font-family: 'Franklin Gothic';" +
-                "-fx-font-size: 50;");
+        String style = "-fx-font-family: 'Franklin Gothic'; -fx-font-size: 50;";
+//        title.setStyle(style);
         title.styleProperty().bind(
                 Bindings.createStringBinding(() ->
-                        "-fx-text-fill: " + fontColor.get() + ";-fx-font-family: 'Franklin Gothic';" +
-                               "-fx-font-size: 50;",fontColor));
+                        "-fx-text-fill: " + fontColor.get() + "; " + style,fontColor));
 
         Image defThemeImg = new Image("file:images/DefaultTheme.png");
         Image darkThemeImg = new Image("file:images/DarkTheme.png");
@@ -982,28 +1035,42 @@ public class GUI extends Application {
         buttonBox.setSpacing(10);
         Text title = new Text(text);
         title.setStyle(style);
-        button.setOnMouseEntered(e->{
-            title.styleProperty().bind(
-                    Bindings.createStringBinding(() ->
-                            "-fx-text-fill: " + fontHoverColor.get() + "; " +
-                                    style,fontHoverColor));
-        });
-        button.setOnMouseExited(e->{
-            title.styleProperty().bind(
-                    Bindings.createStringBinding(() ->
-                            "-fx-text-fill: " + fontColor.get() + "; " +
-                                    style,fontColor));
-        });
+
+        String normalStyle = "-fx-text-fill: " + fontColor.get() + "; " + style;
+
+        title.styleProperty().bind(Bindings.when(button.hoverProperty())
+                .then("-fx-text-fill: Red; " + style)
+                .otherwise(normalStyle));
+
+//        button.setOnMouseEntered(e->{
+//            title.styleProperty().bind(
+//                    Bindings.createStringBinding(() ->
+//                            "-fx-text-fill: " + fontHoverColor.get() + "; " +
+//                                    style,fontHoverColor));
+//        });
+//        button.setOnMouseExited(e->{
+//            title.styleProperty().bind(
+//                    Bindings.createStringBinding(() ->
+//                            "-fx-text-fill: " + fontColor.get() + "; " +
+//                                    style,fontColor));
+//        });
         button.setOnMouseClicked(e->{
             System.out.println(text + " Button was Pressed!");
             if(text.equals("Dark Theme")){
                 backGround.set(Color.BLACK);
                 midGround.set(Color.web("#666666"));
                 fontColor.set("#FFFFFF");
+                foreGround.set(Color.WHITE);
             } else if (text.equals("Default Theme")) {
                 backGround.set(Color.WHITE);
                 midGround.set(Color.LIGHTGREY);
                 fontColor.set("#000000");
+                foreGround.set(Color.BLACK);
+            } else if (text.equals("Wooden Theme")) {
+                backGround.set(Color.web("#cc9966"));
+                midGround.set(Color.web("#996633"));
+                fontColor.set("#FFFFFF");
+                foreGround.set(Color.web("#663300"));
             }
         });
 
@@ -1014,7 +1081,7 @@ public class GUI extends Application {
         BorderPane background = new BorderPane();
         StackPane ruleBook = new StackPane();
         background.setCenter(ruleBook);
-        background.setBackground(new Background(new BackgroundFill( Color.color(0,0,0,0), CornerRadii.EMPTY, Insets.EMPTY)));
+        background.setBackground(new Background(new BackgroundFill(midGround.get(), CornerRadii.EMPTY, Insets.EMPTY)));
 //        Rectangle  = makeRectangle(1.5, 0.9);
         Rectangle box = new Rectangle();
         box.fillProperty().bind(backGround);
@@ -1053,6 +1120,9 @@ public class GUI extends Application {
         Rectangle rulesArea = new Rectangle();
         rulesArea.fillProperty().bind(backGround);
 
+        StringBinding textAreaStyleBinding = Bindings.createStringBinding(() ->
+                "-fx-control-inner-background: \'" + midGround.get() + "\';", midGround);
+
         TextArea rulesTextArea = new TextArea();
         rulesTextArea.setMinSize(root.getWidth(), root.getHeight()-gameRule.getHeight()-hBox1.getHeight());
         rulesTextArea.setEditable(false);
@@ -1064,13 +1134,8 @@ public class GUI extends Application {
                         "-fx-font-family: 'Franklin Gothic';" +
                         "-fx-font-size: 25;" +
                         "-fx-border-radius: 5;" +
+                        textAreaStyleBinding.get() +
                         "-fx-text-fill: " + fontColor.get() + ";", fontColor));
-        rulesTextArea.styleProperty().bind(
-                Bindings.createStringBinding(() ->
-                        "-fx-text-fill: " + fontColor.get() + ";-fx-padding: 10 30; " +
-                                "-fx-font-family: 'Franklin Gothic';" +
-                                "-fx-font-size: 25;" +
-                                "-fx-border-radius: 5;",fontColor));
 
         tictactoe.setOnMouseClicked(event -> {
             setSelectedType(tictactoe, supertictactoe, quixo);
@@ -1181,15 +1246,17 @@ public class GUI extends Application {
         });
 
         Text title = new Text("Profile");
-        title.setFont(Font.font("Franklin Gothic", FontWeight.BOLD, 50));
-        header.getChildren().addAll(back, title);
-        header.setSpacing(50);
-        title.setStyle("-fx-font-family: 'Franklin Gothic';" +
-                "-fx-font-size: 50;");
+        String style = "-fx-font-family: 'Franklin Gothic'; -fx-font-size: 50; -fx-font-weight: Bold; ";
+        System.out.println(fontColor.get());
         title.styleProperty().bind(
                 Bindings.createStringBinding(() ->
-                        "-fx-text-fill: " + fontColor.get() + ";-fx-font-family: 'Franklin Gothic';" +
-                                "-fx-font-size: 50;",fontColor));
+                        "-fx-text-fill: " + fontColor.get() + "; " + style ,fontColor));
+        System.out.println(fontColor.get());
+//        title.setFont(Font.font("Franklin Gothic", FontWeight.BOLD, 50));
+        header.getChildren().addAll(back, title);
+        header.setSpacing(50);
+//        title.setStyle(style);
+
 
         HBox profile = new HBox();
         profile.setMinWidth(boxWidth);
@@ -1207,7 +1274,6 @@ public class GUI extends Application {
                 "-fx-padding: 10 30; " +
                 "-fx-font-family: 'Franklin Gothic';" +
                 "-fx-font-size: 30;" +
-                "-fx-line-spacing: 500px;" +
                 textAreaStyleBinding.get() +
                 "-fx-text-fill: " + fontColor.get() + ";", fontColor));
 //        profileDescription.setStyle("-fx-padding: 10 30; " +
@@ -1229,6 +1295,7 @@ public class GUI extends Application {
         themes.setAlignment(Pos.TOP_LEFT);
     }
     public static void showTurn(int row, int col, int[] superIndex){
+        System.out.println("Here in showTurn (GUI)");
         if(getPlayer()==1)
             markX(row,col,superIndex);
         else
@@ -1347,6 +1414,8 @@ public class GUI extends Application {
         return timeline;
     }
     private static void markX(int row, int col, int[] superIndex){
+        System.out.println("Here marking x in markX(GUI)\n" + superIndex[0] + " : " + superIndex[1] + "\n" +
+                row + " : " +col);
         int startY = (int) ((int) (row*(cell/3))+(superIndex[0]*cell)+((cell/3)*0.2));
         int startX = (int) ((int) (col*(cell/3))+(superIndex[1]*cell)+((cell/3)*0.2));
         int endY = startY + (int)((cell/3)*0.6);
@@ -1355,6 +1424,7 @@ public class GUI extends Application {
         startX = endX;
         endX = endX - (int)((cell/3)*0.6);
         markLine(startX,startY,endX,endY,Color.RED,0.2,marks);
+        System.out.println("Here marked x in markX(GUI)");
     }
     private static void markX(int row, int col){
         int startY = (int)((row*cell)+(cell*0.2));
@@ -1378,9 +1448,11 @@ public class GUI extends Application {
     }
     static void markO(double x, double y, double diameter, Group node){
         Circle circle = new Circle(x,y,0);
-        circle.setFill(Color.BLUE);
-        Circle inner = new Circle(x,y,0);
-        inner.setFill(Color.WHITE);
+        circle.setStroke(Color.BLUE);
+        circle.setStrokeWidth(15);
+        circle.setFill(null);
+        Circle inner = new Circle(0);
+        inner.setFill(Color.rgb(0,0,0,0));
 
 
         Timeline timeline = new Timeline();
@@ -1455,9 +1527,11 @@ public class GUI extends Application {
     private static void markO2(int row, int col){
         Rectangle box = (Rectangle) boxPane.lookup("#"+row+col);
         Circle circle = new Circle(0);
-        circle.setFill(Color.BLUE);
+        circle.setStroke(Color.BLUE);
+        circle.setStrokeWidth(6);
+        circle.setFill(null);
         Circle inner = new Circle(0);
-        inner.setFill(Color.WHITE);
+        inner.setFill(Color.rgb(0,0,0,0));
 
 
         Timeline timeline = new Timeline();

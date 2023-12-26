@@ -4,10 +4,7 @@ import javafx.application.Platform;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Group;
-import javafx.scene.layout.BorderPane;
-import javafx.scene.layout.Pane;
-import javafx.scene.layout.StackPane;
-import javafx.scene.layout.VBox;
+import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
 import javafx.scene.text.Font;
@@ -23,6 +20,7 @@ import static Tic_Tac_Ultimate.Runner.singlePlayer;
 
 public abstract class GamePane extends BorderPane implements Serializable {
     public void initialize(){
+        setBackground(new Background(new BackgroundFill(backGround.get(), CornerRadii.EMPTY, Insets.EMPTY)));
         setPadding(new Insets(10));
         StackPane player1 = playerInfo(1, Color.RED);
         setLeft(player1);
@@ -84,7 +82,7 @@ public abstract class GamePane extends BorderPane implements Serializable {
                 }
             }
             Rectangle back = makeRectangle(0.09, 0.09);
-            back.setFill(Color.LIGHTGREY);
+            back.fillProperty().bind(midGround);
             StackPane turnIndicator = new StackPane(back, grid);
             turnIndicator.setAlignment(Pos.CENTER);
             info.getChildren().add(turnIndicator);
