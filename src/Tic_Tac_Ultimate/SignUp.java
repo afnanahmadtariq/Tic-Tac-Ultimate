@@ -27,7 +27,7 @@ public class SignUp extends Stage{
             getIcons().add(icon);
             setTitle("Tic Tac Ultimate");
             setWidth(720);
-            setHeight(800);
+            setHeight(750);
             setResizable(false);
             initModality(Modality.APPLICATION_MODAL);
             initStyle(StageStyle.UNDECORATED);
@@ -38,15 +38,22 @@ public class SignUp extends Stage{
 
             HBox title = GuiUtility.getTitle(32, 0);
 
-            TextField nameField = textField("Enter your display name", modified, 0, getScene());
-            TextField usernameField = textField("Enter username (only alphabets and number are allowed?)", modified, 1, getScene());
-            TextField emailField = textField("Enter your email", modified, 2, getScene());
-            TextField passwordField = textField("password (length 8-16, include alphabets, numbers and special characters)", modified, 3, getScene());
-            TextField confirmField = textField("Re-enter your password to confirm", modified, 4, getScene());
+            TextField nameField = textField("Enter your display Name", modified, 0, getScene());
+            TextField usernameField = textField("Enter Username", modified, 1, getScene());
+            TextField emailField = textField("Enter your E-mail", modified, 2, getScene());
+            TextField passwordField = textField("Password (length 8-16, include alphabets, numbers and special characters)", modified, 3, getScene());
+            TextField confirmField = textField("Re-enter your Password to Confirm", modified, 4, getScene());
+            Text checkUsername = new Text("");
+            usernameField.addEventHandler(KeyEvent.ANY, e -> {
+                if (usernameField.getText().contains("@"))
+                    checkUsername.setText("Username cannot contain '@'");
+                else
+                    checkUsername.setText("");
+            });
             Text confirmEmail = new Text("");
-            emailField.addEventHandler(KeyEvent.KEY_TYPED, e -> {
+            emailField.addEventHandler(KeyEvent.ANY, e -> {
                 if (!emailField.getText().contains("@") || !emailField.getText().contains(".com"))
-                    confirmEmail.setText("Enter a valid email address");
+                    confirmEmail.setText("Enter a valid E-mail Address");
                 else
                     confirmEmail.setText("");
             });
@@ -54,45 +61,45 @@ public class SignUp extends Stage{
             Text confirmPwd = new Text("");
             passwordField.addEventHandler(KeyEvent.KEY_RELEASED,e -> {
                 if (!passwordField.getText().equals(confirmField.getText()) && modified[4])
-                    confirmPwd.setText("Passwords do not match");
+                    confirmPwd.setText("Password does not match");
                 else
                     confirmPwd.setText("");
                 switch(new Password(8,16).check(passwordField.getText())){
                     case -10 -> {
                         checkPwd.setStyle("-fx-fill: red");
-                        checkPwd.setText("password should be at-least 8 and maximum 16");
+                        checkPwd.setText("Password should be at-least 8 and Maximum of 16 characters");
                     }
                     case -2 -> {
                         checkPwd.setStyle("-fx-fill: red");
-                        checkPwd.setText("password is very weak");
+                        checkPwd.setText("Password is very Weak");
                     }
                     case -1 -> {
                         checkPwd.setStyle("-fx-fill: orange");
-                        checkPwd.setText("password is weak");
+                        checkPwd.setText("Password is Weak");
                     }
                     case 0 -> {
                         checkPwd.setStyle("-fx-fill: yellow");
-                        checkPwd.setText("password is okay");
+                        checkPwd.setText("Password is Okay");
                     }
                     case 1 -> {
                         checkPwd.setStyle("-fx-fill: green");
-                        checkPwd.setText("password is strong");
+                        checkPwd.setText("Password is Strong");
                     }
                     case 2 -> {
                         checkPwd.setStyle("-fx-fill: blue");
-                        checkPwd.setText("password is very strong");
+                        checkPwd.setText("Password is very Strong");
                     }
                 }
             });
             confirmField.addEventHandler(KeyEvent.KEY_TYPED,e -> {
                 if (!passwordField.getText().equals(confirmField.getText()))
-                    confirmPwd.setText("Passwords do not match");
+                    confirmPwd.setText("Password does not match");
                 else
                     confirmPwd.setText("");
             });
 
             Group nameGroup = group("Name",nameField);
-            Group usernameGroup = group("Username",usernameField);
+            Group usernameGroup = group("Username",usernameField, checkUsername);
             Group emailGroup = group("Email Address",emailField, confirmEmail);
             Group pwdGroup = group("Password",passwordField, checkPwd);
             Group confirmGroup = group("Confirm Password",confirmField, confirmPwd);
@@ -111,8 +118,9 @@ public class SignUp extends Stage{
                     System.out.println("Enter same passwords!!");
                 }
                 else{
-                    Online.register(name,email,username,pwd);
+                    Runner.signUp(name,username, email,pwd);
                     System.out.println("Sing-up Invoked.");
+                    close();
                 }
             });
 
@@ -126,7 +134,7 @@ public class SignUp extends Stage{
 
             root.getChildren().addAll(title, nameGroup, usernameGroup, emailGroup, pwdGroup, confirmGroup, singUp, back);
             root.setAlignment(Pos.CENTER);
-            root.setSpacing(30);
+            root.setSpacing(18);
         }
     private Group group(String label, TextField textField, Text confirmMessage){
         Group group = group(label, textField);

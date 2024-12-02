@@ -7,13 +7,12 @@ public class QuixoBrain {
             case "Medium" -> med(board.board);
             case "Hard" -> hard(board.board);
             case "Extreme" -> extreme(board);
-            case "Practice" -> practice(board.board);
             default -> easy(board.board);
         };
     }
     private static int[][] easy(int[][] board) {
         int[] index = new int[]{rand(false), rand(false)};
-        while (board[index[0]][index[1]] == 1) {
+        while (board[index[0]][index[1]] == 1 && (index[0] == 0 || index[0] == 4 || index[1]==0 || index[1] == 4)) {
             index = new int[]{rand(false), rand(false)};
         }
         int[] insert = new int[] {index[0], index[1]};

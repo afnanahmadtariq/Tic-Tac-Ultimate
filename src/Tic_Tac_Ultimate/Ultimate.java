@@ -50,4 +50,5 @@ public class Ultimate extends GamePane {
             board.getChildren().add(marks);
         });
     }
+
 }

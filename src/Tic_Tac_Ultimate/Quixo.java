@@ -33,7 +33,7 @@ public class Quixo extends GamePane {
     @Override
     public void makeBoard(Pane board){
         Rectangle backRectangle = makeRectangle(0.8,0.8);
-        backRectangle.setFill(foreGround);
+        backRectangle.setFill(foreGround.get());
         boxPane = new Pane();
         boxPane.setTranslateX(10);
         boxPane.setTranslateY(10);
@@ -43,8 +43,8 @@ public class Quixo extends GamePane {
         for (int i = 0; i < 5; i++) {
             for (int j = 0; j < 5; j++) {
                 Rectangle box = makeBox();
-                box.setTranslateX(130 * j);
-                box.setTranslateY(130 * i);
+                box.setTranslateX(112 * j);
+                box.setTranslateY(112 * i);
                 box.setId(""+i+j);
                 System.out.println(box.getId());
                 boxPane.getChildren().add(box);
@@ -81,7 +81,7 @@ public class Quixo extends GamePane {
             check = checkDraw(row, col);
             if(check == 10){
                 listen = true;
-                box.setFill(Color.WHITE);
+                box.setFill(midGround.get());
                 arrowGroup.getChildren().clear();
                 clearDraw();
             }
@@ -95,7 +95,6 @@ public class Quixo extends GamePane {
             else{
                 blink(box, 1);
             }
-//            turn(Integer.parseInt(box.getId().substring(0,1)),Integer.parseInt(box.getId().substring(1)));
             System.out.println("mouse Clicked!");
         });
         return box;
@@ -119,19 +118,19 @@ public class Quixo extends GamePane {
     private Pane arrow(int row, int col, String imageName){
         double x,y;
         if(imageName.equals("up") || imageName.equals("down")){
-            x = (130*col)+20;
+            x = (112*col)+20;
             if(imageName.equals("up"))
-                y = 130*5;
+                y = 112*5;
 
             else
                 y = -90;
         }
         else {
-            y = (130*row)+20;
+            y = (112*row)+20;
             if(imageName.equals("right"))
                 x = -90;
             else
-                x = 130*5;
+                x = 112*5;
         }
         Pane pane = new Pane();
         pane.setTranslateX(x);
@@ -189,7 +188,7 @@ public class Quixo extends GamePane {
                 value++;
                 for (; value <= colI; value++) {
                     Node box = boxPane.lookup("#" + row + value);
-                    translateX(box.getTranslateX(),box.getTranslateX()-130,box, 1);
+                    translateX(box.getTranslateX(),box.getTranslateX()-112,box, 1);
                     box.setId("" + row + (value - 1));
                     length++;
                 }
@@ -197,11 +196,11 @@ public class Quixo extends GamePane {
                 rect.setId(""+ rowI + colI);
                 double size = rect.getScaleX();
                 scale(0,0, rect,1);
-                TranslateTransition transition = translateX(rect.getTranslateX(), rect.getTranslateX()-65, rect, 1);
+                TranslateTransition transition = translateX(rect.getTranslateX(), rect.getTranslateX()-58, rect, 1);
                 int finalLength = length;
                 transition.setOnFinished(event->{
-                    rect.setTranslateX(rect.getTranslateX()+(finalLength *130)+65);
-                    rect.setFill(Color.WHITE);
+                    rect.setTranslateX(rect.getTranslateX()+(finalLength *112)+58);
+                    rect.setFill(midGround.get());
                     ScaleTransition scaleTransition = scale(size,size, rect,0.5);
                     scaleTransition.setOnFinished(scaleEvent ->{
                         if(check==0)mark(rowI, colI);
@@ -216,7 +215,7 @@ public class Quixo extends GamePane {
                 value--;
                 for (; value >= colI; value--) {
                     Node box = boxPane.lookup("#" + row + value);
-                    translateX(box.getTranslateX(),box.getTranslateX()+130,box, 1);
+                    translateX(box.getTranslateX(),box.getTranslateX()+112,box, 1);
                     box.setId("" + row + (value + 1));
                     length++;
                 }
@@ -224,11 +223,11 @@ public class Quixo extends GamePane {
                 rect.setId(""+ rowI + colI);
                 double size = rect.getScaleX();
                 scale(0,0,rect,1);
-                TranslateTransition transition = translateX(rect.getTranslateX(), rect.getTranslateX()+65, rect, 1);
+                TranslateTransition transition = translateX(rect.getTranslateX(), rect.getTranslateX()+58, rect, 1);
                 int finalLength = length;
                 transition.setOnFinished(event->{
-                    rect.setTranslateX(rect.getTranslateX()-(finalLength *130)-65);
-                    rect.setFill(Color.WHITE);
+                    rect.setTranslateX(rect.getTranslateX()-(finalLength *112)-58);
+                    rect.setFill(midGround.get());
                     ScaleTransition scaleTransition = scale(size,size, rect,0.5);
                     scaleTransition.setOnFinished(scaleEvent ->{
                         if(check==0)mark(rowI, colI);
@@ -246,7 +245,7 @@ public class Quixo extends GamePane {
                 value++;
                 for (; value <= rowI; value++) {
                     Node box = boxPane.lookup("#" + value + col);
-                    translateY(box.getTranslateY(),box.getTranslateY()-130,box, 1);
+                    translateY(box.getTranslateY(),box.getTranslateY()-112,box, 1);
                     box.setId("" + (value - 1) + col);
                     length++;
                 }
@@ -254,11 +253,11 @@ public class Quixo extends GamePane {
                 rect.setId(""+ rowI + colI);
                 double size = rect.getScaleX();
                 scale(0,0,rect,1);
-                TranslateTransition transition = translateY(rect.getTranslateY(), rect.getTranslateY()-65, rect, 1);
+                TranslateTransition transition = translateY(rect.getTranslateY(), rect.getTranslateY()-58, rect, 1);
                 int finalLength = length;
                 transition.setOnFinished(event->{
-                    rect.setTranslateY(rect.getTranslateY()+(finalLength *130)+65);
-                    rect.setFill(Color.WHITE);
+                    rect.setTranslateY(rect.getTranslateY()+(finalLength *112)+58);
+                    rect.setFill(midGround.get());
                     ScaleTransition scaleTransition = scale(size,size, rect,0.5);
                     scaleTransition.setOnFinished(scaleEvent ->{
                         if(check==0)mark(rowI, colI);
@@ -273,7 +272,7 @@ public class Quixo extends GamePane {
                 value--;
                 for (; value >= rowI; value--) {
                     Node box = boxPane.lookup("#" + value + col);
-                    translateY(box.getTranslateY(),box.getTranslateY()+130,box, 1);
+                    translateY(box.getTranslateY(),box.getTranslateY()+112,box, 1);
                     box.setId("" + (value + 1) + col);
                     length++;
                 }
@@ -281,11 +280,11 @@ public class Quixo extends GamePane {
                 rect.setId(""+ rowI + colI);
                 double size = rect.getScaleX();
                 scale(0,0,rect,1);
-                TranslateTransition transition = translateY(rect.getTranslateY(), rect.getTranslateY()+65, rect, 1);
+                TranslateTransition transition = translateY(rect.getTranslateY(), rect.getTranslateY()+58, rect, 1);
                 int finalLength = length;
                 transition.setOnFinished(event->{
-                    rect.setTranslateY(rect.getTranslateY()-(finalLength *130)-65);
-                    rect.setFill(Color.WHITE);
+                    rect.setTranslateY(rect.getTranslateY()-(finalLength *112)-58);
+                    rect.setFill(midGround.get());
                     ScaleTransition scaleTransition = scale(size,size, rect,0.5);
                     scaleTransition.setOnFinished(scaleEvent ->{
                         if(check==0)mark(rowI, colI);;
@@ -297,7 +296,14 @@ public class Quixo extends GamePane {
             }
         }
     }
-    private void mark(int row, int col) {
+    public void mark(int row, int col, int player) {
+        if(player==1)
+            markX(row, col, 1);
+        else
+            markO(row, col);
+        System.out.println("Marked");
+    }
+    public void mark(int row, int col) {
         if(getPlayer()==1)
             markX(row, col, 1);
         else
@@ -305,7 +311,6 @@ public class Quixo extends GamePane {
     }
     public void markX(int row, int col, int step){
         Rectangle box = (Rectangle) boxPane.lookup("#"+row+col);
-//        System.out.println("\nstartX: -------->" + startX.getValue() + "\nstartY: -------->" + startY.getValue() +"\nendX: -------->" + endX.getValue() + "\nendY: -------->" + endY.getValue());
         double delay = 0;
         if(step == 2) {
             delay = 0.2;
@@ -340,8 +345,6 @@ public class Quixo extends GamePane {
         }
 
         timeline.getKeyFrames().addAll(startFrame, endFrame);
-//        timeline.play();
-//        timeline.setOnFinished(event -> {
         if(step == 2) {
             line.startXProperty().bind(box.translateXProperty().add(box.widthProperty().multiply(0.8)));
             line.endXProperty().bind(box.translateXProperty().add(box.widthProperty().multiply(0.2)));
@@ -352,16 +355,14 @@ public class Quixo extends GamePane {
         }
         line.startYProperty().bind(box.translateYProperty().add(box.heightProperty().multiply(0.2)));
         line.endYProperty().bind(box.translateYProperty().add(box.heightProperty().multiply(0.8)));
-//        });
     }
     @Override
     public void markO(int row, int col){
         Rectangle box = (Rectangle) boxPane.lookup("#"+row+col);
         Circle circle = new Circle(0);
-        circle.setFill(Color.BLUE);
-        Circle inner = new Circle(0);
-        inner.setFill(Color.WHITE);
-
+        circle.setStroke(Color.BLUE);
+        circle.setStrokeWidth(12);
+        circle.setFill(Color.TRANSPARENT);
 
         Timeline timeline = new Timeline();
         timeline.setCycleCount(1);
@@ -370,31 +371,13 @@ public class Quixo extends GamePane {
         timeline.getKeyFrames().add(keyFrame);
         timeline.play();
 
-        Timeline innerTimeLine = new Timeline();
-        innerTimeLine.setCycleCount(1);
-        KeyValue keyValueRadiusInner = new KeyValue(inner.radiusProperty(), (box.getWidth()*0.3));
-        KeyFrame keyFrameInner = new KeyFrame(Duration.seconds(0.25), keyValueRadiusInner);
-        innerTimeLine.getKeyFrames().add(keyFrameInner);
-        innerTimeLine.play();
-
-//        timeline.setOnFinished(event -> {
-//            circle.radiusProperty().bind(box.widthProperty().multiply(0.4));
         circle.centerXProperty().bind(box.translateXProperty().add(box.widthProperty().multiply(0.5)));
         circle.centerYProperty().bind(box.translateYProperty().add(box.heightProperty().multiply(0.5)));
-
-//            inner.radiusProperty().bind(box.widthProperty().multiply(0.3));
-        inner.centerXProperty().bind(box.translateXProperty().add(box.widthProperty().multiply(0.5)));
-        inner.centerYProperty().bind(box.translateYProperty().add(box.heightProperty().multiply(0.5)));
-//        });
 
         circle.scaleXProperty().bind(box.scaleXProperty());
         circle.scaleYProperty().bind(box.scaleYProperty());
         circle.setMouseTransparent(true);
-        inner.scaleXProperty().bind(box.scaleXProperty());
-        inner.scaleYProperty().bind(box.scaleYProperty());
-        inner.fillProperty().bind(box.fillProperty());
-        inner.setMouseTransparent(true);
-        marks.getChildren().addAll(circle,inner);
+        marks.getChildren().add(circle);
     }
     public void markUp(int num, int[][] lineIndex){
         int[] index = lineIndex[num];
@@ -410,9 +393,5 @@ public class Quixo extends GamePane {
                 Runner.endGame();
             }
         });
-    }
-    @Override
-    public void loadGame(){
-
     }
 }

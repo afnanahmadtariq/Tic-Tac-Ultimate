@@ -2,7 +2,10 @@ package Tic_Tac_Ultimate;
 
 import java.io.Serializable;
 import java.util.Arrays;
+import java.util.List;
 import java.util.Stack;
+
+import static Tic_Tac_Ultimate.Runner.showTurn;
 
 public class QuixoController extends QuixoBoard implements Serializable {
     private final boolean SINGLE_PLAYER;
@@ -41,9 +44,8 @@ public class QuixoController extends QuixoBoard implements Serializable {
         if(player==2 && SINGLE_PLAYER) {
             int[][] index = QuixoBrain.compTurn(new QuixoController(this), difficulty);
             System.out.println("index of cpu: " + Arrays.deepToString(index));
+            checkDraw(index[0]);
             GUI.slide(index[0][0], index[0][1], index[1][0], index[1][1]);
-//            if(!doTurn(index[0], index[1]))
-//                System.out.println("BARi nhi hui cpu se");
         }
     }
     public int checkDraw(int[] drawIndex){
@@ -131,5 +133,15 @@ public class QuixoController extends QuixoBoard implements Serializable {
         game = winner;
         Runner.endGame(win, winValue);
         return true;
+    }
+    public void loadGame(){
+        System.out.println("Load start");
+       for(int i=0; i<5; i++){
+           for(int j=0; j<5; j++) {
+               if (board[i][j] != 0) {
+                   GUI.mark(i, j, board[i][j]);
+               }
+           }
+       }
     }
 }

@@ -42,7 +42,7 @@ final public class GuiUtility {
         title.setSpacing(5);
 
         ticTac.setFont(Font.font("Franklin Gothic Heavy", FontWeight.BOLD, fontSize));
-        ticTac.setFill(Color.BLACK);
+        ticTac.fillProperty().bind(foreGround);
 
         ultimate.setFont(Font.font("Franklin Gothic Heavy", FontWeight.BOLD, fontSize));
         ultimate.setFill(Color.WHITE);
@@ -70,11 +70,11 @@ final public class GuiUtility {
     }
     public static TextField textField(String str, boolean[] modified, int index, Scene scene){
         TextField textField = new TextField(str);
-        textField.setStyle("-fx-text-fill: #adadad;" +
-                "-fx-background-color: rgb(255,255,255);" +
+        textField.setStyle("-fx-text-fill: #000000;" +
+                "-fx-background-color: rgb(180,180,180);" +
                 "-fx-background-radius: 25;" +
                 "-fx-border-radius: 25;" +
-                "-fx-border-color: rgba(0,0,0,0);");
+                "-fx-border-color: rgba(0,0,0);");
         textField.setPrefSize(300,45);
         scene.focusOwnerProperty().addListener((observable, oldOwner, newOwner) ->{
             if(textField.getText().isEmpty() && textField == oldOwner) {
@@ -134,7 +134,7 @@ final public class GuiUtility {
     }
     public static Rectangle makeRectangle(double widthMultiplier, double heightMultiplier){
         Rectangle rectangle = new Rectangle();
-        rectangle.setFill(midGround);
+        rectangle.setFill(midGround.get());
         rectangle.widthProperty().bind(root.heightProperty().multiply(widthMultiplier));
         rectangle.heightProperty().bind(root.heightProperty().multiply(heightMultiplier));
         rectangle.setArcWidth(50);
@@ -142,9 +142,9 @@ final public class GuiUtility {
         return rectangle;
     }
     public static void blink(Rectangle box, int type){
-        Color current = (Color) box.getFill();
-        FillTransition fill = fill(current, Color.RED, (0.08*type), box, 3, true);
-        fill.setOnFinished(event -> box.setFill(current));
+        Color color = (Color) midGround.get();
+        FillTransition fill = fill(color, Color.RED, (0.08*type), box, 3, true);
+        fill.setOnFinished(event -> box.setFill(midGround.get()));
     }
     public static void blink(Pane pane, int count){
         pane.setBackground(new Background(new BackgroundFill(Color.ORANGE, CornerRadii.EMPTY, Insets.EMPTY)));
@@ -154,7 +154,7 @@ final public class GuiUtility {
         count--;
         int finalCount = count;
         empty.setOnFinished(end -> {
-            pane.setBackground(new Background(new BackgroundFill(Color.WHITE, CornerRadii.EMPTY, Insets.EMPTY)));
+            pane.setBackground(new Background(new BackgroundFill(midGround.get(), CornerRadii.EMPTY, Insets.EMPTY)));
             if(finalCount >=0)
                 blink(pane, finalCount);
         });
@@ -272,48 +272,10 @@ final public class GuiUtility {
         ));
         timeline[0].setCycleCount(Timeline.INDEFINITE);
         timeline[0].play();
-//        final int shakeDistance = 10;
-//        final int numShakes = 10;
-//        final double shakeDuration = 50; // milliseconds
-//
-//        TranslateTransition tt = new TranslateTransition(Duration.millis(shakeDuration), node);
-//        tt.setCycleCount(2 * numShakes);
-//        tt.setAutoReverse(true);
-//        tt.setByX(shakeDistance);
-//        tt.setByY(shakeDistance);
-//
-//        tt.playFromStart();
     }
     public static void reject(Pane node){
         shake(node);
         blink(node, 3);
-    }
-    private static void shakeStage(Stage stage) {
-        final double originalX = stage.getX();
-        final double originalY = stage.getY();
-        final Timeline[] timeline = new Timeline[1];
-        timeline[0] = new Timeline(new KeyFrame (Duration.millis(1),new EventHandler<ActionEvent>() {
-            int shakeCount = 0;
-            @Override
-            public void handle(ActionEvent event) {
-                if (!(shakeCount > 400)) {
-                    int dist = shakeCount++ % 10;
-                    if((shakeCount >= 100 && shakeCount < 200) || (shakeCount >= 300 && shakeCount < 400)){
-                        dist *=-1;
-                    }
-                    stage.setX(originalX + dist);
-                    stage.setY(originalY + dist);
-                }
-                else {
-                    stage.setX(originalX);
-                    stage.setY(originalY);
-                    timeline[0].stop();
-                }
-            }
-        }
-        ));
-        timeline[0].setCycleCount(Timeline.INDEFINITE);
-        timeline[0].play();
     }
     public static Line makeHLine(double Multiplier, int stroke, Pane grid){
         Line line = new Line();

@@ -1,7 +1,10 @@
 package Tic_Tac_Ultimate;
 
 import java.io.Serializable;
+import java.util.List;
 import java.util.Stack;
+
+import static Tic_Tac_Ultimate.Runner.showTurn;
 
 public class UltimateController extends UltimateBoard implements Serializable {
     private final boolean singlePlayer;
@@ -107,5 +110,14 @@ public class UltimateController extends UltimateBoard implements Serializable {
             game = 0;
         Runner.endGame(win, winValue);
         return true;
+    }
+    public void loadGame(){
+        List<int[][]> load = stack.stream().toList();
+        if(load.size()%2==1)
+            player = (player%2)+1;
+        for(int[][] index: load){
+            showTurn(index[0], index[1]);
+            player = (player%2)+1;
+        }
     }
 }

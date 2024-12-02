@@ -43,8 +43,4 @@ public class TicTacToe extends GamePane {
             board.getChildren().add(marks);
         });
     }
-    @Override
-    public void loadGame(){
-
-    }
 }

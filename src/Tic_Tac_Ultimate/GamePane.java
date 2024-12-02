@@ -8,10 +8,7 @@ import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Group;
 import javafx.scene.Node;
-import javafx.scene.layout.BorderPane;
-import javafx.scene.layout.Pane;
-import javafx.scene.layout.StackPane;
-import javafx.scene.layout.VBox;
+import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Circle;
 import javafx.scene.shape.Rectangle;
@@ -30,9 +27,10 @@ import static Tic_Tac_Ultimate.Runner.gameType;
 import static Tic_Tac_Ultimate.Runner.singlePlayer;
 
 public abstract class GamePane extends BorderPane {
-    private static Stack<ArrayList<Node>> stack;
+    private static Stack<Integer> stack;
     public Group marks;
     public void initialize(){
+        setBackground(new Background(new BackgroundFill(backGround.get(), CornerRadii.EMPTY, Insets.EMPTY)));
         setPadding(new Insets(10));
         StackPane player1 = playerInfo(1, Color.RED);
         setLeft(player1);
@@ -61,7 +59,9 @@ public abstract class GamePane extends BorderPane {
         Text playerName = new Text("Player " + player);
         if(singlePlayer && player==2)
             playerName = new Text("CPU");
-        playerName.setFont(Font.font("Franklin Gothic Heavy", FontWeight.BOLD, 74));
+        else if (singlePlayer && player == 1)
+            playerName = new Text(profile.getName());
+        playerName.setFont(Font.font("Franklin Gothic Heavy", FontWeight.BOLD, 70));
         playerName.setFill(color);
         Group symbol = new Group();
         Text turn = new Text("Turn");
@@ -94,7 +94,7 @@ public abstract class GamePane extends BorderPane {
                 }
             }
             Rectangle back = makeRectangle(0.09, 0.09);
-            back.setFill(Color.LIGHTGREY);
+            back.fillProperty().bind(midGround);
             StackPane turnIndicator = new StackPane(back, grid);
             turnIndicator.setAlignment(Pos.CENTER);
             info.getChildren().add(turnIndicator);
@@ -138,10 +138,9 @@ public abstract class GamePane extends BorderPane {
     }
     public void markO(double x, double y, double diameter, Group node){
         Circle circle = new Circle(x,y,0);
-        circle.setFill(Color.BLUE);
-        Circle inner = new Circle(x,y,0);
-        inner.setFill(Color.WHITE);
-
+        circle.setStroke(Color.BLUE);
+        circle.setStrokeWidth((diameter*0.5) - (diameter*0.3));
+        circle.setFill(Color.TRANSPARENT);
 
         Timeline timeline = new Timeline();
         timeline.setCycleCount(1);
@@ -150,19 +149,10 @@ public abstract class GamePane extends BorderPane {
         timeline.getKeyFrames().add(keyFrame);
         timeline.play();
 
-        Timeline innerTimeLine = new Timeline();
-        innerTimeLine.setCycleCount(1);
-        KeyValue keyValueRadiusInner = new KeyValue(inner.radiusProperty(), (diameter*0.38));
-        KeyFrame keyFrameInner = new KeyFrame(Duration.seconds(0.25), keyValueRadiusInner);
-        innerTimeLine.getKeyFrames().add(keyFrameInner);
-        innerTimeLine.play();
-
         circle.setMouseTransparent(true);
-        inner.setMouseTransparent(true);
-        node.getChildren().addAll(circle,inner);
+        node.getChildren().add(circle);
     }
     public void clearMarks(){
         marks.getChildren().clear();
     }
-    abstract void loadGame();
 }

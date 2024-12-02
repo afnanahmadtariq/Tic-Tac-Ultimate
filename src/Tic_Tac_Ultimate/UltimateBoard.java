@@ -1,14 +1,14 @@
 package Tic_Tac_Ultimate;
 
 public class UltimateBoard {
-    public TicTacToeBoard[][] uBoard;
+    public Board[][] uBoard;
     public int game;
     public int winValue;
     public UltimateBoard() {
-        uBoard = new TicTacToeBoard[3][3];
+        uBoard = new Board[3][3];
         for(int i=0; i<3; i++){
             for(int j=0; j<3; j++)
-                uBoard[i][j] = new TicTacToeBoard();
+                uBoard[i][j] = new Board();
         }
         game = -1;
         winValue = 0;

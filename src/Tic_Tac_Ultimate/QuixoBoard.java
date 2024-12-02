@@ -1,9 +1,10 @@
 package Tic_Tac_Ultimate;
 
+import java.io.Serializable;
 import java.util.HashMap;
 import java.util.Map;
 
-public class QuixoBoard {
+public class QuixoBoard implements Serializable {
         public int[][] board;
         public int game;
         public int winValue;
@@ -46,7 +47,7 @@ public class QuixoBoard {
         }
         private boolean win(int player){
             int count = 1;
-            for(int i=0;i<5;i++) {
+            for(int i=0;i<4;i++) {
                 if(board[i][0]==player) {
                     boolean flag = true;
                     for (int j = 0; j < 4; j++) {
